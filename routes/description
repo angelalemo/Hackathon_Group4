@@ -1,0 +1,11 @@
+1. Route (เส้นทางของ API)
+
+หน้าที่:
+
+รับ request จาก client (เช่น GET, POST, PUT, DELETE)
+เรียกใช้ controller ที่เกี่ยวข้อง
+
+สิ่งที่ควรส่ง:
+
+req (request object) และ res (response object)
+ค่า params หรือ body จาก request จะถูกส่งต่อไปยัง controller
