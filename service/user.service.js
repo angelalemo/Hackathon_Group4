@@ -1,4 +1,4 @@
-const e = require("express");
+const express = require("express");
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
 
@@ -54,13 +54,6 @@ class UserService {
     return user;
   }
 
-  static async deleteUser(NID) {
-    const user = await User.findByPk(NID);
-    if (!user) throw new Error("User not found");
-
-    await user.destroy();
-    return { message: `User with NID ${NID} deleted successfully` };
-  }
 }
 
 
