@@ -1,8 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
-const sequelize = require('./config/db');
-const userRoutes = require("./routes/user.routes");
-const farmRoutes = require("./routes/farm.routes");
+const sequelize = require('./backend/config/db');
+const userRoutes = require("./backend/routes/user.routes");
+const farmRoutes = require("./backend/routes/farm.routes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;

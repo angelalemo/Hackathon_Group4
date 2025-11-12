@@ -1,16 +1,14 @@
 const express = require("express");
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
+const axios = require("axios");
+const jwt = require("jsonwebtoken");
 
 class UserService {
   static async registerUser(data) {
     const { username, password, type, line, facebook, email, phoneNumber } = data;
 
-    if (!type){
-        usertype = "Customer";
-    }else{
-        usertype = "Farmer";
-    }
+    const usertype = type === true ? "Farmer" : "Customer";
 
     const existing = await User.findOne({ where: { username } });
     if (existing) {
@@ -52,6 +50,36 @@ class UserService {
 
     await user.update(data);
     return user;
+  }
+
+    static async registerOrLoginWithLine(accessToken, type) {
+    // ดึงข้อมูลโปรไฟล์จาก LINE API
+    const response = await axios.get("https://api.line.me/v2/profile", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    const { userId, displayName, pictureUrl } = response.data;
+
+    const usertype = type === true ? "Farmer" : "Customer";
+
+    // ตรวจสอบว่าผู้ใช้อยู่ในระบบหรือยัง
+    let user = await User.findOne({ where: { line: userId } });
+
+    if (!user) {
+      // สมัครใหม่ (register)
+      user = await User.create({
+        username: displayName,
+        password: null,
+        type: usertype,
+        line: userId,
+        email: null,
+        phoneNumber: null,
+      });
+    }
+
+    // สร้าง token สำหรับเข้าสู่ระบบ
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    return { user, token };
   }
 
 }
