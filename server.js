@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
-const { sequelize } = require("./models");
-const userRoutes = require("./routes/userRoutes");
+const sequelize = require('./config/db');
+const userRoutes = require("./routes/user.routes");
 const farmRoutes = require("./routes/farm.routes");
 
 const app = express();

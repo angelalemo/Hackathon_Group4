@@ -1,7 +1,7 @@
-const FarmService = require("../services/farmService");
+const FarmService = require("../service/farm.service");
 
 class FarmController {
-  static async getAll(req, res) {
+  static async getAllFarm(req, res) {
     try {
       const farms = await FarmService.getAllFarms();
       res.status(200).json(farms);
@@ -20,7 +20,7 @@ class FarmController {
     }
   }
 
-  static async create(req, res) {
+  static async createFarm(req, res) {
     try {
       const userNID = req.body.NID; // ดึงจาก user ที่ส่งมา
       const farm = await FarmService.createFarm(userNID, req.body);
@@ -30,7 +30,7 @@ class FarmController {
     }
   }
 
-  static async update(req, res) {
+  static async updateFarm(req, res) {
     try {
       const { NID, FID } = req.body;
       const farm = await FarmService.updateFarm(NID, FID, req.body);

@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const FarmController = require("../controllers/farmController");
+const FarmController = require("../controllers/farm.controller");
 
-router.get("/", FarmController.getAll);     // ทุกคนดูได้
+router.get("/", FarmController.getAllFarm);     // ทุกคนดูได้
 router.get("/farm", FarmController.getFarm);     // ทุกคนดูได้
-router.post("/", FarmController.create);    // เฉพาะ Farmer
-router.put("/", FarmController.update);     // เฉพาะ Farmer
+router.post("/", FarmController.createFarm);    // เฉพาะ Farmer
+router.put("/", FarmController.updateFarm);     // เฉพาะ Farmer
 
 
 module.exports = router;
