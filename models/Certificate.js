@@ -2,26 +2,26 @@
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-  class Storage extends Model {
+  class Certificate extends Model {
     static associate(models) {
-      Storage.belongsTo(models.Farm, { foreignKey: "FID" });
+      Certificate.belongsTo(models.Farm, { foreignKey: "FID" });
     }
   }
 
-  Storage.init(
+  Certificate.init(
     {
       id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
       FID: DataTypes.INTEGER,
-      file: DataTypes.STRING,
-      typeStorage: DataTypes.STRING, // image หรือ video
+      institution: DataTypes.STRING,
+      file: DataTypes.STRING
     },
     {
       sequelize,
-      modelName: "Storage",
-      tableName: "storages",
+      modelName: "Certificate",
+      tableName: "certificates",
       timestamps: false,
     }
   );
 
-  return Storage;
+  return Certificate;
 };

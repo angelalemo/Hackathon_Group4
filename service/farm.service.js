@@ -1,4 +1,4 @@
-const { Farm, User, Storage, Location } = require("../models");
+const { Farm, User, Storage, Location, Certificate } = require("../models");
 const fs = require("fs");
 const path = require("path");
 
@@ -9,6 +9,7 @@ class FarmService {
         { model: User, attributes: ["NID", "username", "type", "email", "phoneNumber"] },
         { model: Location, attributes: ["province", "district", "subDistrict"] },
         { model: Storage, attributes: ["file", "typeStorage"] },
+        { model: Certificate, attributes: ["institution", "file"] }
       ],
     });
 
@@ -32,6 +33,7 @@ class FarmService {
         { model: User, attributes: ["NID", "username", "email", "phoneNumber", "type"] },
         { model: Location, attributes: ["province", "district", "subDistrict"] },
         { model: Storage, attributes: ["file", "typeStorage"] },
+        { model: Certificate, attributes: ["institution", "file"] },
       ],
     });
 
@@ -42,66 +44,93 @@ class FarmService {
       return {
         ...farmData,
         storages: farmData.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
+        certificates: farmData.Certificates?.map((c) => ({
+          institution: c.institution,
+          file: c.file,
+        })) || [],
         Location: farmData.Location || {},
       };
     });
   }
 
   static async createFarm(userNID, data) {
-      const user = await User.findByPk(userNID);
-      if (!user) throw new Error("User not found");
-      if (user.type !== "Farmer") throw new Error("Permission denied: Only farmers can create farms");
+    const user = await User.findByPk(userNID);
+    if (!user) throw new Error("User not found");
+    if (user.type !== "Farmer") throw new Error("Permission denied: Only farmers can create farms");
 
-      const newFarm = await Farm.create({
-        NID: userNID,
-        farmName: data.farmName,
-        line: data.line,
-        facebook: data.facebook,
-        email: data.email,
-        phoneNumber: data.phoneNumber,
-        description: data.description,
-        locationID: data.locationID,
-      });
+    const newFarm = await Farm.create({
+      NID: userNID,
+      farmName: data.farmName,
+      line: data.line,
+      facebook: data.facebook,
+      email: data.email,
+      phoneNumber: data.phoneNumber,
+      description: data.description,
+      locationID: data.locationID,
+    });
 
-      // ✅ จัดการ storages
-      if (data.storages && Array.isArray(data.storages)) {
-        for (const s of data.storages) {
-          let fileData = s.file;
+    // ✅ จัดการ storages (รูป / วิดีโอ)
+    if (data.storages && Array.isArray(data.storages)) {
+      for (const s of data.storages) {
+        let fileData = s.file;
 
-          // 🧩 ตรวจชนิดข้อมูลไฟล์
-          if (Buffer.isBuffer(fileData)) {
-            fileData = fileData.toString("base64");
-          } else if (typeof fileData === "string") {
+        if (Buffer.isBuffer(fileData)) {
+          fileData = fileData.toString("base64");
+        } else if (typeof fileData === "string") {
           if (fileData.startsWith("http")) {
-            // เป็น URL — เก็บได้เลย
-            } else if (!fileData.startsWith("data:")) {
-              // เป็น path ไฟล์ — อ่านและแปลง base64
-              const absPath = path.resolve(fileData);
-              const fileBuffer = fs.readFileSync(absPath);
-              fileData = fileBuffer.toString("base64");
-            }
+            // URL — ใช้ได้เลย
+          } else if (!fileData.startsWith("data:")) {
+            const absPath = path.resolve(fileData);
+            const fileBuffer = fs.readFileSync(absPath);
+            fileData = fileBuffer.toString("base64");
           }
-
-          // 🧩 ตรวจชนิดไฟล์ (image หรือ video)
-          let typeStorage = s.typeStorage || "image";
-          if (
-            fileData.startsWith("data:video") ||
-            s.file.endsWith(".mp4") ||
-            s.file.endsWith(".mov")
-          ) {
-            typeStorage = "video";
-          }
-
-          await Storage.create({
-            FID: newFarm.FID,
-            file: fileData,
-            typeStorage,
-          });
         }
-      }
 
-      return newFarm;
+        let typeStorage = s.typeStorage || "image";
+        if (
+          fileData.startsWith("data:video") ||
+          s.file.endsWith(".mp4") ||
+          s.file.endsWith(".mov")
+        ) {
+          typeStorage = "video";
+        }
+
+        await Storage.create({
+          FID: newFarm.FID,
+          file: fileData,
+          typeStorage,
+        });
+      }
+    }
+
+    // ✅ จัดการ certificates (ใบรับรอง)
+    if (data.certificates && Array.isArray(data.certificates)) {
+      for (const c of data.certificates) {
+        let certFile = c.file;
+
+        if (Buffer.isBuffer(certFile)) {
+          certFile = certFile.toString("base64");
+        } else if (typeof certFile === "string") {
+          if (certFile.startsWith("http")) {
+            // เป็น URL — ใช้ได้เลย
+          } else if (!certFile.startsWith("data:")) {
+            const absPath = path.resolve(certFile);
+            const fileBuffer = fs.readFileSync(absPath);
+            certFile = fileBuffer.toString("base64");
+          }
+        }
+
+        await Certificate.create({
+          FID: newFarm.FID,
+          institution: c.institution,
+          file: certFile,
+        });
+      }
+    }
+
+    return newFarm;
   }
+
 
   static async updateFarm(userNID, farmID, data) {
     const user = await User.findByPk(userNID);
@@ -123,7 +152,7 @@ class FarmService {
       locationID: data.locationID || farm.locationID,
     });
 
-    // ✅ เพิ่มรูปหรือวิดีโอใหม่ (ไม่ลบของเดิม)
+    // ✅ เพิ่ม storages ใหม่ (ไม่ลบของเดิม)
     if (data.storages && Array.isArray(data.storages)) {
       for (const s of data.storages) {
         let fileData = s.file;
@@ -132,7 +161,7 @@ class FarmService {
           fileData = fileData.toString("base64");
         } else if (typeof fileData === "string") {
           if (fileData.startsWith("http")) {
-            // เป็น URL — เก็บได้เลย
+            // URL — ใช้ได้เลย
           } else if (!fileData.startsWith("data:")) {
             const absPath = path.resolve(fileData);
             const fileBuffer = fs.readFileSync(absPath);
@@ -157,15 +186,51 @@ class FarmService {
       }
     }
 
+    // ✅ เพิ่มใบรับรองใหม่ (ไม่ลบของเดิม)
+    if (data.certificates && Array.isArray(data.certificates)) {
+      for (const c of data.certificates) {
+        let certFile = c.file;
+
+        if (Buffer.isBuffer(certFile)) {
+          certFile = certFile.toString("base64");
+        } else if (typeof certFile === "string") {
+          if (certFile.startsWith("http")) {
+            // URL — ใช้ได้เลย
+          } else if (!certFile.startsWith("data:")) {
+            const absPath = path.resolve(certFile);
+            const fileBuffer = fs.readFileSync(absPath);
+            certFile = fileBuffer.toString("base64");
+          }
+        }
+
+        await Certificate.create({
+          FID: farm.FID,
+          institution: c.institution,
+          file: certFile,
+        });
+      }
+    }
+
+    // ✅ โหลดข้อมูลฟาร์มใหม่ (รวม Storage + Certificate)
     const updatedFarm = await Farm.findByPk(farmID, {
-      include: [{ model: Storage, attributes: ["file", "typeStorage"] }],
+      include: [
+        { model: Storage, attributes: ["file", "typeStorage"] },
+        { model: Certificate, attributes: ["institution", "file"] },
+      ],
     });
 
     return {
       ...updatedFarm.toJSON(),
       storages: updatedFarm.Storages.map((s) => `${s.typeStorage}:${s.file}`),
+      certificates: updatedFarm.Certificates.map((c) => ({
+        institution: c.institution,
+        file: c.file,
+      })),
     };
   }
+
 }
+
+
 
 module.exports = FarmService;

@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       Farm.hasMany(models.Storage, { foreignKey: "FID" });
       Farm.hasMany(models.Product, { foreignKey: "FID" });
       Farm.hasMany(models.Chat, { foreignKey: "FID" });
+      Farm.hasMany(models.Certificate, { foreignKey: "FID" });
     }
   }
 
