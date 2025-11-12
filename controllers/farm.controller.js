@@ -10,6 +10,16 @@ class FarmController {
     }
   }
 
+  static async getFarm(req, res) {
+    try {
+      const { farmID, userNID } = req.query;
+      const farms = await FarmService.getFarm({ farmID, userNID });
+      res.status(200).json(farm);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
   static async create(req, res) {
     try {
       const userNID = req.body.NID; // ดึงจาก user ที่ส่งมา
