@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       NID: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
       username: DataTypes.STRING,
       password: DataTypes.STRING,
-      type: DataTypes.STRING, // 'Farmer' หรือ 'User'
+      type: DataTypes.STRING, // 'Farmer' หรือ 'Customer'
       line: DataTypes.STRING,
       facebook: DataTypes.STRING,
       email: DataTypes.STRING,
