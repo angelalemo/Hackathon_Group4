@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const sequelize = require('./backend/config/db');
 const userRoutes = require("./backend/routes/user.routes");
 const farmRoutes = require("./backend/routes/farm.routes");
+const productRoutes = require("./backend/routes/product.routes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", userRoutes);
 app.use("/farms", farmRoutes);
+app.use("/products", productRoutes);
 
 async function initializeDatabase() {
     try {
