@@ -1,13 +1,18 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize(
-     'phaktae', // อันนี้อย่าลืมลง sql ชื่อเดียวกันก่อนรัน
-     'postgres', // Username เปลี่ยนตามของตัวเอง อย่าลืม
-     'GGwdst76', // Password เปลี่ยนตามของตัวเอง อย่าลืม
-     {
-       host: 'localhost',
-       dialect: 'postgres' 
-     }
-   );
+let sequelize;
+if (process.env.NODE_ENV === 'test') {
+  sequelize = new Sequelize('sqlite::memory:', { logging: false });
+} else {
+  sequelize = new Sequelize(
+    'phaktae',//อย่าลืมลง sql ในเครื่องด้วยนะ
+    'postgres',//ถ้าใช้ user อื่น อย่าลืมเปลี่ยน
+    'suphakit25252523',//เปลี่ยนเป็นรหัสผ่านของตัวเอง
+    {
+      host: 'localhost',
+      dialect: 'postgres'
+    }
+  );
+}
 
 module.exports = sequelize;

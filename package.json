@@ -24,7 +24,14 @@
     "dev": "nodemon server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test:backend": "cross-env NODE_ENV=test jest --runInBand --env=node tests"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "jest": "^29.0.0",
+    "sqlite3": "^5.0.0",
+    "supertest": "^6.0.0"
   },
   "eslintConfig": {
     "extends": [
