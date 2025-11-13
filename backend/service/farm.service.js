@@ -66,7 +66,8 @@ class FarmService {
       email: data.email,
       phoneNumber: data.phoneNumber,
       description: data.description,
-      locationID: data.locationID,
+      lineToken: data.lineToken,
+      lineUserId: data.lineUserId,
     });
 
     // ✅ จัดการ storages (รูป / วิดีโอ)
@@ -141,6 +142,8 @@ class FarmService {
     if (!farm) throw new Error("Farm not found");
     if (farm.NID !== userNID) throw new Error("You can only edit your own farm");
 
+    const lineToken = "DteoCpKEmdM0Vtq7yyh+/AdMilxXVkzftFhOw366/S9kDUBR6BaqS2+clUFvgKLI93fLmya0pWLyHzamMh02Lq84T3zRXrvvITvJPO1Rn16tlN88/SKktwF0yrDUq3xBXf4jjgpSL7DTfYxo/ZYcCgdB04t89/1O/w1cDnyilFU="; // ตัวอย่าง token ใหม่
+
     // ✅ อัปเดตข้อมูลฟาร์มทั่วไป
     await farm.update({
       farmName: data.farmName || farm.farmName,
@@ -150,6 +153,8 @@ class FarmService {
       phoneNumber: data.phoneNumber || farm.phoneNumber,
       description: data.description || farm.description,
       locationID: data.locationID || farm.locationID,
+      lineToken: data.lineToken || farm.lineToken,
+      lineUserId: data.lineUserId || farm.lineUserId,
     });
 
     // ✅ เพิ่ม storages ใหม่ (ไม่ลบของเดิม)

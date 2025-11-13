@@ -24,7 +24,9 @@ module.exports = (sequelize, DataTypes) => {
       email: DataTypes.STRING,
       phoneNumber: DataTypes.STRING,
       description: DataTypes.TEXT,
-      locationID: DataTypes.INTEGER,
+      lineToken: DataTypes.STRING||null,    // Channel Access Token (ของ OA)
+      lineUserId: DataTypes.STRING||null,   // LINE userId ของเจ้าของฟาร์ม
+      
     },
     {
       sequelize,
