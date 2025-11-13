@@ -11,24 +11,29 @@ class FarmController {
   }
 
   static async getFarm(req, res) {
-    try {
-      const { farmID, userNID } = req.query;
-      const farms = await FarmService.getFarm({ farmID, userNID });
-      res.status(200).json(farm);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+  try {
+    const { farmID } = req.params; // ✅ ใช้ params แทน query
+    const farm = await FarmService.getFarm({ farmID }); // ✅ ใช้ farm ตัวเดียว
+    if (!farm) {
+      return res.status(404).json({ message: "Farm not found" });
     }
+    res.status(200).json(farm);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
+}
+
 
   static async createFarm(req, res) {
-    try {
-      const userNID = req.body.NID; // ดึงจาก user ที่ส่งมา
-      const farm = await FarmService.createFarm(userNID, req.body);
-      res.status(201).json({ message: "Farm created successfully", farm });
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
+  try {
+    const { userNID, ...data } = req.body; // ดึง userNID จาก body
+    const farm = await FarmService.createFarm(userNID, data);
+    res.status(201).json({ message: "Farm created successfully", farm });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
+}
+
 
   static async updateFarm(req, res) {
     try {
