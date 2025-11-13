@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       PID: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
       FID: DataTypes.INTEGER,
       productName: DataTypes.STRING,
+      category: DataTypes.STRING,
       saleType: DataTypes.STRING,
       price: DataTypes.FLOAT,
       image: DataTypes.STRING,

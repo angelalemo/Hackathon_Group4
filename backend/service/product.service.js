@@ -36,7 +36,7 @@ class ProductService {
 
   // 🔹 สร้างสินค้าใหม่ (เฉพาะเจ้าของฟาร์ม)
   static async createProduct(userNID, data) {
-    const { FID, productName, saleType, price, image } = data;
+    const { FID, productName, category, saleType, price, image } = data;
 
     const farm = await Farm.findByPk(FID);
     if (!farm) throw new Error("Farm not found");
@@ -48,6 +48,7 @@ class ProductService {
     const newProduct = await Product.create({
       FID,
       productName,
+      category,
       saleType,
       price,
       image: validateImageFormat(image),
@@ -68,6 +69,7 @@ class ProductService {
     await product.update({
       productName: data.productName || product.productName,
       saleType: data.saleType || product.saleType,
+      category: data.category || product.category,
       price: data.price || product.price,
       image: data.image ? validateImageFormat(data.image) : product.image,
     });
