@@ -26,8 +26,8 @@ class FarmController {
 
   static async createFarm(req, res) {
   try {
-    const { userNID, ...data } = req.body; // ดึง userNID จาก body
-    const farm = await FarmService.createFarm(userNID, data);
+    const { NID, ...data } = req.body; // ดึง userNID จาก body
+    const farm = await FarmService.createFarm(NID, data);
     res.status(201).json({ message: "Farm created successfully", farm });
   } catch (error) {
     res.status(400).json({ error: error.message });

@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
   class Farm extends Model {
     static associate(models) {
       Farm.belongsTo(models.User, { foreignKey: "NID" });
-      Farm.belongsTo(models.Location, { foreignKey: "locationID" });
       Farm.hasMany(models.Storage, { foreignKey: "FID" });
       Farm.hasMany(models.Product, { foreignKey: "FID" });
       Farm.hasMany(models.Chat, { foreignKey: "FID" });
@@ -26,7 +25,9 @@ module.exports = (sequelize, DataTypes) => {
       description: DataTypes.TEXT,
       lineToken: DataTypes.STRING||null,    // Channel Access Token (ของ OA)
       lineUserId: DataTypes.STRING||null,   // LINE userId ของเจ้าของฟาร์ม
-      
+      province: DataTypes.STRING,
+      district: DataTypes.STRING,
+      subDistrict: DataTypes.STRING,
     },
     {
       sequelize,
