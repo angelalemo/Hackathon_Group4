@@ -7,19 +7,39 @@ class FarmService {
     const farms = await Farm.findAll({
       include: [
         { model: User, attributes: ["NID", "username", "type", "email", "phoneNumber"] },
-        { model: Location, attributes: ["province", "district", "subDistrict"] },
         { model: Storage, attributes: ["file", "typeStorage"] },
-        { model: Certificate, attributes: ["institution", "file"] }
+        { model: Certificate, attributes: ["institution", "file"] },
       ],
     });
 
-    const formatted = farms.map((farm) => ({
-      ...farm.toJSON(),
-      storages: farm.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
-    }));
+    const formatted = farms.map((farm) => {
+      const data = farm.toJSON();
+
+      return {
+        ...data,
+
+        // ⚡ storages
+        storages: data.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
+
+        // ⚡ certificates
+        certificates: data.Certificates?.map((c) => ({
+          institution: c.institution,
+          file: c.file,
+        })) || [],
+
+        // ⚡ location fields (ดึงจาก Farm โดยตรง)
+        location: {
+          province: data.province,
+          district: data.district,
+          subDistrict: data.subDistrict,
+        },
+      };
+    });
 
     return formatted;
   }
+
+
 
   static async getFarm({ farmID, userNID }) {
     const where = {};
@@ -31,7 +51,6 @@ class FarmService {
       where,
       include: [
         { model: User, attributes: ["NID", "username", "email", "phoneNumber", "type"] },
-        { model: Location, attributes: ["province", "district", "subDistrict"] },
         { model: Storage, attributes: ["file", "typeStorage"] },
         { model: Certificate, attributes: ["institution", "file"] },
       ],
@@ -40,15 +59,26 @@ class FarmService {
     if (!farms || farms.length === 0) throw new Error("No farms found");
 
     return farms.map((farm) => {
-      const farmData = farm.toJSON();
+      const data = farm.toJSON();
+
       return {
-        ...farmData,
-        storages: farmData.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
-        certificates: farmData.Certificates?.map((c) => ({
+        ...data,
+
+        // ⚡ storages
+        storages: data.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
+
+        // ⚡ certificates
+        certificates: data.Certificates?.map((c) => ({
           institution: c.institution,
           file: c.file,
         })) || [],
-        Location: farmData.Location || {},
+
+        // ⚡ location จาก Farm model (ไม่ใช่ Location table)
+        location: {
+          province: data.province,
+          district: data.district,
+          subDistrict: data.subDistrict,
+        },
       };
     });
   }
@@ -68,6 +98,9 @@ class FarmService {
       description: data.description,
       lineToken: data.lineToken,
       lineUserId: data.lineUserId,
+      province: data.province,
+      district: data.district,
+      subDistrict: data.subDistrict,
     });
 
     // ✅ จัดการ storages (รูป / วิดีโอ)
@@ -155,6 +188,9 @@ class FarmService {
       locationID: data.locationID || farm.locationID,
       lineToken: data.lineToken || farm.lineToken,
       lineUserId: data.lineUserId || farm.lineUserId,
+      province: data.province || farm.province,
+      district: data.district || farm.district,
+      subDistrict: data.subDistrict || farm.subDistrict,
     });
 
     // ✅ เพิ่ม storages ใหม่ (ไม่ลบของเดิม)
