@@ -41,14 +41,10 @@ class FarmService {
 
 
 
-  static async getFarm({ farmID, userNID }) {
-    const where = {};
-
-    if (farmID) where.FID = farmID;
-    if (userNID) where.NID = userNID;
+  static async getFarmbyFarmID({farmID}) {
 
     const farms = await Farm.findAll({
-      where,
+      where : { FID: farmID },
       include: [
         { model: User, attributes: ["NID", "username", "email", "phoneNumber", "type"] },
         { model: Storage, attributes: ["file", "typeStorage"] },
@@ -73,7 +69,44 @@ class FarmService {
           file: c.file,
         })) || [],
 
-        // ⚡ location จาก Farm model (ไม่ใช่ Location table)
+        // ⚡ location จาก Farm model
+        location: {
+          province: data.province,
+          district: data.district,
+          subDistrict: data.subDistrict,
+        },
+      };
+    });
+  }
+
+  static async getFarmbyNID ({NID}) {
+    const farms = await Farm.findAll({
+      where: { NID },
+      include: [
+        { model: User, attributes: ["NID", "username", "email", "phoneNumber", "type"] },
+        { model: Storage, attributes: ["file", "typeStorage"] },
+        { model: Certificate, attributes: ["institution", "file"] },
+      ],
+    });
+
+    if (!farms || farms.length === 0) throw new Error("No farms found");
+
+    return farms.map((farm) => {
+      const data = farm.toJSON();
+
+      return {
+        ...data,
+
+        // ⚡ storages
+        storages: data.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
+
+        // ⚡ certificates
+        certificates: data.Certificates?.map((c) => ({
+          institution: c.institution,
+          file: c.file,
+        })) || [],
+
+        // ⚡ location จาก Farm model
         location: {
           province: data.province,
           district: data.district,
