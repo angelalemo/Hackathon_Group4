@@ -71,6 +71,7 @@ const Login = ({ className }) => {
             required
           />
 
+          <label className="login-label">รหัสผ่าน</label>
           <input
             type={showPassword ? "text" : "password"}
             className="login-input"
