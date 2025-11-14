@@ -27,7 +27,7 @@ const Login = ({ className }) => {
     const cleanPassword = sanitizeInput(password);
 
     try {
-      const response = await axios.post("http://localhost:5000/users/login", {
+      const response = await axios.post("http://localhost:4000/users/login", {
         username: cleanUsername,
         password: cleanPassword,
       });
@@ -71,6 +71,7 @@ const Login = ({ className }) => {
             required
           />
 
+          <label className="login-label">รหัสผ่าน</label>
           <input
             type={showPassword ? "text" : "password"}
             className="login-input"

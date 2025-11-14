@@ -89,7 +89,7 @@ const validateForm = () => {
     setLoading(true);
 
     try {
-      await axios.post("http://localhost:5000/users/register", {
+      await axios.post("http://localhost:4000/users/register", {
         username: formData.username,
         password: formData.password,
         type: formData.type === "Farmer",
