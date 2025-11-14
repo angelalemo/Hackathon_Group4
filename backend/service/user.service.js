@@ -30,6 +30,7 @@ class UserService {
     return newUser;
   }
 
+  // backend/service/user.service.js
   static async loginUser(username, password) {
     const user = await User.findOne({ where: { username } });
     if (!user) throw new Error("User not found");
@@ -37,10 +38,14 @@ class UserService {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new Error("Invalid password");
 
-    return user;
+    // เพิ่ม JWT Token
+    const token = jwt.sign({ id: user.NID }, "your_secret_key", {
+      expiresIn: "7d",
+    });
+    return { user, token };
   }
 
-    static async updateUser(NID, data) {
+  static async updateUser(NID, data) {
     const user = await User.findByPk(NID);
     if (!user) throw new Error("User not found");
 
@@ -52,7 +57,7 @@ class UserService {
     return user;
   }
 
-    static async registerOrLoginWithLine(accessToken, type) {
+  static async registerOrLoginWithLine(accessToken, type) {
     // ดึงข้อมูลโปรไฟล์จาก LINE API
     const response = await axios.get("https://api.line.me/v2/profile", {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -78,12 +83,11 @@ class UserService {
     }
 
     // สร้าง token สำหรับเข้าสู่ระบบ
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
     return { user, token };
   }
-
 }
 
-
 module.exports = UserService;
-

@@ -14,7 +14,7 @@ class FarmController {
     try {
       const { farmID, userNID } = req.query;
       const farms = await FarmService.getFarm({ farmID, userNID });
-      res.status(200).json(farm);
+      res.status(200).json(farms);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }

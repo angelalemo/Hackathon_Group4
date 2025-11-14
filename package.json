@@ -17,8 +17,10 @@
     "pg-hstore": "^2.3.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-router-dom": "^6.30.2",
     "react-scripts": "5.0.1",
     "sequelize": "^6.37.7",
+    "styled-components": "^6.1.19",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
