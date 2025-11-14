@@ -5,6 +5,17 @@ const axios = require("axios");
 const jwt = require("jsonwebtoken");
 
 class UserService {
+
+  static async getAllUser() {
+    const users = await User.findAll();
+    return users;
+  }
+
+  static async getUserById(NID) {
+    const user = await User.findByPk(NID);
+    return user;
+  }
+
   static async registerUser(data) {
     const { username, password, type, line, facebook, email, phoneNumber } = data;
 
