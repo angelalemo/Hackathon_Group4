@@ -248,9 +248,13 @@ GET /farms
 
 #### Get Farm by ID or User
 ```http
-GET /farms/ID?farmID=1
-GET /farms/ID?userNID=1
+GET /farms/:farmID
+GET /farms/user/:userNID
 ```
+
+**URL Parameters:**
+- `farmID` - ID ของฟาร์ม
+- `userNID` - ID ของเกษตรกร (ดึงฟาร์มทั้งหมดของเกษตรกรคนนั้น)
 
 #### Create Farm
 ```http
