@@ -268,17 +268,21 @@ POST /farms
   "email": "contact@greenfarm.com",
   "phoneNumber": "0812345678",
   "description": "Organic vegetable farm",
-  "locationID": 1,
+  "province": "Chiang Mai",
+  "district": "Mueang",
+  "subDistrict": "Suthep",
+
   "storages": [
     {
-      "file": "base64_or_url",
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA", 
       "typeStorage": "image"
     }
   ],
+
   "certificates": [
     {
       "institution": "Organic Thailand",
-      "file": "base64_or_url"
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA"
     }
   ]
 }
