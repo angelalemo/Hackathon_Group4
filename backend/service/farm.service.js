@@ -1,4 +1,4 @@
-const { Farm, User, Storage, Location, Certificate } = require("../models");
+const { Farm, User, Storage, Certificate } = require("../models");
 const fs = require("fs");
 const path = require("path");
 
