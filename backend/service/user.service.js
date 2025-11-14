@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 
 class UserService {
   static async registerUser(data) {
+    console.log("Registering user with data:", data);
     const { username, password, type, line, facebook, email, phoneNumber } = data;
 
     const usertype = type === true ? "Farmer" : "Customer";
