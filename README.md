@@ -1,6 +1,6 @@
 # Hackathon_Group4
 
-# Farm Bridge 🌾
+# Phaktae 🌾
 
 Platform connecting organic farmers directly with consumers, promoting transparency and trust in the organic agriculture supply chain.
 
