@@ -7,8 +7,10 @@ const productRoutes = require("./backend/routes/product.routes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const cors = require('cors');
 
 // Middleware
+app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
