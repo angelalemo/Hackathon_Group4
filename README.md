@@ -1,6 +1,4 @@
-# Hackathon_Group4
-
-# Phaktae 🌾
+# Farm Bridge 🌾
 
 Platform connecting organic farmers directly with consumers, promoting transparency and trust in the organic agriculture supply chain.
 
@@ -447,20 +445,24 @@ CREATE TABLE chats (
 ## 📁 Project Structure
 
 ```
-Hackathon_Group4/
+HACKATHON_GROUP4/
 ├── .github/
 │   └── workflows/
-│       ├── backend-ci.yml
 │       ├── backend-cd.yml
-│       ├── frontend-ci.yml
-│       └── frontend-cd.yml
+│       ├── backend-ci.yml
+│       ├── frontend-cd.yml
+│       └── frontend-ci.yml
+│
 ├── backend/
 │   ├── config/
 │   │   └── db.js
+│   │
 │   ├── controllers/
+│   │   ├── description
 │   │   ├── farm.controller.js
 │   │   ├── product.controller.js
 │   │   └── user.controller.js
+│   │
 │   ├── models/
 │   │   ├── Certificate.js
 │   │   ├── Chat.js
@@ -470,24 +472,55 @@ Hackathon_Group4/
 │   │   ├── Storage.js
 │   │   ├── User.js
 │   │   └── index.js
+│   │
 │   ├── routes/
+│   │   ├── description
 │   │   ├── farm.routes.js
 │   │   ├── product.routes.js
 │   │   └── user.routes.js
+│   │
 │   └── service/
+│       ├── description
 │       ├── farm.service.js
+│       ├── filter.service.js
 │       ├── product.service.js
-│       ├── user.service.js
-│       └── filter.service.js
+│       └── user.service.js
+│
+├── feature/
+│
 ├── public/
+│   ├── images/
+│   │   ├── PhaktaeTG.png
+│   │   ├── PhaktaeTW.png
+│   │   ├── logo192.png
+│   │   └── logo512.png
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── manifest.json
+│   └── robots.txt
+│
 ├── src/
-│   ├── App.js
+│   ├── frontend/
+│   │   └── Auth/
+│   │       ├── Login/
+│   │       │   └── index.js
+│   │       └── Register/
+│   │           └── index.js
 │   ├── App.css
+│   ├── App.js
+│   ├── App.test.js
+│   ├── GlobalStyle.js
+│   ├── index.css
 │   ├── index.js
-│   └── index.css
-├── server.js
+│   ├── logo.svg
+│   ├── reportWebVitals.js
+│   └── setupTests.js
+│
+├── .gitignore
+├── package-lock.json
 ├── package.json
-└── README.md
+├── README.md
+└── server.js
 ```
 
 ---
