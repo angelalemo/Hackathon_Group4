@@ -308,7 +308,24 @@ PUT /farms
 
 #### Get All Products by Farm
 ```http
-GET /products?FID=1
+GET /products/
+```
+**Query Parameters:**
+- `FID` - Farm ID (optional, filter by specific farm)
+
+**Response (200 OK):**
+```json
+[
+  {
+    "PID": 1,
+    "productName": "Organic Tomato",
+    "category": "Vegetables",
+    "saleType": "Organic",
+    "price": 50.00,
+    "image": "base64_or_url",
+    "FID": 1
+  }
+]
 ```
 
 #### Get Product by ID
@@ -316,9 +333,31 @@ GET /products?FID=1
 GET /products/:PID
 ```
 
+**URL Parameters:**
+- `PID` - Product ID
+
+**Response (200 OK):**
+```json
+{
+  "PID": 1,
+  "productName": "Organic Tomato",
+  "category": "Vegetables",
+  "saleType": "Organic",
+  "price": 50.00,
+  "image": "base64_or_url",
+  "FID": 1,
+  "Farm": {
+    "farmName": "Green Valley Farm",
+    "Location": {
+      "province": "เชียงใหม่"
+    }
+  }
+}
+```
+
 #### Create Product
 ```http
-POST /products
+POST /products/
 ```
 **Request Body:**
 ```json
@@ -333,29 +372,64 @@ POST /products
 }
 ```
 
+**Response (201 Created):**
+```json
+{
+  "PID": 1,
+  "productName": "Organic Tomato",
+  "category": "Vegetables",
+  "saleType": "Organic",
+  "price": 50.00,
+  "image": "base64_or_url",
+  "FID": 1
+}
+```
+
 #### Update Product
 ```http
-PUT /products
+PUT /products/
 ```
 **Request Body:**
 ```json
 {
   "NID": 1,
   "PID": 1,
-  "productName": "Updated Name",
-  "price": 60.00
+  "productName": "Updated Product Name",
+  "category": "Vegetables",
+  "saleType": "Organic",
+  "price": 60.00,
+  "image": "base64_or_url"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "message": "Product updated successfully",
+  "product": {
+    "PID": 1,
+    "productName": "Updated Product Name",
+    "price": 60.00
+  }
 }
 ```
 
 #### Delete Product
 ```http
-DELETE /products
+DELETE /products/
 ```
 **Request Body:**
 ```json
 {
   "NID": 1,
   "PID": 1
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "message": "Product deleted successfully"
 }
 ```
 
@@ -419,9 +493,9 @@ CREATE TABLE locations (
 ```sql
 CREATE TABLE storages (
   id SERIAL PRIMARY KEY,
-  FID INTEGER REFERENCES farms(FID),
+  FID INTEGER REFERENCES farms(FID) ON DELETE CASCADE ON UPDATE CASCADE,
   file TEXT,
-  typeStorage VARCHAR(50)  -- 'image' or 'video'
+  typeStorage VARCHAR(255)  -- 'image' or 'video'
 );
 ```
 
@@ -462,7 +536,7 @@ HACKATHON_GROUP4/
 │   │   └── db.js
 │   │
 │   ├── controllers/
-│   │   ├── description
+│   │   ├── description/
 │   │   ├── farm.controller.js
 │   │   ├── product.controller.js
 │   │   └── user.controller.js
@@ -478,13 +552,13 @@ HACKATHON_GROUP4/
 │   │   └── index.js
 │   │
 │   ├── routes/
-│   │   ├── description
+│   │   ├── description/
 │   │   ├── farm.routes.js
 │   │   ├── product.routes.js
 │   │   └── user.routes.js
 │   │
 │   └── service/
-│       ├── description
+│       ├── description/
 │       ├── farm.service.js
 │       ├── filter.service.js
 │       ├── product.service.js
@@ -536,8 +610,31 @@ HACKATHON_GROUP4/
 The project follows a **3-layer architecture**:
 
 1. **Routes Layer** (`routes/`): Handles HTTP requests and defines API endpoints
+   - `product.routes.js`: Defines product-related endpoints
+   - `farm.routes.js`: Defines farm-related endpoints
+   - `user.routes.js`: Defines authentication endpoints
+
 2. **Controller Layer** (`controllers/`): Processes requests, validates input, and coordinates responses
+   - `product.controller.js`: Handles product CRUD operations
+   - `farm.controller.js`: Handles farm management
+   - `user.controller.js`: Handles authentication and user management
+
 3. **Service Layer** (`service/`): Contains business logic and database operations
+   - `product.service.js`: Product business logic
+   - `farm.service.js`: Farm business logic
+   - `user.service.js`: User and authentication logic
+   - `filter.service.js`: Search and filtering logic
+
+### Route Definitions
+
+#### Product Routes (product.routes.js)
+```javascript
+router.get("/", ProductController.getAllByFarm);
+router.get("/:PID", ProductController.getById);
+router.post("/", ProductController.create);
+router.put("/", ProductController.update);
+router.delete("/", ProductController.delete);
+```
 
 ### Adding a New Feature
 
