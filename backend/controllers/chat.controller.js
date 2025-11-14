@@ -33,8 +33,8 @@ class ChatController {
 
   static async sendMessage(req, res) {
     try {
-      const { logID, senderNID, text } = req.body;
-      const message = await ChatService.sendMessage(logID, senderNID, text);
+      const { logID, senderNID, messageText } = req.body;
+      const message = await ChatService.sendMessage(logID, senderNID, messageText);
       res.status(201).json({ message: "Message sent", data: message });
     } catch (error) {
       res.status(400).json({ error: error.message });

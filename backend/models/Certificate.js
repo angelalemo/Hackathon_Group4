@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
       FID: DataTypes.INTEGER,
       institution: DataTypes.STRING,
-      file: DataTypes.STRING
+      file: DataTypes.TEXT,
     },
     {
       sequelize,

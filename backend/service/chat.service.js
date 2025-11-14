@@ -42,7 +42,7 @@ class ChatService {
   }
 
   // ✅ ส่งข้อความ
-  static async sendMessage(logID, senderNID, text) {
+  static async sendMessage(logID, senderNID, messageText) {
     const chat = await Chat.findByPk(logID);
     if (!chat) throw new Error("Chat not found");
 
@@ -52,7 +52,7 @@ class ChatService {
     const message = await Message.create({
       logID,
       senderNID,
-      messageText: text,
+      messageText: messageText,
     });
 
     // ✅ แจ้งเตือนไป LINE ฟาร์มด้วย (optional)
