@@ -1,6 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const sequelize = require('./backend/config/db');
+const dotenv = require('dotenv');
+dotenv.config();
 
 // routes
 const userRoutes = require("./backend/routes/user.routes");
@@ -8,6 +10,7 @@ const farmRoutes = require("./backend/routes/farm.routes");
 const productRoutes = require("./backend/routes/product.routes");
 const filterRoutes = require("./backend/routes/filter.routes");
 const chatRoutes = require("./backend/routes/chat.routes");
+const lineRoutes = require("./backend/routes/line.routes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -25,6 +28,7 @@ app.use("/farms", farmRoutes);
 app.use("/products", productRoutes);
 app.use("/filter", filterRoutes); //
 app.use("/chats", chatRoutes);
+app.use("/line", lineRoutes); // เพิ่มเส้นทางสำหรับ LINE
 
 // database
 async function initializeDatabase() {

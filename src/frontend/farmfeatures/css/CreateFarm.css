@@ -1,0 +1,135 @@
+/* เผื่อพื้นที่สำหรับ Navbar */
+.farmer-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  margin-top: 80px;
+}
+
+/* กล่องฟอร์ม */
+.farmer-card {
+  width: 100%;
+  max-width: 700px;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* ชื่อหัวข้อ */
+.farmer-title {
+  text-align: center;
+  color: #1b7f2c;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* ฟอร์ม */
+.farmer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* กลุ่ม Input */
+.farmer-group label {
+  font-weight: 600;
+}
+
+.farmer-group input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Grid */
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Upload Box */
+.upload-box {
+  border: 1px solid #ccc;
+  background: #f3f3f3;
+  border-radius: 12px;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-text {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* ปุ่มเล็ก */
+.btn-small {
+  background: #1b7f2c;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-small:hover {
+  background: #136721;
+}
+
+/* ปุ่ม submit */
+.btn-submit {
+  background: #1b7f2c;
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+
+.btn-submit:hover {
+  background: #145b1f;
+}
+
+/* Responsive สำหรับมือถือ */
+@media (max-width: 768px) {
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .farmer-card {
+    padding: 20px;
+  }
+}
