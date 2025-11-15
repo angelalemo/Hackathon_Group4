@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from './frontend/Auth/Login/';
 import Register from './frontend/Auth/Register/';
 
-import Home from './frontend/pages/Home';           // เพิ่ม import Home
-import Navbar from './frontend/components/Navbar';  // เพิ่ม import Navbar
+import Home from './frontend/Home';           // เพิ่ม import Home
+import Navbar from './frontend/Navbar';  // เพิ่ม import Navbar
 
 import { GlobalStyle } from "./GlobalStyle";
 import './App.css';
