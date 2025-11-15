@@ -17,6 +17,12 @@ function validateImageFormat(image) {
 
 
 class ProductService {
+  
+  // 🔹 ดึงสินค้าทั้งหม
+  static async getAll() {
+    const products = await Product.findAll();
+    return products;
+  }
 
   // 🔹 ดึงสินค้าทั้งหมดจาก FID เดียวกัน
   static async getAllByFarm(FID) {
@@ -58,13 +64,13 @@ class ProductService {
   }
 
   // 🔹 แก้ไขสินค้า (เฉพาะเจ้าของฟาร์ม)
-  static async updateProduct(userNID, PID, data) {
+  static async updateProduct(NID, PID, data) {
     const product = await Product.findByPk(PID);
     if (!product) throw new Error("Product not found");
 
     const farm = await Farm.findByPk(product.FID);
     if (!farm) throw new Error("Farm not found");
-    if (farm.NID !== userNID) throw new Error("Permission denied: You don't own this farm");
+    if (farm.NID !== NID) throw new Error("Permission denied: You don't own this farm");
 
     await product.update({
       productName: data.productName || product.productName,
@@ -78,13 +84,13 @@ class ProductService {
   }
 
   // 🔹 ลบสินค้า (เฉพาะเจ้าของฟาร์ม)
-  static async deleteProduct(userNID, PID) {
+  static async deleteProduct(NID, PID) {
     const product = await Product.findByPk(PID);
     if (!product) throw new Error("Product not found");
 
     const farm = await Farm.findByPk(product.FID);
     if (!farm) throw new Error("Farm not found");
-    if (farm.NID !== userNID) throw new Error("Permission denied: You don't own this farm");
+    if (farm.NID !== NID) throw new Error("Permission denied: You don't own this farm");
 
     await product.destroy();
     return { message: `Product ${PID} deleted successfully` };

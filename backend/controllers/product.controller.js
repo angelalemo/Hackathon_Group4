@@ -1,6 +1,16 @@
 const ProductService = require("../service/product.service");
 
 class ProductController {
+
+  static async getAll(req, res) {
+    try {
+      const products = await ProductService.getAll();
+      res.status(200).json(products);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+  
   static async getAllByFarm(req, res) {
     try {
       const { FID } = req.params;
