@@ -150,7 +150,7 @@ class FarmService {
 
     // 🟦 สร้างฟาร์ม
     const newFarm = await Farm.create({
-      NID: userNID,
+      NID: NID,
       farmName: data.farmName,
       line: data.line,
       facebook: data.facebook,
