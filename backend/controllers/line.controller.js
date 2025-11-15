@@ -1,4 +1,4 @@
-const LineService = require("../services/lineService");
+const LineService = require("../utils/lineService");
 
 class LineController {
   static async lineCallback(req, res) {
