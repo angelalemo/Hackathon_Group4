@@ -15,6 +15,7 @@ export default function CreateFarm() {
     subDistrict: "",
     lineUserId: "",
     location: "",
+    
   });
 
   const [storages, setStorages] = useState([]);

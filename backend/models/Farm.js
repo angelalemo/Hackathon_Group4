@@ -29,7 +29,6 @@ module.exports = (sequelize, DataTypes) => {
       district: DataTypes.STRING,
       subDistrict: DataTypes.STRING,
       location: DataTypes.STRING,
-      ProfileImage: DataTypes.TEXT,
     },
     {
       sequelize,
