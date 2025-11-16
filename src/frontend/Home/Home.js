@@ -11,10 +11,6 @@ export default function Home() {
   return (
     <Container>
       
-
-      
-
-
       {/* -------- BANNER IMAGE -------- */}
       <Banner src="/banner_veg.jpg" alt="banner" />
 

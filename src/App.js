@@ -9,7 +9,6 @@ import Home from './frontend/Home/Home';           // เพิ่ม import Hom
 // import Navbar from './frontend/Navbar';  // เพิ่ม import Navbar
 import CreateFarm from './frontend/farmfeatures/CreateFarm';
 import Navbar from './frontend/Navbar';
-import CreateFarm from './frontend/farmfeatures/CreateFarm';
 import NotFound from './frontend/NotFound';
 import Storage from './frontend/Storage';
 import ProductManagement from './frontend/ProductManagement';
