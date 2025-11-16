@@ -114,11 +114,7 @@ const validateForm = () => {
   return (
     <div className={className}>
       <div className="register-left">
-        <img
-          src="/images/PhaktaeTW.png"
-          alt="Organic Logo"
-          className="register-logo"
-        />
+      <h1 className="logo">Phaktae</h1>
       </div>
 
       <div className="register-right">
@@ -246,7 +242,7 @@ const validateForm = () => {
 
 export default styled(Register)`
   display: flex;
-  height: 100vh;
+  height: 90vh;
   background: #ffffff;
   overflow-y: auto;
 
@@ -266,9 +262,12 @@ export default styled(Register)`
     }
   }
 
-  .register-logo {
-    width: 55%;
-    opacity: 0.95;
+  .logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffffff;
+    margin: 0;
+    font-size: 114px;
   }
 
   /* ----- RIGHT SIDE ----- */
