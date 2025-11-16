@@ -44,11 +44,7 @@ const Login = ({ className }) => {
   return (
     <div className={className}>
       <div className="login-left">
-        <img
-          src="/images/PhaktaeTW.png"
-          alt="Organic Logo"
-          className="login-logo"
-        />
+      <h1 className="logo">Phaktae</h1>
       </div>
 
       <div className="login-right">
@@ -111,7 +107,7 @@ const Login = ({ className }) => {
 };
 export default styled(Login)`
   display: flex;
-  height: 100vh;
+  height: 90vh;
   background: #ffffff;
 
   /* ----- LEFT SIDE (LINE Style) ----- */
@@ -126,9 +122,12 @@ export default styled(Login)`
     background: #00b900;
   }
 
-  .login-logo {
-    width: 55%;
-    opacity: 0.95;
+  .logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffffff;
+    margin: 0;
+    font-size: 114px;
   }
 
   /* ----- RIGHT SIDE ----- */
