@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react';
 
 import Login from './frontend/Auth/Login/';
 import Register from './frontend/Auth/Register/';
-import Home from './frontend/Home';
+import Home from './frontend/Home/Home';           // เพิ่ม import Home
+// import Navbar from './frontend/Navbar';  // เพิ่ม import Navbar
+import CreateFarm from './frontend/farmfeatures/CreateFarm';
 import Navbar from './frontend/Navbar';
 import CreateFarm from './frontend/farmfeatures/CreateFarm';
 import NotFound from './frontend/NotFound';
