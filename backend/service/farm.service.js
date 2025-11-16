@@ -162,6 +162,7 @@ class FarmService {
       province: data.province,
       district: data.district,
       subDistrict: data.subDistrict,
+      location: data.location,
     });
 
     // 🟩 จัดการ Storage (ภาพ/วิดีโอหลายไฟล์)
@@ -258,6 +259,7 @@ class FarmService {
       province: data.province ?? farm.province,
       district: data.district ?? farm.district,
       subDistrict: data.subDistrict ?? farm.subDistrict,
+      location: data.location ?? farm.location,
     });
 
     return farm;

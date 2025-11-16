@@ -13,7 +13,8 @@ export default function CreateFarm() {
     province: "",
     district: "",
     subDistrict: "",
-    lineUserId: ""
+    lineUserId: "",
+    location: "",
   });
 
   const [storages, setStorages] = useState([]);
@@ -112,6 +113,7 @@ export default function CreateFarm() {
 
           <div className="farmer-group">
             <label>ที่อยู่ :</label>
+            <input name="location" placeholder="เลขที่บ้าน, หมู่, ซอยหรือถนน  " onChange={updateForm} />
             <div className="grid-3">
               <input name="subDistrict" placeholder="ตำบล" onChange={updateForm} />
               <input name="district" placeholder="อำเภอ" onChange={updateForm} />
@@ -133,14 +135,14 @@ export default function CreateFarm() {
           </div>
 
           <div className="farmer-group">
-            <label>รูปภาพ / วิดีโอ :</label>
+            <label>รูปภาพ/วิดีโอเกี่ยวกับฟาร์มและวิธีการปลูก :</label>
             <div className="upload-box">
               <input type="file" accept="image/*,video/*" onChange={handleStorageUpload} />
             </div>
           </div>
 
           <div className="farmer-group">
-            <label>ใบรับรอง :</label>
+            <label>ใบรับรองผักอินทรีย์ :</label>
             <div className="upload-box">
               <input type="file" accept="image/*,application/pdf" onChange={handleCertUpload} />
             </div>

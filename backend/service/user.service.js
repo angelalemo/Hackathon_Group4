@@ -18,7 +18,7 @@ class UserService {
 
   static async registerUser(data) {
     console.log("Registering user with data:", data);
-    const { username, password, type, line, facebook, email, phoneNumber } = data;
+    const { username, password, type, line, facebook, email, phoneNumber, profileImage } = data;
 
     const usertype = type === true ? "Farmer" : "Customer";
 
@@ -28,6 +28,7 @@ class UserService {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
 
     const newUser = await User.create({
       username,
