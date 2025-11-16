@@ -5,10 +5,11 @@ import { Menu, Bell, ChevronLeft, Upload } from 'lucide-react';
 
 const EditProductPage = ({ className, product, onSave, onCancel, onBack }) => {
   const [formData, setFormData] = useState({
-    name: product.name,
-    category: 'ผักสวน',
-    price: product.price,
-    image: product.image
+    productName: product.productName || '',
+    category: product.category || 'ผักสวน',
+    saleType: product.saleType || 'กก.',
+    price: product.price || '',
+    image: product.image || null
   });
 
   const handleImageUpload = (e) => {
@@ -23,12 +24,16 @@ const EditProductPage = ({ className, product, onSave, onCancel, onBack }) => {
   };
 
   const handleSave = () => {
-    if (formData.name && formData.price) {
+    if (formData.productName && formData.price) {
       onSave({
-        name: formData.name,
-        price: parseInt(formData.price),
+        productName: formData.productName,
+        category: formData.category,
+        saleType: formData.saleType,
+        price: parseFloat(formData.price),
         image: formData.image
       });
+    } else {
+      alert('กรุณากรอกชื่อสินค้าและราคา');
     }
   };
 
@@ -56,8 +61,8 @@ const EditProductPage = ({ className, product, onSave, onCancel, onBack }) => {
           <input
             type="text"
             className="input"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.productName}
+            onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
           />
         </div>
 
@@ -70,6 +75,21 @@ const EditProductPage = ({ className, product, onSave, onCancel, onBack }) => {
           >
             <option value="ผักสวน">ผักสวน</option>
             <option value="ผักไร่">ผักไร่</option>
+            <option value="ผลไม้">ผลไม้</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label className="label">หน่วยขาย :</label>
+          <select
+            className="select"
+            value={formData.saleType}
+            onChange={(e) => setFormData({ ...formData, saleType: e.target.value })}
+          >
+            <option value="กก.">กก.</option>
+            <option value="ลัง">ลัง</option>
+            <option value="กระสอบ">กระสอบ</option>
+            <option value="ลูก">ลูก</option>
           </select>
         </div>
 
@@ -82,7 +102,7 @@ const EditProductPage = ({ className, product, onSave, onCancel, onBack }) => {
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: e.target.value })}
             />
-            <span>บาท</span>
+            <span>บาท/{formData.saleType}</span>
           </div>
         </div>
 
@@ -119,7 +139,7 @@ const EditProductPage = ({ className, product, onSave, onCancel, onBack }) => {
 };
 
 export default styled(EditProductPage)`
-  max-width: 100vh;
+  max-width: 448px;
   margin: 0 auto;
   background-color: white;
   min-height: 100vh;
@@ -200,6 +220,7 @@ export default styled(EditProductPage)`
   }
 
   .select {
+    width: 100%;
     border: 1px solid #d1d5db;
     border-radius: 0.25rem;
     padding: 0.5rem 0.75rem;
