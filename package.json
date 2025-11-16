@@ -20,6 +20,7 @@
     "pg-hstore": "^2.3.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.30.2",
     "react-scripts": "5.0.1",
@@ -28,9 +29,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "NODE_OPTIONS=--localstorage-file=/tmp/localstorage.json react-scripts start",
     "dev": "nodemon server.js",
-    "build": "react-scripts build",
+    "build": "NODE_OPTIONS=--localstorage-file=/tmp/localstorage.json react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
