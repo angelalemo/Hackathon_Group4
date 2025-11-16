@@ -24,17 +24,18 @@ const ProductListPage = ({ className, products, onAddProduct, onEditProduct, onD
 
       <div className="product-grid">
         {products.map(product => (
-          <div key={product.id} className="product-card">
+          <div key={product.PID} className="product-card">
             <div className="product-image">
               {product.image ? (
-                <img src={product.image} alt={product.name} />
+                <img src={product.image} alt={product.productName} />
               ) : (
                 <div className="image-placeholder" />
               )}
             </div>
             <div className="product-info">
-              <div className="product-name">{product.name}</div>
-              <div className="product-price">฿{product.price}/กก.</div>
+              <div className="product-name">{product.productName}</div>
+              <div className="product-category">{product.category}</div>
+              <div className="product-price">฿{product.price}/{product.saleType}</div>
               <div className="button-container">
                 <button 
                   className="edit-button"
@@ -44,7 +45,7 @@ const ProductListPage = ({ className, products, onAddProduct, onEditProduct, onD
                 </button>
                 <button 
                   className="delete-button"
-                  onClick={() => onDeleteProduct(product.id)}
+                  onClick={() => onDeleteProduct(product.PID)}
                 >
                   ลบสินค้า
                 </button>
@@ -63,7 +64,7 @@ const ProductListPage = ({ className, products, onAddProduct, onEditProduct, onD
 };
 
 export default styled(ProductListPage)`
-  max-width: 100vh;
+  max-width: 448px;
   margin: 0 auto;
   background-color: white;
   min-height: 100vh;
@@ -154,7 +155,13 @@ export default styled(ProductListPage)`
   .product-name {
     font-weight: 500;
     font-size: 0.875rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .product-category {
+    font-size: 0.75rem;
+    color: #16a34a;
+    margin-bottom: 0.25rem;
   }
 
   .product-price {
