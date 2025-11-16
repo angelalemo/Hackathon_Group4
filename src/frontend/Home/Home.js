@@ -20,32 +20,34 @@ export default function Home() {
         <SectionLine />
       </SectionHeader>
 
-      <FarmerGrid>
-        <FarmerCard>
-          <FarmerIcon>
-            <FaUser size={24} />
-          </FarmerIcon>
-          <FarmerName>โรงผักสร้างสุข</FarmerName>
-        </FarmerCard>
-        <FarmerCard>
-          <FarmerIcon>
-            <FaUser size={24} />
-          </FarmerIcon>
-          <FarmerName>กรีนเฮาส์</FarmerName>
-        </FarmerCard>
-        <FarmerCard>
-          <FarmerIcon>
-            <FaUser size={24} />
-          </FarmerIcon>
-          <FarmerName>กรีนโรด</FarmerName>
-        </FarmerCard>
-        <FarmerCard>
-          <FarmerIcon>
-            <FaUser size={24} />
-          </FarmerIcon>
-          <FarmerName>กรีนโรด</FarmerName>
-        </FarmerCard>
-      </FarmerGrid>
+      <FarmerScrollContainer>
+        <FarmerGrid>
+          <FarmerCard>
+            <FarmerIcon>
+              <FaUser size={24} />
+            </FarmerIcon>
+            <FarmerName>โรงผักสร้างสุข</FarmerName>
+          </FarmerCard>
+          <FarmerCard>
+            <FarmerIcon>
+              <FaUser size={24} />
+            </FarmerIcon>
+            <FarmerName>กรีนเฮาส์</FarmerName>
+          </FarmerCard>
+          <FarmerCard>
+            <FarmerIcon>
+              <FaUser size={24} />
+            </FarmerIcon>
+            <FarmerName>กรีนโรด</FarmerName>
+          </FarmerCard>
+          <FarmerCard>
+            <FarmerIcon>
+              <FaUser size={24} />
+            </FarmerIcon>
+            <FarmerName>กรีนโรด</FarmerName>
+          </FarmerCard>
+        </FarmerGrid>
+      </FarmerScrollContainer>
 
       {/* -------- ALL VEGETABLES -------- */}
       <SectionHeader>
@@ -53,7 +55,8 @@ export default function Home() {
         <SectionLine />
       </SectionHeader>
 
-      <VegGrid>
+      <VegScrollContainer>
+        <VegGrid>
         <VegItem>
           <img src="/veg01.png" alt="ผัก" />
           <p>คะน้า</p>
@@ -123,7 +126,8 @@ export default function Home() {
           <img src="/veg14.png" alt="ผัก" />
           <p>ผักกาดหวา</p>
         </VegItem>
-      </VegGrid>
+        </VegGrid>
+      </VegScrollContainer>
     </Container>
   );
 }
@@ -132,11 +136,18 @@ export default function Home() {
 
 const Container = styled.div`
   width: 100%;
-  max-width: 480px;  /* ขนาดมือถือ */
   margin: auto;
   padding: 10px 15px 80px;
   background: #ffffff;
   font-family: "Prompt", sans-serif;
+
+  @media (min-width: 768px) {
+    padding: 20px 30px 80px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 20px 50px 80px;
+  }
 `;
 
 /* HEADER */
@@ -217,8 +228,15 @@ const FilterChip = styled.div`
 /* BANNER */
 const Banner = styled.img`
   width: 100%;
+  max-width: 100%;
+  height: auto;
   border-radius: 8px;
   margin-bottom: 20px;
+  object-fit: cover;
+
+  @media (min-width: 768px) {
+    border-radius: 12px;
+  }
 `;
 
 /* SECTION HEADER */
@@ -228,6 +246,12 @@ const SectionHeader = styled.div`
   gap: 8px;
   margin-top: 16px;
   margin-bottom: 12px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    margin-top: 24px;
+    margin-bottom: 16px;
+  }
 `;
 
 const SectionLine = styled.div`
@@ -243,12 +267,45 @@ const SectionTitle = styled.h2`
   white-space: nowrap;
 `;
 
+/* FARMER SCROLL CONTAINER */
+const FarmerScrollContainer = styled.div`
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 20px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #2baa00 #f0f0f0;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #2baa00;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #228800;
+  }
+`;
+
 /* FARMER CARDS */
 const FarmerGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
   gap: 12px;
-  margin-bottom: 20px;
+  min-width: min-content;
+  padding-bottom: 4px;
+
+  @media (min-width: 768px) {
+    gap: 16px;
+  }
 `;
 
 const FarmerCard = styled.div`
@@ -260,6 +317,13 @@ const FarmerCard = styled.div`
   align-items: center;
   justify-content: center;
   gap: 10px;
+  min-width: 150px;
+  flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    min-width: 180px;
+    padding: 24px 15px;
+  }
 `;
 
 const FarmerIcon = styled.div`
@@ -279,17 +343,52 @@ const FarmerName = styled.div`
   color: #333;
 `;
 
+/* VEG SCROLL CONTAINER */
+const VegScrollContainer = styled.div`
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 50px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #2baa00 #f0f0f0;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #2baa00;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #228800;
+  }
+`;
+
 /* VEG ITEMS */
 const VegGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   gap: 12px;
-  margin-bottom: 50px;
+  min-width: min-content;
+  padding-bottom: 4px;
+
+  @media (min-width: 768px) {
+    gap: 16px;
+  }
 `;
 
 const VegItem = styled.div`
   text-align: center;
   font-size: 12px;
+  min-width: 70px;
+  flex-shrink: 0;
 
   img {
     width: 55px;
@@ -304,5 +403,15 @@ const VegItem = styled.div`
   p {
     margin: 0;
     color: #333;
+  }
+
+  @media (min-width: 768px) {
+    min-width: 80px;
+    font-size: 13px;
+
+    img {
+      width: 65px;
+      height: 65px;
+    }
   }
 `;
