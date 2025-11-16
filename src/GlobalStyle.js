@@ -5,12 +5,13 @@ export const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap');
 
   * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
   }
 
-  body {
-    margin: 0;
-    background-color: #ffffffff;
+  html, body {
+    background-color: #ffffff;
     line-height: 1.5;
     color: #333;
     font-family: 'Montserrat', 'Prompt', sans-serif;
