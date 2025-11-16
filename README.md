@@ -1,4 +1,10 @@
+<<<<<<< HEAD
+# Hackathon_Group4
+
+# Phaktae 🌾
+=======
 # Farm Bridge 🌾
+>>>>>>> dev
 
 Platform connecting organic farmers directly with consumers, promoting transparency and trust in the organic agriculture supply chain.
 
@@ -248,6 +254,12 @@ GET /farms
 
 #### Get Farm by ID or User
 ```http
+<<<<<<< HEAD
+GET /farms/ID?farmID=1
+GET /farms/ID?userNID=1
+```
+
+=======
 GET /farms/:farmID
 GET /farms/user/:userNID
 ```
@@ -256,6 +268,7 @@ GET /farms/user/:userNID
 - `farmID` - ID ของฟาร์ม
 - `userNID` - ID ของเกษตรกร (ดึงฟาร์มทั้งหมดของเกษตรกรคนนั้น)
 
+>>>>>>> dev
 #### Create Farm
 ```http
 POST /farms
@@ -270,6 +283,23 @@ POST /farms
   "email": "contact@greenfarm.com",
   "phoneNumber": "0812345678",
   "description": "Organic vegetable farm",
+<<<<<<< HEAD
+  "province": "Chiang Mai",
+  "district": "Mueang",
+  "subDistrict": "Suthep",
+
+  "storages": [
+    {
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA", 
+      "typeStorage": "image"
+    }
+  ],
+
+  "certificates": [
+    {
+      "institution": "Organic Thailand",
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA"
+=======
   "locationID": 1,
   "storages": [
     {
@@ -281,6 +311,7 @@ POST /farms
     {
       "institution": "Organic Thailand",
       "file": "base64_or_url"
+>>>>>>> dev
     }
   ]
 }
@@ -308,6 +339,9 @@ PUT /farms
 
 #### Get All Products by Farm
 ```http
+<<<<<<< HEAD
+GET /products?FID=1
+=======
 GET /products/
 ```
 **Query Parameters:**
@@ -326,6 +360,7 @@ GET /products/
     "FID": 1
   }
 ]
+>>>>>>> dev
 ```
 
 #### Get Product by ID
@@ -333,6 +368,11 @@ GET /products/
 GET /products/:PID
 ```
 
+<<<<<<< HEAD
+#### Create Product
+```http
+POST /products
+=======
 **URL Parameters:**
 - `PID` - Product ID
 
@@ -358,6 +398,7 @@ GET /products/:PID
 #### Create Product
 ```http
 POST /products/
+>>>>>>> dev
 ```
 **Request Body:**
 ```json
@@ -372,6 +413,11 @@ POST /products/
 }
 ```
 
+<<<<<<< HEAD
+#### Update Product
+```http
+PUT /products
+=======
 **Response (201 Created):**
 ```json
 {
@@ -388,12 +434,17 @@ POST /products/
 #### Update Product
 ```http
 PUT /products/
+>>>>>>> dev
 ```
 **Request Body:**
 ```json
 {
   "NID": 1,
   "PID": 1,
+<<<<<<< HEAD
+  "productName": "Updated Name",
+  "price": 60.00
+=======
   "productName": "Updated Product Name",
   "category": "Vegetables",
   "saleType": "Organic",
@@ -411,12 +462,17 @@ PUT /products/
     "productName": "Updated Product Name",
     "price": 60.00
   }
+>>>>>>> dev
 }
 ```
 
 #### Delete Product
 ```http
+<<<<<<< HEAD
+DELETE /products
+=======
 DELETE /products/
+>>>>>>> dev
 ```
 **Request Body:**
 ```json
@@ -426,6 +482,8 @@ DELETE /products/
 }
 ```
 
+<<<<<<< HEAD
+=======
 **Response (200 OK):**
 ```json
 {
@@ -433,6 +491,7 @@ DELETE /products/
 }
 ```
 
+>>>>>>> dev
 ---
 
 ## 🗄 Database Schema
@@ -493,9 +552,15 @@ CREATE TABLE locations (
 ```sql
 CREATE TABLE storages (
   id SERIAL PRIMARY KEY,
+<<<<<<< HEAD
+  FID INTEGER REFERENCES farms(FID),
+  file TEXT,
+  typeStorage VARCHAR(50)  -- 'image' or 'video'
+=======
   FID INTEGER REFERENCES farms(FID) ON DELETE CASCADE ON UPDATE CASCADE,
   file TEXT,
   typeStorage VARCHAR(255)  -- 'image' or 'video'
+>>>>>>> dev
 );
 ```
 
@@ -523,6 +588,22 @@ CREATE TABLE chats (
 ## 📁 Project Structure
 
 ```
+<<<<<<< HEAD
+Hackathon_Group4/
+├── .github/
+│   └── workflows/
+│       ├── backend-ci.yml
+│       ├── backend-cd.yml
+│       ├── frontend-ci.yml
+│       └── frontend-cd.yml
+├── backend/
+│   ├── config/
+│   │   └── db.js
+│   ├── controllers/
+│   │   ├── farm.controller.js
+│   │   ├── product.controller.js
+│   │   └── user.controller.js
+=======
 HACKATHON_GROUP4/
 ├── .github/
 │   └── workflows/
@@ -541,6 +622,7 @@ HACKATHON_GROUP4/
 │   │   ├── product.controller.js
 │   │   └── user.controller.js
 │   │
+>>>>>>> dev
 │   ├── models/
 │   │   ├── Certificate.js
 │   │   ├── Chat.js
@@ -550,6 +632,26 @@ HACKATHON_GROUP4/
 │   │   ├── Storage.js
 │   │   ├── User.js
 │   │   └── index.js
+<<<<<<< HEAD
+│   ├── routes/
+│   │   ├── farm.routes.js
+│   │   ├── product.routes.js
+│   │   └── user.routes.js
+│   └── service/
+│       ├── farm.service.js
+│       ├── product.service.js
+│       ├── user.service.js
+│       └── filter.service.js
+├── public/
+├── src/
+│   ├── App.js
+│   ├── App.css
+│   ├── index.js
+│   └── index.css
+├── server.js
+├── package.json
+└── README.md
+=======
 │   │
 │   ├── routes/
 │   │   ├── description/
@@ -599,6 +701,7 @@ HACKATHON_GROUP4/
 ├── package.json
 ├── README.md
 └── server.js
+>>>>>>> dev
 ```
 
 ---
@@ -610,6 +713,10 @@ HACKATHON_GROUP4/
 The project follows a **3-layer architecture**:
 
 1. **Routes Layer** (`routes/`): Handles HTTP requests and defines API endpoints
+<<<<<<< HEAD
+2. **Controller Layer** (`controllers/`): Processes requests, validates input, and coordinates responses
+3. **Service Layer** (`service/`): Contains business logic and database operations
+=======
    - `product.routes.js`: Defines product-related endpoints
    - `farm.routes.js`: Defines farm-related endpoints
    - `user.routes.js`: Defines authentication endpoints
@@ -635,6 +742,7 @@ router.post("/", ProductController.create);
 router.put("/", ProductController.update);
 router.delete("/", ProductController.delete);
 ```
+>>>>>>> dev
 
 ### Adding a New Feature
 
@@ -702,4 +810,8 @@ For support, please open an issue in the GitHub repository.
 
 - Organic farming communities in Thailand
 - Open source libraries and frameworks used in this project
+<<<<<<< HEAD
 - Hackathon organizers and mentors
+=======
+- Hackathon organizers and mentors
+>>>>>>> dev

@@ -3,6 +3,9 @@ const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
+const path = require("path");
+
 
 class UserService {
 
@@ -18,7 +21,7 @@ class UserService {
 
   static async registerUser(data) {
     console.log("Registering user with data:", data);
-    const { username, password, type, line, facebook, email, phoneNumber } = data;
+    const { username, password, type, line, facebook, email, phoneNumber, profileImage } = data;
 
     const usertype = type === true ? "Farmer" : "Customer";
 
@@ -28,6 +31,7 @@ class UserService {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
 
     const newUser = await User.create({
       username,
@@ -100,6 +104,39 @@ class UserService {
     });
     return { user, token };
   }
+
+  static async updateUserProfileImage(NID, profileImage) {
+  const user = await User.findByPk(NID);
+  if (!user) throw new Error("User not found");
+
+  // เช็กว่าเป็น URL หรือไม่
+  const isURL = (str) => /^https?:\/\//i.test(str);
+
+  let finalImage = profileImage;
+
+  // ถ้าไม่ใช่ URL → ถือว่าเป็นไฟล์จากเครื่อง → แปลงเป็น Base64
+  if (!isURL(profileImage)) {
+    const filePath = path.resolve(profileImage);
+
+    if (!fs.existsSync(filePath)) {
+      throw new Error("Local image file not found");
+    }
+
+    const fileData = fs.readFileSync(filePath);
+    const ext = path.extname(filePath).toLowerCase();
+
+    let mimeType = "image/jpeg";
+    if (ext === ".png") mimeType = "image/png";
+    if (ext === ".jpg" || ext === ".jpeg") mimeType = "image/jpeg";
+
+    const base64String = fileData.toString("base64");
+    finalImage = `data:${mimeType};base64,${base64String}`;
+  }
+
+  user.profileImage = finalImage;
+  await user.save();
+  return user;
+}
 }
 
 module.exports = UserService;
