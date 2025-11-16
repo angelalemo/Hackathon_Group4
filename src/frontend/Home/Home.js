@@ -1,27 +1,15 @@
-import React from "react";
+import React, { use } from "react";
 import styled from "styled-components";
 import { FaSearch } from "react-icons/fa";
+import Banner from "../Homecomponents/Banner";
 
 export default function Home() {
+  
+
   return (
     <Container>
-      {/* -------- SEARCH -------- */}
-      <SearchBox>
-        <FaSearch color="#888" />
-        <input type="text" placeholder="Search" />
-      </SearchBox>
 
-      {/* -------- FILTER CHIPS -------- */}
-      <FilterRow>
-        <Chip>หมวดหมู่</Chip>
-        <Chip>ชนิดผัก</Chip>
-        <Chip>ตำบล</Chip>
-        <Chip>อำเภอ</Chip>
-        <Chip>จังหวัด</Chip>
-      </FilterRow>
-
-      {/* -------- BANNER IMAGE -------- */}
-      <Banner src="/banner_veg.jpg" alt="banner" />
+      <Banner/>
 
       {/* -------- FARMER SECTION -------- */}
       <SectionTitle>เกษตรกร</SectionTitle>
@@ -118,13 +106,6 @@ const Chip = styled.div`
   border: 1.5px solid #2baa00;
   font-size: 13px;
   color: #2baa00;
-`;
-
-/* BANNER */
-const Banner = styled.img`
-  width: 100%;
-  border-radius: 8px;
-  margin-bottom: 20px;
 `;
 
 /* SECTION TITLE */
