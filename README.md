@@ -220,9 +220,9 @@ POST /users/login
 #### Get All Farms
 ```http
 GET /farms/All
-ได้ทั้งfarm, รูปภาพ/วิดีโอ, ใบรับรอง, product
+//ได้ทั้งfarm, รูปภาพ/วิดีโอ, ใบรับรอง, product
 ```
-**Response (200 OK):**
+**ผลที่ได้ (200 OK):**
 ```json
 [
     {
@@ -283,14 +283,14 @@ GET /farms/All
   {
       "FID": 6,
       "NID": 3,
-      ............................   
+      //............................   
 ]
 ```
 ```http
 GET /farms/AllwithProducts
-ได้ทั้งfarm, product
+//ได้ทั้งfarm, product
 ```
-**Response (200 OK):**
+**ผลที่ได้ (200 OK):**
 ```json
 [
     {
@@ -331,21 +331,80 @@ GET /farms/AllwithProducts
     {
         "FID": 2,
         "NID": 1,
-      ............................   
+      //............................   
 ]
 ```
 
 #### Get Farm by ID or User
 ```http
 GET /farms/:FID
-GET /farms/
+GET /farms/user/:NID
+//ได้ทั้งfarm, รูปภาพ/วิดีโอ, ใบรับรอง, product
+```
+**ผลที่ได้ (200 OK):**
+```json
+{
+    "FID": 3,
+    "NID": 1,
+    "farmName": "สมบูรณ์ฟาร์ม",
+    "line": "@sombunfarm",
+    "facebook": "facebook.com/sombunfarm",
+    "email": "farm@example.com",
+    "phoneNumber": "0801112222",
+    "description": "ฟาร์มเกษตรอินทรีย์",
+    "lineToken": null,
+    "lineUserId": null,
+    "province": null,
+    "district": null,
+    "subDistrict": null,
+    "location": null,
+    "locationID": null,
+    "User": {
+        "NID": 1,
+        "username": "testuser",
+        "email": "newemail@example.com",
+        "phoneNumber": "0899999999",
+        "type": "Farmer"
+    },
+    "Storages": [],
+    "Certificates": [],
+    "Products": []
+}
+```
+#### Get Farm by ID or User
+```http
+GET /farms/:FID/products
+//ได้ทั้งfarm, product
+```
+**ผลที่ได้ (200 OK):**
+```json
+{
+    {
+    "FID": 3,
+    "NID": 1,
+    "farmName": "สมบูรณ์ฟาร์ม",
+    "line": "@sombunfarm",
+    "facebook": "facebook.com/sombunfarm",
+    "email": "farm@example.com",
+    "phoneNumber": "0801112222",
+    "description": "ฟาร์มเกษตรอินทรีย์",
+    "lineToken": null,
+    "lineUserId": null,
+    "province": null,
+    "district": null,
+    "subDistrict": null,
+    "location": null,
+    "locationID": null,
+    "Products": []
+}
+}
 ```
 
 #### Create Farm
 ```http
-POST /farms
+POST /farms/create
 ```
-**Request Body:**
+**ข้อมูลที่ต้องการ**
 ```json
 {
   "NID": 1,
@@ -358,6 +417,7 @@ POST /farms
   "province": "Chiang Mai",
   "district": "Mueang",
   "subDistrict": "Suthep",
+  "location":"17/8",
 
   "storages": [
     {
@@ -374,20 +434,132 @@ POST /farms
   ]
 }
 ```
+**ผลที่ได้ (201 Created):**
+```json
+{
+    "message": "Farm created successfully",
+    "farm": {
+        "FID": 8,
+        "NID": 1,
+        "farmName": "Green Valley Farm",
+        "line": "@greenfarm",
+        "facebook": "greenfarm",
+        "email": "contact@greenfarm.com",
+        "phoneNumber": "0812345678",
+        "description": "Organic vegetable farm",
+        "lineToken": null,
+        "lineUserId": null,
+        "province": "Chiang Mai",
+        "district": "Mueang",
+        "subDistrict": "Suthep",
+        "location": "17/8",
+        "locationID": null
+    }
+}
+```
 
 #### Update Farm
 ```http
-PUT /farms
+PUT /farms/updateInfo
 ```
-**Request Body:**
+**ข้อมูลที่ต้องการ**
 ```json
 {
   "NID": 1,
   "FID": 1,
   "farmName": "Updated Farm Name",
   "description": "Updated description",
-  "storages": [...],
-  "certificates": [...]
+  "phoneNumber": "0801112222",
+  "lineToken": null,
+  "lineUserId": null,
+  "province": "กรุงเทพ",
+  "district": "เมือง",
+  "subDistrict": "-",
+  "location": null
+       
+}
+```
+**ผลที่ได้ (200OK):**
+```json
+{
+    "message": "Farm updated successfully",
+    "farm": {
+        "FID": 1,
+        "NID": 1,
+        "farmName": "Updated Farm Name",
+        "line": "@sombunfarm",
+        "facebook": "facebook.com/sombunfarm",
+        "email": "farm@example.com",
+        "phoneNumber": "0801112222",
+        "description": "Updated description",
+        "lineToken": null,
+        "lineUserId": null,
+        "province": "กรุงเทพ",
+        "district": "เมือง",
+        "subDistrict": "-",
+        "location": null,
+        "locationID": null
+    }
+}
+```
+#### เพิ่มรูปใน farm
+```http
+PUT /farms/addStorage
+``` 
+**ข้อมูลที่ต้องการ**
+```json
+{
+  "NID": 1,
+  "FID": 1,
+  "storages": [
+    {
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA" 
+    },
+    {
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA"
+    }
+  ]
+}
+```
+**ผลที่ได้ (200OK):**
+```
+{
+    "message": "Farm image added successfully",
+    "farm": [
+        {
+            "id": 3,
+            "FID": 1,
+            "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA",
+            "typeStorage": "image"
+        },
+        {
+            "id": 4,
+            "FID": 1,
+            "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA",
+            "typeStorage": "image"
+        }
+    ]
+}
+```
+#### ลบรูปหรือวิดีโอ
+```http
+PUT /farms/deleteStorage
+``` 
+**ข้อมูลที่ต้องการ**
+```json
+{
+  "NID": 1,
+  "FID": 1,
+  "storagesID": 3
+}
+```
+**ผลที่ได้ (200OK):**
+```
+{
+    "message": "Farm image deleted successfully",
+    "farm": {
+        "message": "Storage deleted successfully"
+    }
 }
 ```
 
