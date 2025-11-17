@@ -365,8 +365,7 @@ const VegItem = styled.div`
   font-size: 12px;
 
   img {
-    width: 55px;
-    height: 55px;
+    width: 100%;         /* เต็มพื้นที่ของกริด */
     object-fit: cover;
     border-radius: 50%;
     border: 2px solid #2baa00;
