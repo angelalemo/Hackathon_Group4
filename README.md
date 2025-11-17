@@ -621,6 +621,327 @@ DELETE /products
 ```
 
 ---
+##### 🧪 API Testing Guide (Postman)
+คู่มือการทดสอบ API ด้วย Postman สำหรับทีมทดสอบ
+การเตรียมพร้อม
+
+ติดตั้ง Postman
+เปิดเซิร์ฟเวอร์ที่ http://localhost:4000
+สร้าง Collection ใหม่ชื่อ "Phaktae API Tests"
+
+
+##### 🧑‍🌾 User Management Tests
+**Test 1: ลงทะเบียนผู้ใช้ใหม่ (Register User)**
+Method: POST
+URL: http://localhost:4000/users/register
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
+  "username": "farmer_john",
+  "password": "securepassword123",
+  "type": true,
+  "line": "@farmerjohn",
+  "facebook": "facebook.com/farmerjohn",
+  "email": "john@farm.com",
+  "phoneNumber": "0812345678"
+}
+Expected Response (201):
+json{
+  "NID": 6,
+  "username": "farmer_john",
+  "password": "$2b$10$7i81VbWxEFhEVTK6MdLVYOVFjM4HY7eYaZBgeQzrl1h1uzMUVX.fa",
+  "type": "Farmer",
+  "line": "@farmerjohn",
+  "facebook": "facebook.com/farmerjohn",
+  "email": "john@farm.com",
+  "phoneNumber": "0812345678",
+  "ProfileImage": null
+}
+Test Points:
+
+✅ Status code เป็น 201
+✅ Response มี NID
+✅ type ถูกแปลงเป็น "Farmer"
+✅ password ถูก hash
+
+
+**Test 2: เข้าสู่ระบบ (Login User)**
+Method: POST
+URL: http://localhost:4000/users/login
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
+  "username": "farmer_john",
+  "password": "securepassword123"
+}
+Expected Response (200):
+json{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "NID": 6,
+  "username": "farmer_john",
+  "type": "Farmer",
+  "phoneNumber": "0812345678",
+  "email": "john@farm.com",
+  "line": "@farmerjohn",
+  "facebook": "facebook.com/farmerjohn",
+  "FID": null,
+  "farmName": null
+}
+Test Points:
+
+✅ Status code เป็น 200
+✅ Response มี token
+✅ ข้อมูล user ถูกต้อง
+💾 บันทึก token และ NID ไว้ใช้ในการทดสอบต่อไป
+
+
+**Test 3: ดูข้อมูลผู้ใช้ทั้งหมด (Get All Users)**
+Method: GET
+URL: http://localhost:4000/users/All
+Expected Response (200):
+json[
+  {
+    "NID": 1,
+    "username": "yaya_updated",
+    "type": "Farmer",
+    "email": "yaya@example.com",
+    "phoneNumber": "0999999999",
+    "ProfileImage": null
+  }
+]
+Test Points:
+
+✅ Status code เป็น 200
+✅ Response เป็น array
+✅ แต่ละ user มี NID, username, type
+
+
+**Test 4: ดูข้อมูลผู้ใช้ตาม ID (Get User by ID)**
+Method: GET
+URL: http://localhost:4000/users/3
+Expected Response (200):
+json{
+  "NID": 3,
+  "username": "Farmer stam",
+  "type": "Farmer",
+  "line": "line_id000",
+  "facebook": "fb_id000",
+  "email": "stam@example.com",
+  "phoneNumber": "000000000",
+  "ProfileImage": null,
+  "Farms": []
+}
+Test Points:
+
+✅ Status code เป็น 200
+✅ NID ตรงกับที่ร้องขอ
+✅ มี Farms array
+
+
+**Test 5: อัพเดทข้อมูลผู้ใช้ (Update User)**
+Method: PUT
+URL: http://localhost:4000/users/update/6
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
+  "username": "farmer_john_updated",
+  "phoneNumber": "0887777777"
+}
+Expected Response (200):
+json{
+  "NID": 6,
+  "username": "farmer_john_updated",
+  "phoneNumber": "0887777777",
+  "type": "Farmer",
+  "email": "john@farm.com"
+}
+Test Points:
+
+✅ Status code เป็น 200
+✅ ข้อมูลที่ส่งไปถูกอัพเดท
+✅ ข้อมูลอื่นๆ ไม่เปลี่ยนแปลง
+
+
+#### 🚜 Farm Management Tests
+**Test 6: ดูฟาร์มทั้งหมดแบบเต็ม (Get All Farms - Full)**
+Method: GET
+URL: http://localhost:4000/farms/All
+Expected Response (200):
+json[
+  {
+    "FID": 5,
+    "NID": 1,
+    "farmName": "สมบูรณ์ฟาร์ม",
+    "line": "@sombunfarm",
+    "email": "farm@example.com",
+    "phoneNumber": "0801112222",
+    "description": "ฟาร์มเกษตรอินทรีย์",
+    "province": "เชียงใหม่",
+    "district": "เมือง",
+    "User": {
+      "NID": 1,
+      "username": "testuser"
+    },
+    "Storages": [],
+    "Certificates": [],
+    "Products": []
+  }
+]
+Test Points:
+
+✅ Status code เป็น 200
+✅ มี User, Storages, Certificates, Products
+✅ Response เป็น array
+
+
+**Test 7: ดูฟาร์มทั้งหมดพร้อมสินค้า (Get All Farms with Products)**
+Method: GET
+URL: http://localhost:4000/farms/AllwithProducts
+Expected Response (200):
+json[
+  {
+    "FID": 6,
+    "farmName": "Markfarm",
+    "province": "เชียงใหม่",
+    "Products": [
+      {
+        "PID": 1,
+        "productName": "ผัก",
+        "price": 50
+      }
+    ]
+  }
+]
+Test Points:
+
+✅ Status code เป็น 200
+✅ มี Products array
+✅ ไม่มี Storages และ Certificates
+
+
+**Test 8: ดูฟาร์มตาม ID (Get Farm by ID)**
+Method: GET
+URL: http://localhost:4000/farms/3
+Expected Response (200):
+json{
+  "FID": 3,
+  "farmName": "สมบูรณ์ฟาร์ม",
+  "User": {
+    "NID": 1,
+    "username": "testuser"
+  },
+  "Storages": [],
+  "Certificates": [],
+  "Products": []
+}
+Test Points:
+
+✅ Status code เป็น 200
+✅ FID ตรงกับที่ร้องขอ
+✅ มีข้อมูลครบถ้วน
+
+
+**Test 9: ดูฟาร์มตามเจ้าของ (Get Farm by User)**
+Method: GET
+URL: http://localhost:4000/farms/user/1
+Expected Response (200):
+json[
+  {
+    "FID": 3,
+    "NID": 1,
+    "farmName": "สมบูรณ์ฟาร์ม"
+  }
+]
+Test Points:
+
+✅ Status code เป็น 200
+✅ NID ของฟาร์มตรงกับที่ร้องขอ
+✅ Response เป็น array
+
+
+**Test 10: ดูสินค้าของฟาร์ม (Get Farm Products)**
+Method: GET
+URL: http://localhost:4000/farms/3/products
+Expected Response (200):
+json{
+  "FID": 3,
+  "farmName": "สมบูรณ์ฟาร์ม",
+  "Products": [
+    {
+      "PID": 1,
+      "productName": "ผักกาดหอม",
+      "price": 50
+    }
+  ]
+}
+Test Points:
+
+✅ Status code เป็น 200
+✅ มี Products array
+✅ ไม่มีข้อมูลอื่นๆ นอกจากฟาร์มและสินค้า
+
+
+**Test 11: สร้างฟาร์มใหม่ (Create Farm)**
+Method: POST
+URL: http://localhost:4000/farms/create
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
+  "NID": 1,
+  "farmName": "Green Valley Farm",
+  "line": "@greenfarm",
+  "facebook": "greenfarm",
+  "email": "contact@greenfarm.com",
+  "phoneNumber": "0812345678",
+  "description": "ฟาร์มผักออร์แกนิกคุณภาพสูง",
+  "province": "เชียงใหม่",
+  "district": "เมือง",
+  "subDistrict": "สุเทพ",
+  "location": "17/8",
+  "storages": [
+    {
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA",
+      "typeStorage": "image"
+    }
+  ],
+  "certificates": [
+    {
+      "institution": "สำนักงานมาตรฐานสินค้าเกษตรและอาหารแห่งชาติ",
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA"
+    }
+  ]
+}
+Expected Response (201):
+json{
+  "message": "Farm created successfully",
+  "farm": {
+    "FID": 8,
+    "NID": 1,
+    "farmName": "Green Valley Farm",
+    "province": "เชียงใหม่"
+  }
+}
+Test Points:
+
+✅ Status code เป็น 201
+✅ Response มี FID ใหม่
+✅ เฉพาะ Farmer เท่านั้นที่สร้างได้
+💾 บันทึก FID ไว้ใช้ในการทดสอบต่อไป
+
+
+**Test 12: อัพเดทข้อมูลฟาร์ม (Update Farm)**
+Method: PUT
+URL: http://localhost:4000/farms/updateInfo
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
+  "NID": 1,
+  "FID": 8,
+  "farmName": "Updated Farm Name",
+  "description": "คำอธิบาย"
+}
+
+
 
 ## 🗄 Database Schema
 
