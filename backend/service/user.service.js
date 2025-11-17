@@ -1,5 +1,5 @@
 const express = require("express");
-const { User, Farm } = require("../models"); // ⚠️ เพิ่ม Farm
+const { User, Farm } = require("../models");
 const bcrypt = require("bcrypt");
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
@@ -12,7 +12,9 @@ class UserService {
   }
 
   static async getUserById(NID) {
-    const user = await User.findByPk(NID);
+    const user = await User.findByPk(NID, {
+      include: [{ model: Farm }]
+    });
     return user;
   }
 
@@ -42,15 +44,13 @@ class UserService {
     return newUser;
   }
 
-  // ✅ แก้ไขตรงนี้
   static async loginUser(username, password) {
-    // ดึงข้อมูล User พร้อม Farm (ถ้ามี)
     const user = await User.findOne({ 
       where: { username },
       include: [{ 
         model: Farm, 
-        attributes: ['FID', 'farmName', 'location'],
-        required: false // ไม่บังคับต้องมี Farm (เพราะ Customer ไม่มี Farm)
+        attributes: ['FID', 'farmName'],
+        required: false
       }]
     });
     
@@ -59,14 +59,18 @@ class UserService {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new Error("Invalid password");
 
-    // สร้าง JWT Token
     const token = jwt.sign(
       { id: user.NID, type: user.type }, 
       "your_secret_key", 
       { expiresIn: "7d" }
     );
 
-    // ✅ Return ข้อมูลแบบ flatten พร้อม FID
+    console.log("=== LOGIN USER DATA ===");
+    console.log("NID:", user.NID);
+    console.log("Type:", user.type);
+    console.log("Farms:", user.Farms);
+    console.log("FID:", user.Farms?.[0]?.FID);
+
     return {
       token,
       NID: user.NID,
@@ -76,10 +80,8 @@ class UserService {
       email: user.email,
       line: user.line,
       facebook: user.facebook,
-      // ดึง FID จาก relationship (ถ้าเป็น Farmer จะมี Farm)
       FID: user.Farms?.[0]?.FID || null,
-      farmName: user.Farms?.[0]?.farmName || null,
-      farmLocation: user.Farms?.[0]?.location || null
+      farmName: user.Farms?.[0]?.farmName || null
     };
   }
 
@@ -96,23 +98,23 @@ class UserService {
   }
 
   static async registerOrLoginWithLine(accessToken, type) {
-    // ดึงข้อมูลโปรไฟล์จาก LINE API
     const response = await axios.get("https://api.line.me/v2/profile", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
     const { userId, displayName, pictureUrl } = response.data;
-
     const usertype = type === true ? "Farmer" : "Customer";
 
-    // ตรวจสอบว่าผู้ใช้อยู่ในระบบหรือยัง
     let user = await User.findOne({ 
       where: { line: userId },
-      include: [{ model: Farm, required: false }]
+      include: [{ 
+        model: Farm,
+        attributes: ['FID', 'farmName'],
+        required: false 
+      }]
     });
 
     if (!user) {
-      // สมัครใหม่ (register)
       user = await User.create({
         username: displayName,
         password: null,
@@ -123,12 +125,10 @@ class UserService {
       });
     }
 
-    // สร้าง token สำหรับเข้าสู่ระบบ
     const token = jwt.sign({ id: user.NID }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
     
-    // ✅ Return แบบเดียวกับ loginUser
     return {
       token,
       NID: user.NID,
