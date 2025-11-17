@@ -941,6 +941,123 @@ json{
   "description": "คำอธิบาย"
 }
 
+**Test 13: สร้างห้องแชทใหม่ (Create Chat Room)**
+Method: POST
+URL:http://localhost:4000/chats/create
+
+Body (raw JSON)
+{
+  "NID": 1,
+  "FID": 5
+}
+
+Expected Response (201)
+{
+  "message": "Chat created",
+  "chat": {
+    "logID": 1,
+    "NID": 1,
+    "FID": 5
+  }
+}
+
+Test Points:
+✅ Status code = 201
+✅ logID ถูกสร้างใหม่
+✅ 1 คน (NID) เชื่อมกับฟาร์ม (FID) ได้สำเร็จ
+❗ ถ้ามีห้องเดิมอยู่แล้ว ควรป้องกันการซ้ำ (ใช้ findOrCreate)
+
+**Test 14: ดูห้องแชททั้งหมดของผู้ใช้ (Get Chats by User)**
+Method: GET
+URL:http://localhost:4000/chats/user/1
+
+Expected Response (200)
+[
+  {
+    "logID": 1,
+    "NID": 1,
+    "FID": 5,
+    "Farm": {
+      "FID": 5,
+      "farmName": "Green Valley Farm"
+    }
+  }
+]
+
+Test Points:
+✅ Response เป็น Array
+✅ มีข้อมูลฟาร์มมาให้ด้วย
+✅ logID ตรงกับห้องที่สร้างไว้
+
+**Test 15: ส่งข้อความ (Send Message)**
+
+Method: POST
+URL:http://localhost:4000/chats/message
+
+Body (raw JSON)
+{
+  "logID": 1,
+  "senderNID": 1,
+  "messageText": "สวัสดีครับ"
+}
+
+Expected Response (200)
+{
+  "message": "Message sent",
+  "data": {
+    "timestamp": "2025-11-17T08:48:22.208Z",
+    "messageID": 1,
+    "logID": 1,
+    "senderNID": 1,
+    "messageText": "สวัสดีครับ"
+  }
+}
+
+Test Points:
+✅ Status 200
+✅ มี messageID ใหม่
+✅ timestamp ถูกต้อง
+📝 Tips: ใช้ senderNID เพื่อตรวจว่าใครเป็นผู้ส่ง
+
+
+**Test 16: ดูข้อความทั้งหมดในห้องแชท (Get Messages by Chat Room)**
+
+Method: GET
+URL:http://localhost:4000/chats/room/1/messages
+
+Expected Response (200)
+[
+  {
+    "messageID": 1,
+    "logID": 1,
+    "senderNID": 1,
+    "messageText": "สวัสดีครับ",
+    "timestamp": "2025-11-17T08:48:22.208Z",
+    "User": {
+      "username": "yaya_updated"
+    }
+  }
+]
+
+Test Points:
+✅ Response เป็น Array
+✅ มี username ของผู้ส่ง
+✅ เรียงตามเวลาล่าสุดก่อน (ถ้าทำ sorting แล้ว)
+
+**Test 17: ลบห้องแชท (Delete Chat Room)**
+
+Method: DELETE
+URL:http://localhost:4000/chats/room/1
+
+Expected Response (200)
+{
+  "message": "Chat 1 deleted"
+}
+
+Test Points:
+✅ Status 200
+✅ ลบทั้งห้องและข้อความทั้งหมดใน logID นั้น
+❗ แนะนำให้ทำ cascade delete เพื่อป้องกัน orphan messages
 
 
 ## 🗄 Database Schema
