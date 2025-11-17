@@ -99,10 +99,10 @@ const validateForm = () => {
         facebook: null,
       });
 
-      setSuccess("ลงทะเบียนสำเร็จ! กำลังเปลี่ยนไปยังหน้าเข้าสู่ระบบ...");
+      setSuccess("ลงทะเบียนสำเร็จ! กำลังเปลี่ยนไปยังหน้าเข้าสู่หน้าหลัก...");
 
       setTimeout(() => {
-        window.location.href = "/login";
+        window.location.href = "/";
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.error || "ลงทะเบียนล้มเหลว กรุณาลองใหม่");
