@@ -10,6 +10,7 @@ import Createfarm from './frontend/Createfarm';
 import FarmListPage from './frontend/Farm';
 import Filter from './frontend/FilterPage';
 import Product from './frontend/Product';
+import ProductManagement from './frontend/ProductManagememt';
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/product/:PID" element={<Product />} />
         <Route path="/farms" element={<FarmListPage />} />
         <Route path="/filter" element={<Filter />} />
+        <Route path="/product-management" element={<ProductManagement />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
