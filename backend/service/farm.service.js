@@ -1,4 +1,4 @@
-const { Farm, User, Storage, Certificate } = require("../models");
+const { Farm, User, Storage, Product, Certificate } = require("../models");
 const fs = require("fs");
 const path = require("path");
 
@@ -21,10 +21,7 @@ class FarmService {
   static async getAllFarmsWithProducts() {
     const farms = await Farm.findAll({
       include: [
-        {
-          model: Product,
-          as: "Products",
-        },
+        { model: Product, attributes: ["PID", "productName", "category", "saleType", "price", "image"] },
       ],
     });
     return farms;
@@ -36,6 +33,7 @@ class FarmService {
         { model: User, attributes: ["NID", "username", "type", "email", "phoneNumber"] },
         { model: Storage, attributes: ["file", "typeStorage"] },
         { model: Certificate, attributes: ["institution", "file"] },
+        { model: Product, attributes: ["PID", "productName", "category", "saleType", "price", "image"] },
       ],
     });
 
@@ -43,23 +41,7 @@ class FarmService {
       const data = farm.toJSON();
 
       return {
-        ...data,
-
-        // ⚡ storages
-        storages: data.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
-
-        // ⚡ certificates
-        certificates: data.Certificates?.map((c) => ({
-          institution: c.institution,
-          file: c.file,
-        })) || [],
-
-        // ⚡ location fields (ดึงจาก Farm โดยตรง)
-        location: {
-          province: data.province,
-          district: data.district,
-          subDistrict: data.subDistrict,
-        },
+        ...data
       };
     });
 

@@ -3,7 +3,7 @@ import "./css/CreateFarm.css";
 
 export default function CreateFarm() {
   const [form, setForm] = useState({
-    NID: "",
+    NID: 4,
     farmName: "",
     line: "",
     facebook: "",
@@ -124,7 +124,7 @@ export default function CreateFarm() {
 
           <div className="farmer-group">
             <label>ช่องทางติดต่อ :</label>
-            <input name="phoneNumber" placeholder="เบอร์โทร" onChange={updateForm} />
+            <input name="phoneNumber" placeholder="เบอร์โทรศัพท์" onChange={updateForm} />
             <input name="email" placeholder="อีเมล" onChange={updateForm} />
             <input name="line" placeholder="LINE" value={form.line} readOnly />
             <input name="facebook" placeholder="Facebook" onChange={updateForm} />

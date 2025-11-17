@@ -10,7 +10,7 @@ const farmRoutes = require("./backend/routes/farm.routes");
 const productRoutes = require("./backend/routes/product.routes");
 const filterRoutes = require("./backend/routes/filter.routes");
 const chatRoutes = require("./backend/routes/chat.routes");
-const lineRoutes = require("./backend/routes/line.routes");
+const gmailRoutes = require("./backend/routes/gmail.routes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -28,7 +28,8 @@ app.use("/farms", farmRoutes);
 app.use("/products", productRoutes);
 app.use("/filter", filterRoutes); //
 app.use("/chats", chatRoutes);
-app.use("/line", lineRoutes); // เพิ่มเส้นทางสำหรับ LINE
+app.use("/gmail", gmailRoutes);
+
 
 // database
 async function initializeDatabase() {

@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -17,6 +18,7 @@
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.553.0",
     "morgan": "^1.10.1",
+    "nodemailer": "^7.0.10",
     "nodemon": "^3.1.10",
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
@@ -31,10 +33,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "NODE_OPTIONS=--localstorage-file=/tmp/localstorage.json react-scripts start",
+    "start": " react-scripts start",
     "dev": "nodemon server.js",
-    "build": "NODE_OPTIONS=--localstorage-file=/tmp/localstorage.json react-scripts build",
-    "test": "NODE_OPTIONS=--localstorage-file=/tmp/localstorage.json react-scripts test",
+    "build": " react-scripts build",
+    "test": " react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
