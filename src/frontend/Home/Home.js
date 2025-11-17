@@ -55,8 +55,7 @@ export default function Home() {
         <SectionLine />
       </SectionHeader>
 
-      <VegScrollContainer>
-        <VegGrid>
+      <VegGrid>
         <VegItem>
           <img src="/veg01.png" alt="ผัก" />
           <p>คะน้า</p>
@@ -126,8 +125,7 @@ export default function Home() {
           <img src="/veg14.png" alt="ผัก" />
           <p>ผักกาดหวา</p>
         </VegItem>
-        </VegGrid>
-      </VegScrollContainer>
+      </VegGrid>
     </Container>
   );
 }
@@ -343,52 +341,27 @@ const FarmerName = styled.div`
   color: #333;
 `;
 
-/* VEG SCROLL CONTAINER */
-const VegScrollContainer = styled.div`
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  margin-bottom: 50px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: #2baa00 #f0f0f0;
-
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f0f0f0;
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #2baa00;
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: #228800;
-  }
-`;
-
 /* VEG ITEMS */
 const VegGrid = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  min-width: min-content;
-  padding-bottom: 4px;
+  margin-bottom: 50px;
 
   @media (min-width: 768px) {
+    grid-template-columns: repeat(6, 1fr);
     gap: 16px;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 20px;
   }
 `;
 
 const VegItem = styled.div`
   text-align: center;
   font-size: 12px;
-  min-width: 70px;
-  flex-shrink: 0;
 
   img {
     width: 55px;
@@ -406,7 +379,6 @@ const VegItem = styled.div`
   }
 
   @media (min-width: 768px) {
-    min-width: 80px;
     font-size: 13px;
 
     img {
