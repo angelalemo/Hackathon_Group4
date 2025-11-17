@@ -276,23 +276,7 @@ POST /farms
   "email": "contact@greenfarm.com",
   "phoneNumber": "0812345678",
   "description": "Organic vegetable farm",
-<<<<<<< HEAD
-  "province": "Chiang Mai",
-  "district": "Mueang",
-  "subDistrict": "Suthep",
 
-  "storages": [
-    {
-      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA", 
-      "typeStorage": "image"
-    }
-  ],
-
-  "certificates": [
-    {
-      "institution": "Organic Thailand",
-      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA"
-=======
   "locationID": 1,
   "storages": [
     {
@@ -304,7 +288,7 @@ POST /farms
     {
       "institution": "Organic Thailand",
       "file": "base64_or_url"
->>>>>>> dev
+
     }
   ]
 }
@@ -332,9 +316,7 @@ PUT /farms
 
 #### Get All Products by Farm
 ```http
-<<<<<<< HEAD
-GET /products?FID=1
-=======
+
 GET /products/
 ```
 **Query Parameters:**
@@ -353,7 +335,7 @@ GET /products/
     "FID": 1
   }
 ]
->>>>>>> dev
+
 ```
 
 #### Get Product by ID
@@ -361,11 +343,7 @@ GET /products/
 GET /products/:PID
 ```
 
-<<<<<<< HEAD
-#### Create Product
-```http
-POST /products
-=======
+
 **URL Parameters:**
 - `PID` - Product ID
 
@@ -406,11 +384,7 @@ POST /products/
 }
 ```
 
-<<<<<<< HEAD
-#### Update Product
-```http
-PUT /products
-=======
+
 **Response (201 Created):**
 ```json
 {
@@ -427,17 +401,14 @@ PUT /products
 #### Update Product
 ```http
 PUT /products/
->>>>>>> dev
+
 ```
 **Request Body:**
 ```json
 {
   "NID": 1,
   "PID": 1,
-<<<<<<< HEAD
-  "productName": "Updated Name",
-  "price": 60.00
-=======
+
   "productName": "Updated Product Name",
   "category": "Vegetables",
   "saleType": "Organic",
@@ -455,17 +426,14 @@ PUT /products/
     "productName": "Updated Product Name",
     "price": 60.00
   }
->>>>>>> dev
+
 }
 ```
 
 #### Delete Product
 ```http
-<<<<<<< HEAD
-DELETE /products
-=======
+
 DELETE /products/
->>>>>>> dev
 ```
 **Request Body:**
 ```json
