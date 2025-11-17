@@ -39,16 +39,6 @@ const AddProductPage = ({ className, onSave, onCancel }) => {
 
   return (
     <div className={className}>
-      <div className="header">
-        <div className="logo-container">
-          <Menu size={24} />
-          <span className="logo">Phaktae</span>
-        </div>
-        <div className="header-icons">
-          <Bell size={24} />
-          <div className="profile-box" />
-        </div>
-      </div>
 
       <div className="title-bar" onClick={onCancel}>
         <ChevronLeft size={24} />
