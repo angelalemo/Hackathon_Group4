@@ -13,15 +13,18 @@ export default function ProductManagement() {
   const [error, setError] = useState(null);
   
   // ดึงข้อมูล User จาก localStorage ที่เก็บไว้ตอน login
-  const [currentUser] = useState(() => {
-    const userData = localStorage.getItem('user');
-    if (!userData) {
-      alert('กรุณา Login ก่อนใช้งาน');
-      window.location.href = '/login';
-      return null;
-    }
-    return JSON.parse(userData);
-  });
+  const [currentUser, setCurrentUser] = useState(null);
+
+useEffect(() => {
+  const userData = localStorage.getItem('user');
+  if (!userData) {
+    alert('กรุณา Login ก่อนใช้งาน');
+    window.location.href = '/login';
+  } else {
+    setCurrentUser(JSON.parse(userData));
+  }
+}, []);
+
   
   const userId = currentUser?.NID; // NID ของผู้ใช้ที่ login
   const farmId = currentUser?.FID || currentUser?.Farm?.FID; // FID ของฟาร์ม (ถ้ามี)
