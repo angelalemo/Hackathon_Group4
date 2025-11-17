@@ -6,16 +6,7 @@ import { Menu, Bell, ChevronLeft, Plus } from 'lucide-react';
 const ProductListPage = ({ className, products, onAddProduct, onEditProduct, onDeleteProduct }) => {
   return (
     <div className={className}>
-      <div className="header">
-        <div className="logo-container">
-          <Menu size={24} />
-          <span className="logo">Phaktae</span>
-        </div>
-        <div className="header-icons">
-          <Bell size={24} />
-          <div className="profile-box" />
-        </div>
-      </div>
+
 
       <div className="title-bar">
         <ChevronLeft size={24} />

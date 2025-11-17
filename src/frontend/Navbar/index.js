@@ -352,7 +352,7 @@ const Navbar = ({ className, onFilterChange }) => {
                         <MessageSquare size={20} />
                         <span>แชทลูกค้า</span>
                       </Link>
-                      <Link to="/inventory" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                      <Link to="/products" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
                         <Package size={20} />
                         <span>คลังสินค้า</span>
                       </Link>
