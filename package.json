@@ -31,7 +31,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "NODE_OPTIONS=--localstorage-file=/tmp/localstorage.json react-scripts start",
+    "start": " react-scripts start",
     "dev": "nodemon server.js",
     "build": "NODE_OPTIONS=--localstorage-file=/tmp/localstorage.json react-scripts build",
     "test": "react-scripts test",

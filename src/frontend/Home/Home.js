@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import styled from "styled-components";
 import { FaSearch } from "react-icons/fa";
 import { HiMenu } from "react-icons/hi";
@@ -6,13 +6,15 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoSquareOutline } from "react-icons/io5";
 import { FaChevronDown } from "react-icons/fa";
 import { FaUser } from "react-icons/fa";
+import Banner from "../Homecomponents/Banner";
 
 export default function Home() {
+  
+
   return (
     <Container>
-      
-      {/* -------- BANNER IMAGE -------- */}
-      <Banner src="/banner_veg.jpg" alt="banner" />
+
+      <Banner/>
 
       {/* -------- FARMER SECTION -------- */}
       <SectionHeader>
@@ -223,25 +225,9 @@ const FilterChip = styled.div`
   gap: 4px;
 `;
 
-/* BANNER */
-const Banner = styled.img`
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  object-fit: cover;
-
-  @media (min-width: 768px) {
-    border-radius: 12px;
-  }
-`;
-
-/* SECTION HEADER */
-const SectionHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* SECTION TITLE */
+const SectionTitle = styled.h2`
+  font-size: 18px;
   margin-top: 16px;
   margin-bottom: 12px;
   width: 100%;
