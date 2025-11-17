@@ -6,6 +6,7 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoSquareOutline } from "react-icons/io5";
 import { FaChevronDown } from "react-icons/fa";
 import { FaUser } from "react-icons/fa";
+import Banner from "../Homecomponents/Banner";
 
 export default function Home() {
   return (

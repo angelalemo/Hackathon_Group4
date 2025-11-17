@@ -24,7 +24,7 @@ export default styled(NotFound)`
   justify-content: center;
   height: 100vh;
   width: 100vw;
-  color: white;
+  color: #007506ff;
 
   h1 {
     font-size: 5rem;
