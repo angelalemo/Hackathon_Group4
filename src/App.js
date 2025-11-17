@@ -3,7 +3,6 @@ import Login from './frontend/Auth/Login/';
 import Register from './frontend/Auth/Register/';
 import Home from './frontend/Home/Home';          
 import Navbar from './frontend/Navbar';
-import CreateFarm from './frontend/farmfeatures/CreateFarm'; //ใช้พิมพ์ใหญ่หรือพิมพ์เล็กเนี่ยน้องมาร์ค farmfeatures
 import NotFound from './frontend/NotFound';
 import Storage from './frontend/Storage';
 import ProductManagement from './frontend/ProductManagement';

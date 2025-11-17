@@ -31,10 +31,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": " react-scripts start",
+    "start": "NODE_OPTIONS=--localstorage-file=/tmp/localstorage.json react-scripts start",
     "dev": "nodemon server.js",
     "build": "NODE_OPTIONS=--localstorage-file=/tmp/localstorage.json react-scripts build",
-    "test": "react-scripts test",
+    "test": "NODE_OPTIONS=--localstorage-file=/tmp/localstorage.json react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
