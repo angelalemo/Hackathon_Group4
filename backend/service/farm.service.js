@@ -52,40 +52,18 @@ class FarmService {
 
   static async getFarmbyFarmID({FID}) {
 
-    const farms = await Farm.findAll({
+    const farms = await Farm.findOne({
       where : { FID: FID },
       include: [
         { model: User, attributes: ["NID", "username", "email", "phoneNumber", "type"] },
         { model: Storage, attributes: ["file", "typeStorage"] },
         { model: Certificate, attributes: ["institution", "file"] },
+        { model: Product, attributes: ["PID", "productName", "category", "saleType", "price", "image"] },
       ],
     });
 
-    if (!farms || farms.length === 0) throw new Error("No farms found");
+    return farms;
 
-    return farms.map((farm) => {
-      const data = farm.toJSON();
-
-      return {
-        ...data,
-
-        // ⚡ storages
-        storages: data.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
-
-        // ⚡ certificates
-        certificates: data.Certificates?.map((c) => ({
-          institution: c.institution,
-          file: c.file,
-        })) || [],
-
-        // ⚡ location จาก Farm model
-        location: {
-          province: data.province,
-          district: data.district,
-          subDistrict: data.subDistrict,
-        },
-      };
-    });
   }
 
   static async getFarmbyNID ({NID}) {
@@ -95,34 +73,11 @@ class FarmService {
         { model: User, attributes: ["NID", "username", "email", "phoneNumber", "type"] },
         { model: Storage, attributes: ["file", "typeStorage"] },
         { model: Certificate, attributes: ["institution", "file"] },
+        { model: Product, attributes: ["PID", "productName", "category", "saleType", "price", "image"] },
       ],
     });
 
-    if (!farms || farms.length === 0) throw new Error("No farms found");
-
-    return farms.map((farm) => {
-      const data = farm.toJSON();
-
-      return {
-        ...data,
-
-        // ⚡ storages
-        storages: data.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
-
-        // ⚡ certificates
-        certificates: data.Certificates?.map((c) => ({
-          institution: c.institution,
-          file: c.file,
-        })) || [],
-
-        // ⚡ location จาก Farm model
-        location: {
-          province: data.province,
-          district: data.district,
-          subDistrict: data.subDistrict,
-        },
-      };
-    });
+    return farms;
   }
 
   static async createFarm(NID, data) {

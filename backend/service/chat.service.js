@@ -1,5 +1,4 @@
 const { Chat, Message, User, Farm } = require("../models");
-const { sendLineMessage } = require("../utils/lineMessaging");
 
 class ChatService {
   // ✅ สร้างห้องแชต
@@ -55,17 +54,11 @@ class ChatService {
       messageText: messageText,
     });
 
-    // ✅ แจ้งเตือนไป LINE ฟาร์มด้วย (optional)
-    const farm = await Farm.findByPk(chat.FID);
-    if (farm?.lineToken && farm?.lineUserId) {
-      const lineMsg = `💬 ข้อความใหม่จาก ${sender.username}: ${text}`;
-      await sendLineMessage(farm.lineToken, farm.lineUserId, lineMsg);
-    }
+
 
     return message;
   }
 
-  // ✅ ลบห้อง
   static async deleteChat(logID) {
     const chat = await Chat.findByPk(logID);
     if (!chat) throw new Error("Chat not found");

@@ -35,8 +35,8 @@ class FarmController {
 
   static async getFarmbyFarmID(req, res) {
   try {
-    const { farmID } = req.params; // ✅ ใช้ params แทน query
-    const farm = await FarmService.getFarmbyFarmID({ farmID }); // ✅ ใช้ farm ตัวเดียว
+    const FID  = req.params;
+    const farm = await FarmService.getFarmbyFarmID( FID ); // ✅ ใช้ farm ตัวเดียว
     if (!farm) {
       return res.status(404).json({ message: "Farm not found" });
     }
