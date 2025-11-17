@@ -219,39 +219,126 @@ POST /users/login
 
 #### Get All Farms
 ```http
-GET /farms
+GET /farms/All
+ได้ทั้งfarm, รูปภาพ/วิดีโอ, ใบรับรอง, product
 ```
 **Response (200 OK):**
 ```json
 [
+    {
+        "FID": 5,
+        "NID": 1,
+        "farmName": "สมบูรณ์ฟาร์ม",
+        "line": "@sombunfarm",
+        "facebook": "facebook.com/sombunfarm",
+        "email": "farm@example.com",
+        "phoneNumber": "0801112222",
+        "description": "ฟาร์มเกษตรอินทรีย์",
+        "lineToken": null,
+        "lineUserId": null,
+        "province": null,
+        "district": null,
+        "subDistrict": null,
+        "location": null,
+        "locationID": null,
+        "User": {
+            "NID": 1,
+            "username": "testuser",
+            "type": "Farmer",
+            "email": "newemail@example.com",
+            "phoneNumber": "0899999999"
+        },
+        "Storages": [
+            {
+                "file": "ตรงนี้จะได้เป็น url หรือ รูปหรือวิดีโอแบบbase 64",
+                "typeStorage": "image หรือ video",
+            }
+        ],
+        "Certificates": [
+            {
+                "institution": "test",
+                "file": "รูปแบบbase 64",
+            }
+        ],
+        "Products":
+        [
+            {
+                "PID": 2,
+                "productName": "มะเขือเทศ",
+                "category": "ผักกินผล",
+                "saleType": "1 กก.",
+                "price": 150,
+                "image": "https://example.com/image.jpg"
+            },
+            {
+                "PID": 1,
+                "productName": "ผัก",
+                "category": "ผักใบเขียว",
+                "saleType": "1 กก.",
+                "price": 50,
+                "image": "https://example.com/image.jpg"
+            },
+        ]
+      },
   {
-    "FID": 1,
-    "farmName": "Green Valley Farm",
-    "description": "Organic vegetable farm",
-    "Location": {
-      "province": "เชียงใหม่",
-      "district": "เมือง",
-      "subDistrict": "สุเทพ"
+      "FID": 6,
+      "NID": 3,
+      ............................   
+]
+```
+```http
+GET /farms/AllwithProducts
+ได้ทั้งfarm, product
+```
+**Response (200 OK):**
+```json
+[
+    {
+        "FID": 6,
+        "NID": 1,
+        "farmName": "Markfarm",
+        "line": "Mark",
+        "facebook": "Mark",
+        "email": "marknarudon@gmail.com",
+        "phoneNumber": "0843677079",
+        "description": "1234",
+        "lineToken": null,
+        "lineUserId": "Uc58b0f5b9789156c962bfb0b9e64f340",
+        "province": "เชียงใหม่",
+        "district": "หางดง",
+        "subDistrict": "สันผักหวาน",
+        "location": null,
+        "locationID": null,
+        "Products": [
+            {
+                "PID": 1,
+                "productName": "ผัก",
+                "category": "ผักใบเขียว",
+                "saleType": "1 กก.",
+                "price": 50,
+                "image": "https://example.com/image.jpg"
+            },
+            {
+                "PID": 2,
+                "productName": "มะเขือเทศ",
+                "category": "ผักกินผล",
+                "saleType": "1 กก.",
+                "price": 150,
+                "image": "https://example.com/image.jpg"
+            }
+        ]
     },
-    "User": {
-      "username": "farmer_john",
-      "email": "john@farm.com"
-    },
-    "storages": ["image:base64...", "video:base64..."],
-    "certificates": [
-      {
-        "institution": "Organic Thailand",
-        "file": "base64..."
-      }
-    ]
-  }
+    {
+        "FID": 2,
+        "NID": 1,
+      ............................   
 ]
 ```
 
 #### Get Farm by ID or User
 ```http
-GET /farms/ID?farmID=1
-GET /farms/ID?userNID=1
+GET /farms/:FID
+GET /farms/
 ```
 
 #### Create Farm
