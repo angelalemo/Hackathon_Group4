@@ -39,16 +39,6 @@ const AddProductPage = ({ className, onSave, onCancel }) => {
 
   return (
     <div className={className}>
-      <div className="header">
-        <div className="logo-container">
-          <Menu size={24} />
-          <span className="logo">Phaktae</span>
-        </div>
-        <div className="header-icons">
-          <Bell size={24} />
-          <div className="profile-box" />
-        </div>
-      </div>
 
       <div className="title-bar" onClick={onCancel}>
         <ChevronLeft size={24} />
@@ -139,10 +129,15 @@ const AddProductPage = ({ className, onSave, onCancel }) => {
 };
 
 export default styled(AddProductPage)`
-  max-width: 448px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   background-color: white;
   min-height: 100vh;
+
+  @media (min-width: 769px) {
+    max-width: 800px;
+  }
 
   .header {
     background-color: white;

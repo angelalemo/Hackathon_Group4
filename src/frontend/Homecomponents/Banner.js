@@ -82,7 +82,7 @@ const BannerCard = styled.div`
 margin-top:20px;
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 100%;
   border-radius: 0px;
   overflow: hidden;
   background: #fff;

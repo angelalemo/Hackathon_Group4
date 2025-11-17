@@ -233,9 +233,18 @@ const Navbar = ({ className, onFilterChange }) => {
 
                   {isFarmer ? (
                     <div className="sidebar-menu">
-                      <Link to="/profile" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}><User size={20} /><span>หน้าโปรไฟล์</span></Link>
-                      <Link to="/chat" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}><MessageSquare size={20} /><span>แชทลูกค้า</span></Link>
-                      <Link to="/inventory" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}><Package size={20} /><span>คลังสินค้า</span></Link>
+                      <Link to="/profile" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                        <User size={20} />
+                        <span>หน้าโปรไฟล์</span>
+                      </Link>
+                      <Link to="/chat" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                        <MessageSquare size={20} />
+                        <span>แชทลูกค้า</span>
+                      </Link>
+                      <Link to="/products" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                        <Package size={20} />
+                        <span>คลังสินค้า</span>
+                      </Link>
                     </div>
                   ) : (
                     <div className="sidebar-menu">

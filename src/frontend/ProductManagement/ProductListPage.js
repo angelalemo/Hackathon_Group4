@@ -6,16 +6,7 @@ import { Menu, Bell, ChevronLeft, Plus } from 'lucide-react';
 const ProductListPage = ({ className, products, onAddProduct, onEditProduct, onDeleteProduct }) => {
   return (
     <div className={className}>
-      <div className="header">
-        <div className="logo-container">
-          <Menu size={24} />
-          <span className="logo">Phaktae</span>
-        </div>
-        <div className="header-icons">
-          <Bell size={24} />
-          <div className="profile-box" />
-        </div>
-      </div>
+
 
       <div className="title-bar">
         <ChevronLeft size={24} />
@@ -64,10 +55,15 @@ const ProductListPage = ({ className, products, onAddProduct, onEditProduct, onD
 };
 
 export default styled(ProductListPage)`
-  max-width: 448px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   background-color: white;
   min-height: 100vh;
+
+  @media (min-width: 769px) {
+    max-width: 1200px;
+  }
 
   .header {
     background-color: white;
@@ -118,8 +114,12 @@ export default styled(ProductListPage)`
   .product-grid {
     padding: 1rem;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   .product-card {
