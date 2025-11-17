@@ -176,6 +176,14 @@ class UserService {
   await user.save();
   return user;
 }
+
+ static async deleteUser(NID) {
+    const user = await User.findByPk(NID);
+    if (!user) throw new Error("User not found");
+
+    await user.destroy();
+    return user;
+  }
 }
 
 module.exports = UserService;
