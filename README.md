@@ -14,6 +14,7 @@ Platform connecting organic farmers directly with consumers, promoting transpare
   - [Installation](#installation)
   - [Running the Application](#running-the-application)
 - [API Documentation](#api-documentation)
+- [API Testing Guide (Postman)](#api-testing-guide-postman)
 - [Database Schema](#database-schema)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
@@ -621,22 +622,30 @@ DELETE /products
 ```
 
 ---
-##### 🧪 API Testing Guide (Postman)
+
+## 🧪 API Testing Guide (Postman)
+
 คู่มือการทดสอบ API ด้วย Postman สำหรับทีมทดสอบ
-การเตรียมพร้อม
 
-ติดตั้ง Postman
-เปิดเซิร์ฟเวอร์ที่ http://localhost:4000
-สร้าง Collection ใหม่ชื่อ "Phaktae API Tests"
+### การเตรียมพร้อม
 
+1. ติดตั้ง [Postman](https://www.postman.com/downloads/)
+2. เปิดเซิร์ฟเวอร์ที่ `http://localhost:4000`
+3. สร้าง Collection ใหม่ชื่อ "Phaktae API Tests"
 
-##### 🧑‍🌾 User Management Tests
-**Test 1: ลงทะเบียนผู้ใช้ใหม่ (Register User)**
-Method: POST
-URL: http://localhost:4000/users/register
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+---
+
+### 🧑‍🌾 User Management Tests
+
+#### Test 1: ลงทะเบียนผู้ใช้ใหม่ (Register User)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/users/register`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
   "username": "farmer_john",
   "password": "securepassword123",
   "type": true,
@@ -645,8 +654,11 @@ json{
   "email": "john@farm.com",
   "phoneNumber": "0812345678"
 }
-Expected Response (201):
-json{
+```
+
+**Expected Response (201):**
+```json
+{
   "NID": 6,
   "username": "farmer_john",
   "password": "$2b$10$7i81VbWxEFhEVTK6MdLVYOVFjM4HY7eYaZBgeQzrl1h1uzMUVX.fa",
@@ -657,25 +669,33 @@ json{
   "phoneNumber": "0812345678",
   "ProfileImage": null
 }
-Test Points:
+```
 
-✅ Status code เป็น 201
-✅ Response มี NID
-✅ type ถูกแปลงเป็น "Farmer"
-✅ password ถูก hash
+**Test Points:**
+- ✅ Status code เป็น 201
+- ✅ Response มี NID
+- ✅ type ถูกแปลงเป็น "Farmer"
+- ✅ password ถูก hash
 
+---
 
-**Test 2: เข้าสู่ระบบ (Login User)**
-Method: POST
-URL: http://localhost:4000/users/login
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+#### Test 2: เข้าสู่ระบบ (Login User)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/users/login`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
   "username": "farmer_john",
   "password": "securepassword123"
 }
-Expected Response (200):
-json{
+```
+
+**Expected Response (200):**
+```json
+{
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "NID": 6,
   "username": "farmer_john",
@@ -687,19 +707,24 @@ json{
   "FID": null,
   "farmName": null
 }
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ Response มี token
-✅ ข้อมูล user ถูกต้อง
-💾 บันทึก token และ NID ไว้ใช้ในการทดสอบต่อไป
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ Response มี token
+- ✅ ข้อมูล user ถูกต้อง
+- 💾 **บันทึก token และ NID ไว้ใช้ในการทดสอบต่อไป**
 
+---
 
-**Test 3: ดูข้อมูลผู้ใช้ทั้งหมด (Get All Users)**
-Method: GET
-URL: http://localhost:4000/users/All
-Expected Response (200):
-json[
+#### Test 3: ดูข้อมูลผู้ใช้ทั้งหมด (Get All Users)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/users/All`
+
+**Expected Response (200):**
+```json
+[
   {
     "NID": 1,
     "username": "yaya_updated",
@@ -709,18 +734,23 @@ json[
     "ProfileImage": null
   }
 ]
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ Response เป็น array
-✅ แต่ละ user มี NID, username, type
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ Response เป็น array
+- ✅ แต่ละ user มี NID, username, type
 
+---
 
-**Test 4: ดูข้อมูลผู้ใช้ตาม ID (Get User by ID)**
-Method: GET
-URL: http://localhost:4000/users/3
-Expected Response (200):
-json{
+#### Test 4: ดูข้อมูลผู้ใช้ตาม ID (Get User by ID)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/users/3`
+
+**Expected Response (200):**
+```json
+{
   "NID": 3,
   "username": "Farmer stam",
   "type": "Farmer",
@@ -731,43 +761,57 @@ json{
   "ProfileImage": null,
   "Farms": []
 }
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ NID ตรงกับที่ร้องขอ
-✅ มี Farms array
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ NID ตรงกับที่ร้องขอ
+- ✅ มี Farms array
 
+---
 
-**Test 5: อัพเดทข้อมูลผู้ใช้ (Update User)**
-Method: PUT
-URL: http://localhost:4000/users/update/6
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+#### Test 5: อัพเดทข้อมูลผู้ใช้ (Update User)
+
+**Method:** `PUT`  
+**URL:** `http://localhost:4000/users/update/6`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
   "username": "farmer_john_updated",
   "phoneNumber": "0887777777"
 }
-Expected Response (200):
-json{
+```
+
+**Expected Response (200):**
+```json
+{
   "NID": 6,
   "username": "farmer_john_updated",
   "phoneNumber": "0887777777",
   "type": "Farmer",
   "email": "john@farm.com"
 }
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ ข้อมูลที่ส่งไปถูกอัพเดท
-✅ ข้อมูลอื่นๆ ไม่เปลี่ยนแปลง
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ ข้อมูลที่ส่งไปถูกอัพเดท
+- ✅ ข้อมูลอื่นๆ ไม่เปลี่ยนแปลง
 
+---
 
-#### 🚜 Farm Management Tests
-**Test 6: ดูฟาร์มทั้งหมดแบบเต็ม (Get All Farms - Full)**
-Method: GET
-URL: http://localhost:4000/farms/All
-Expected Response (200):
-json[
+### 🚜 Farm Management Tests
+
+#### Test 6: ดูฟาร์มทั้งหมดแบบเต็ม (Get All Farms - Full)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/All`
+
+**Expected Response (200):**
+```json
+[
   {
     "FID": 5,
     "NID": 1,
@@ -787,18 +831,23 @@ json[
     "Products": []
   }
 ]
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ มี User, Storages, Certificates, Products
-✅ Response เป็น array
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ มี User, Storages, Certificates, Products
+- ✅ Response เป็น array
 
+---
 
-**Test 7: ดูฟาร์มทั้งหมดพร้อมสินค้า (Get All Farms with Products)**
-Method: GET
-URL: http://localhost:4000/farms/AllwithProducts
-Expected Response (200):
-json[
+#### Test 7: ดูฟาร์มทั้งหมดพร้อมสินค้า (Get All Farms with Products)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/AllwithProducts`
+
+**Expected Response (200):**
+```json
+[
   {
     "FID": 6,
     "farmName": "Markfarm",
@@ -812,18 +861,23 @@ json[
     ]
   }
 ]
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ มี Products array
-✅ ไม่มี Storages และ Certificates
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ มี Products array
+- ✅ ไม่มี Storages และ Certificates
 
+---
 
-**Test 8: ดูฟาร์มตาม ID (Get Farm by ID)**
-Method: GET
-URL: http://localhost:4000/farms/3
-Expected Response (200):
-json{
+#### Test 8: ดูฟาร์มตาม ID (Get Farm by ID)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/3`
+
+**Expected Response (200):**
+```json
+{
   "FID": 3,
   "farmName": "สมบูรณ์ฟาร์ม",
   "User": {
@@ -834,36 +888,46 @@ json{
   "Certificates": [],
   "Products": []
 }
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ FID ตรงกับที่ร้องขอ
-✅ มีข้อมูลครบถ้วน
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ FID ตรงกับที่ร้องขอ
+- ✅ มีข้อมูลครบถ้วน
 
+---
 
-**Test 9: ดูฟาร์มตามเจ้าของ (Get Farm by User)**
-Method: GET
-URL: http://localhost:4000/farms/user/1
-Expected Response (200):
-json[
+#### Test 9: ดูฟาร์มตามเจ้าของ (Get Farm by User)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/user/1`
+
+**Expected Response (200):**
+```json
+[
   {
     "FID": 3,
     "NID": 1,
     "farmName": "สมบูรณ์ฟาร์ม"
   }
 ]
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ NID ของฟาร์มตรงกับที่ร้องขอ
-✅ Response เป็น array
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ NID ของฟาร์มตรงกับที่ร้องขอ
+- ✅ Response เป็น array
 
+---
 
-**Test 10: ดูสินค้าของฟาร์ม (Get Farm Products)**
-Method: GET
-URL: http://localhost:4000/farms/3/products
-Expected Response (200):
-json{
+#### Test 10: ดูสินค้าของฟาร์ม (Get Farm Products)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/3/products`
+
+**Expected Response (200):**
+```json
+{
   "FID": 3,
   "farmName": "สมบูรณ์ฟาร์ม",
   "Products": [
@@ -874,19 +938,24 @@ json{
     }
   ]
 }
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ มี Products array
-✅ ไม่มีข้อมูลอื่นๆ นอกจากฟาร์มและสินค้า
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ มี Products array
+- ✅ ไม่มีข้อมูลอื่นๆ นอกจากฟาร์มและสินค้า
 
+---
 
-**Test 11: สร้างฟาร์มใหม่ (Create Farm)**
-Method: POST
-URL: http://localhost:4000/farms/create
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+#### Test 11: สร้างฟาร์มใหม่ (Create Farm)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/farms/create`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
   "NID": 1,
   "farmName": "Green Valley Farm",
   "line": "@greenfarm",
@@ -911,8 +980,11 @@ json{
     }
   ]
 }
-Expected Response (201):
-json{
+```
+
+**Expected Response (201):**
+```json
+{
   "message": "Farm created successfully",
   "farm": {
     "FID": 8,
@@ -921,20 +993,25 @@ json{
     "province": "เชียงใหม่"
   }
 }
-Test Points:
+```
 
-✅ Status code เป็น 201
-✅ Response มี FID ใหม่
-✅ เฉพาะ Farmer เท่านั้นที่สร้างได้
-💾 บันทึก FID ไว้ใช้ในการทดสอบต่อไป
+**Test Points:**
+- ✅ Status code เป็น 201
+- ✅ Response มี FID ใหม่
+- ✅ เฉพาะ Farmer เท่านั้นที่สร้างได้
+- 💾 **บันทึก FID ไว้ใช้ในการทดสอบต่อไป**
 
+---
 
-**Test 12: อัพเดทข้อมูลฟาร์ม (Update Farm)**
-Method: PUT
-URL: http://localhost:4000/farms/updateInfo
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+#### Test 12: อัพเดทข้อมูลฟาร์ม (Update Farm)
+
+**Method:** `PUT`  
+**URL:** `http://localhost:4000/farms/updateInfo`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
   "NID": 1,
   "FID": 8,
   "farmName": "Updated Farm Name",
@@ -942,9 +1019,11 @@ json{
   "phoneNumber": "0801112222",
   "province": "กรุงเทพมหานคร"
 }
+```
 
-Expected Response (200):
-json{
+**Expected Response (200):**
+```json
+{
   "message": "Farm updated successfully",
   "farm": {
     "FID": 8,
@@ -952,22 +1031,24 @@ json{
     "description": "คำอธิบายฟาร์มใหม่ที่อัพเดทแล้ว"
   }
 }
+```
 
-Test Points:
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ ข้อมูลที่ส่งไปถูกอัพเดท
+- ✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่แก้ไขได้
 
-✅ Status code เป็น 200
-✅ ข้อมูลที่ส่งไปถูกอัพเดท
-✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่แก้ไขได้
+---
 
+#### Test 13: เพิ่มรูปภาพ/วิดีโอในฟาร์ม (Add Farm Storage)
 
+**Method:** `PUT`  
+**URL:** `http://localhost:4000/farms/addStorage`  
+**Headers:** `Content-Type: application/json`
 
-
-**Test 13: เพิ่มรูปภาพ/วิดีโอในฟาร์ม (Add Farm Storage)**
-Method: PUT
-URL: http://localhost:4000/farms/addStorage
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+**Body (raw JSON):**
+```json
+{
   "NID": 1,
   "FID": 8,
   "storages": [
@@ -981,8 +1062,11 @@ json{
     }
   ]
 }
-Expected Response (200):
-json{
+```
+
+**Expected Response (200):**
+```json
+{
   "message": "Farm image added successfully",
   "farm": [
     {
@@ -999,44 +1083,58 @@ json{
     }
   ]
 }
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ สามารถเพิ่มหลายรูปพร้อมกันได้
-✅ แต่ละรูปมี id และ typeStorage
-💾 บันทึก storage id ไว้ใช้ทดสอบการลบ
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ สามารถเพิ่มหลายรูปพร้อมกันได้
+- ✅ แต่ละรูปมี id และ typeStorage
+- 💾 **บันทึก storage id ไว้ใช้ทดสอบการลบ**
 
+---
 
-**Test 14: ลบรูปภาพ/วิดีโอในฟาร์ม (Delete Farm Storage)**
-Method: PUT
-URL: http://localhost:4000/farms/deleteStorage
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+#### Test 14: ลบรูปภาพ/วิดีโอในฟาร์ม (Delete Farm Storage)
+
+**Method:** `PUT`  
+**URL:** `http://localhost:4000/farms/deleteStorage`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
   "NID": 1,
   "FID": 8,
   "storagesID": 3
 }
-Expected Response (200):
-json{
+```
+
+**Expected Response (200):**
+```json
+{
   "message": "Farm image deleted successfully",
   "farm": {
     "message": "Storage deleted successfully"
   }
 }
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ รูปที่ระบุถูกลบ
-✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่ลบได้
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ รูปที่ระบุถูกลบ
+- ✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่ลบได้
 
+---
 
-🛒 Product Management Tests
-**Test 15: ดูสินค้าทั้งหมด (Get All Products)**
-Method: GET
-URL: http://localhost:4000/products/All
-Expected Response (200):
-json[
+### 🛒 Product Management Tests
+
+#### Test 15: ดูสินค้าทั้งหมด (Get All Products)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/products/All`
+
+**Expected Response (200):**
+```json
+[
   {
     "PID": 1,
     "FID": 1,
@@ -1056,18 +1154,23 @@ json[
     "image": "https://example.com/cabbage.jpg"
   }
 ]
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ Response เป็น array
-✅ แต่ละสินค้ามี PID, FID, productName, price
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ Response เป็น array
+- ✅ แต่ละสินค้ามี PID, FID, productName, price
 
+---
 
-**Test 16: ดูสินค้าตามฟาร์ม (Get Products by Farm)**
-Method: GET
-URL: http://localhost:4000/products/farms/1
-Expected Response (200):
-json[
+#### Test 16: ดูสินค้าตามฟาร์ม (Get Products by Farm)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/products/farms/1`
+
+**Expected Response (200):**
+```json
+[
   {
     "PID": 1,
     "FID": 1,
@@ -1076,18 +1179,23 @@ json[
     "price": 30
   }
 ]
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ สินค้าทั้งหมดมี FID เท่ากับ 1
-✅ Response เป็น array
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ สินค้าทั้งหมดมี FID เท่ากับ 1
+- ✅ Response เป็น array
 
+---
 
-**Test 17: ดูสินค้าตาม ID (Get Product by ID)**
-Method: GET
-URL: http://localhost:4000/products/2
-Expected Response (200):
-json{
+#### Test 17: ดูสินค้าตาม ID (Get Product by ID)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/products/2`
+
+**Expected Response (200):**
+```json
+{
   "PID": 2,
   "FID": 1,
   "productName": "Organic Cabbage",
@@ -1096,19 +1204,24 @@ json{
   "price": 60,
   "image": "https://example.com/cabbage.jpg"
 }
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ PID ตรงกับที่ร้องขอ
-✅ มีข้อมูลครบถ้วน
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ PID ตรงกับที่ร้องขอ
+- ✅ มีข้อมูลครบถ้วน
 
+---
 
-**Test 18: สร้างสินค้าใหม่ (Create Product)**
-Method: POST
-URL: http://localhost:4000/products/create
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+#### Test 18: สร้างสินค้าใหม่ (Create Product)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/products/create`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
   "NID": 1,
   "FID": 8,
   "productName": "มะเขือเทศอินทรีย์",
@@ -1117,8 +1230,11 @@ json{
   "price": 80,
   "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD"
 }
-Expected Response (201):
-json{
+```
+
+**Expected Response (201):**
+```json
+{
   "message": "Product created successfully",
   "product": {
     "PID": 4,
@@ -1130,27 +1246,35 @@ json{
     "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD"
   }
 }
-Test Points:
+```
 
-✅ Status code เป็น 201
-✅ Response มี PID ใหม่
-✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่สร้างได้
-💾 บันทึก PID ไว้ใช้ในการทดสอบต่อไป
+**Test Points:**
+- ✅ Status code เป็น 201
+- ✅ Response มี PID ใหม่
+- ✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่สร้างได้
+- 💾 **บันทึก PID ไว้ใช้ในการทดสอบต่อไป**
 
+---
 
-**Test 19: อัพเดทสินค้า (Update Product)**
-Method: PUT
-URL: http://localhost:4000/products/update
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+#### Test 19: อัพเดทสินค้า (Update Product)
+
+**Method:** `PUT`  
+**URL:** `http://localhost:4000/products/update`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
   "NID": 1,
   "PID": 4,
   "productName": "มะเขือเทศอินทรีย์ Grade A",
   "price": 90
 }
-Expected Response (200):
-json{
+```
+
+**Expected Response (200):**
+```json
+{
   "message": "Product updated successfully",
   "product": {
     "PID": 4,
@@ -1160,45 +1284,62 @@ json{
     "price": 90
   }
 }
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ ข้อมูลที่ส่งไปถูกอัพเดท
-✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่แก้ไขได้
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ ข้อมูลที่ส่งไปถูกอัพเดท
+- ✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่แก้ไขได้
 
+---
 
-**Test 20: ลบสินค้า (Delete Product)**
-Method: DELETE
-URL: http://localhost:4000/products/delete
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+#### Test 20: ลบสินค้า (Delete Product)
+
+**Method:** `DELETE`  
+**URL:** `http://localhost:4000/products/delete`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
   "NID": 1,
   "PID": 4
 }
-Expected Response (200):
-json{
+```
+
+**Expected Response (200):**
+```json
+{
   "message": "Product 4 deleted successfully"
 }
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ สินค้าถูกลบจากระบบ
-✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่ลบได้
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ สินค้าถูกลบจากระบบ
+- ✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่ลบได้
 
+---
 
-💬 Chat Management Tests
-Test 21: สร้างห้องแชท (Create Chat)
-Method: POST
-URL: http://localhost:4000/chats/create
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+### 💬 Chat Management Tests
+
+#### Test 21: สร้างห้องแชท (Create Chat)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/chats/create`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
   "NID": 1,
   "FID": 5
 }
-Expected Response (201):
-json{
+```
+
+**Expected Response (201):**
+```json
+{
   "message": "Chat created",
   "chat": {
     "logID": 1,
@@ -1206,19 +1347,24 @@ json{
     "FID": 5
   }
 }
-Test Points:
+```
 
-✅ Status code เป็น 201
-✅ Response มี logID ใหม่
-✅ มีการเชื่อมโยงระหว่าง User และ Farm
-💾 บันทึก logID ไว้ใช้ในการทดสอบต่อไป
+**Test Points:**
+- ✅ Status code เป็น 201
+- ✅ Response มี logID ใหม่
+- ✅ มีการเชื่อมโยงระหว่าง User และ Farm
+- 💾 **บันทึก logID ไว้ใช้ในการทดสอบต่อไป**
 
+---
 
-Test 22: ดูห้องแชททั้งหมดของผู้ใช้ (Get Chats by User)
-Method: GET
-URL: http://localhost:4000/chats/user/1
-Expected Response (200):
-json[
+#### Test 22: ดูห้องแชททั้งหมดของผู้ใช้ (Get Chats by User)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/chats/user/1`
+
+**Expected Response (200):**
+```json
+[
   {
     "logID": 1,
     "NID": 1,
@@ -1229,25 +1375,33 @@ json[
     }
   }
 ]
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ Response เป็น array
-✅ แต่ละห้องมีข้อมูลฟาร์มที่เกี่ยวข้อง
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ Response เป็น array
+- ✅ แต่ละห้องมีข้อมูลฟาร์มที่เกี่ยวข้อง
 
+---
 
-Test 23: ส่งข้อความ (Send Message)
-Method: POST
-URL: http://localhost:4000/chats/message
-Headers: Content-Type: application/json
-Body (raw JSON):
-json{
+#### Test 23: ส่งข้อความ (Send Message)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/chats/message`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
   "logID": 1,
   "senderNID": 1,
   "messageText": "สวัสดีครับ สนใจสินค้าของฟาร์มครับ"
 }
-Expected Response (201):
-json{
+```
+
+**Expected Response (201):**
+```json
+{
   "message": "Message sent",
   "data": {
     "timestamp": "2025-11-17T08:48:22.208Z",
@@ -1257,18 +1411,23 @@ json{
     "messageText": "สวัสดีครับ สนใจสินค้าของฟาร์มครับ"
   }
 }
-Test Points:
+```
 
-✅ Status code เป็น 201
-✅ Response มี messageID และ timestamp
-✅ ข้อความถูกบันทึกในห้องแชทที่ถูกต้อง
+**Test Points:**
+- ✅ Status code เป็น 201
+- ✅ Response มี messageID และ timestamp
+- ✅ ข้อความถูกบันทึกในห้องแชทที่ถูกต้อง
 
+---
 
-Test 24: ดูข้อความทั้งหมดในห้องแชท (Get Messages)
-Method: GET
-URL: http://localhost:4000/chats/room/1/messages
-Expected Response (200):
-json[
+#### Test 24: ดูข้อความทั้งหมดในห้องแชท (Get Messages)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/chats/room/1/messages`
+
+**Expected Response (200):**
+```json
+[
   {
     "messageID": 1,
     "logID": 1,
@@ -1280,178 +1439,220 @@ json[
     }
   }
 ]
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ ข้อความเรียงตามเวลา
-✅ แต่ละข้อความมีข้อมูลผู้ส่ง
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ ข้อความเรียงตามเวลา
+- ✅ แต่ละข้อความมีข้อมูลผู้ส่ง
 
+---
 
-Test 25: ลบห้องแชท (Delete Chat)
-Method: DELETE
-URL: http://localhost:4000/chats/room/1
-Expected Response (200):
-json{
+#### Test 25: ลบห้องแชท (Delete Chat)
+
+**Method:** `DELETE`  
+**URL:** `http://localhost:4000/chats/room/1`
+
+**Expected Response (200):**
+```json
+{
   "message": "Chat 1 deleted"
 }
-Test Points:
+```
 
-✅ Status code เป็น 200
-✅ ห้องแชทถูกลบจากระบบ
-✅ ข้อความทั้งหมดในห้องถูกลบด้วย
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ ห้องแชทถูกลบจากระบบ
+- ✅ ข้อความทั้งหมดในห้องถูกลบด้วย
 
+---
 
-🔍 การทดสอบ Error Cases
-Test 26: ลงทะเบียนด้วย Username ซ้ำ
-Method: POST
-URL: http://localhost:4000/users/register
-Body:
-json{
+### 🔍 การทดสอบ Error Cases
+
+#### Test 26: ลงทะเบียนด้วย Username ซ้ำ
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/users/register`
+
+**Body:**
+```json
+{
   "username": "farmer_john",
   "password": "password123",
   "type": true
 }
-Expected Response (400):
-json{
+```
+
+**Expected Response (400):**
+```json
+{
   "error": "Username already exists"
 }
-Test Points:
+```
 
-✅ Status code เป็น 400
-✅ Error message ชัดเจน
+**Test Points:**
+- ✅ Status code เป็น 400
+- ✅ Error message ชัดเจน
 
+---
 
-Test 27: เข้าสู่ระบบด้วยรหัสผ่านผิด
-Method: POST
-URL: http://localhost:4000/users/login
-Body:
-json{
+#### Test 27: เข้าสู่ระบบด้วยรหัสผ่านผิด
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/users/login`
+
+**Body:**
+```json
+{
   "username": "farmer_john",
   "password": "wrongpassword"
 }
-Expected Response (401):
-json{
+```
+
+**Expected Response (401):**
+```json
+{
   "error": "Invalid password"
 }
-Test Points:
+```
 
-✅ Status code เป็น 401
-✅ ไม่มี token ถูกส่งกลับ
+**Test Points:**
+- ✅ Status code เป็น 401
+- ✅ ไม่มี token ถูกส่งกลับ
 
+---
 
-Test 28: สร้างฟาร์มโดย Customer
-Method: POST
-URL: http://localhost:4000/farms/create
-Body:
-json{
+#### Test 28: สร้างฟาร์มโดย Customer
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/farms/create`
+
+**Body:**
+```json
+{
   "NID": 6,
   "farmName": "Test Farm"
 }
-หมายเหตุ: NID 6 เป็น Customer
-Expected Response (400):
-json{
+```
+
+**หมายเหตุ:** NID 6 เป็น Customer
+
+**Expected Response (400):**
+```json
+{
   "error": "Permission denied: Only farmers can create farms"
 }
-Test Points:
+```
 
-✅ Status code เป็น 400 หรือ 403
-✅ ระบบตรวจสอบ permission
+**Test Points:**
+- ✅ Status code เป็น 400 หรือ 403
+- ✅ ระบบตรวจสอบ permission
 
+---
 
-Test 29: สร้างสินค้าในฟาร์มที่ไม่ใช่เจ้าของ
-Method: POST
-URL: http://localhost:4000/products/create
-Body:
-json{
+#### Test 29: สร้างสินค้าในฟาร์มที่ไม่ใช่เจ้าของ
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/products/create`
+
+**Body:**
+```json
+{
   "NID": 2,
   "FID": 1,
   "productName": "Test Product",
   "price": 100
 }
-หมายเหตุ: NID 2 ไม่ใช่เจ้าของ FID 1
-Expected Response (400):
-json{
+```
+
+**หมายเหตุ:** NID 2 ไม่ใช่เจ้าของ FID 1
+
+**Expected Response (400):**
+```json
+{
   "error": "Permission denied: You don't own this farm"
 }
-Test Points:
+```
 
-✅ Status code เป็น 400 หรือ 403
-✅ ระบบตรวจสอบความเป็นเจ้าของ
+**Test Points:**
+- ✅ Status code เป็น 400 หรือ 403
+- ✅ ระบบตรวจสอบความเป็นเจ้าของ
 
+---
 
-Test 30: ดูฟาร์มที่ไม่มีอยู่
-Method: GET
-URL: http://localhost:4000/farms/99999
-Expected Response (404):
-json{
+#### Test 30: ดูฟาร์มที่ไม่มีอยู่
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/99999`
+
+**Expected Response (404):**
+```json
+{
   "error": "Farm not found"
 }
-Test Points:
+```
 
-✅ Status code เป็น 404
-✅ Error message ชัดเจน
+**Test Points:**
+- ✅ Status code เป็น 404
+- ✅ Error message ชัดเจน
 
+---
 
-📊 Test Summary Checklist
-User Management (5 tests)
+### 📊 Test Summary Checklist
 
- 🔘ลงทะเบียนผู้ใช้ใหม่
- 🔘เข้าสู่ระบบ
- 🔘ดูข้อมูลผู้ใช้ทั้งหมด
- 🔘ดูข้อมูลผู้ใช้ตาม ID
- 🔘อัพเดทข้อมูลผู้ใช้
+#### User Management (5 tests)
+- [ ] ลงทะเบียนผู้ใช้ใหม่
+- [ ] เข้าสู่ระบบ
+- [ ] ดูข้อมูลผู้ใช้ทั้งหมด
+- [ ] ดูข้อมูลผู้ใช้ตาม ID
+- [ ] อัพเดทข้อมูลผู้ใช้
 
-Farm Management (9 tests)
+#### Farm Management (9 tests)
+- [ ] ดูฟาร์มทั้งหมดแบบเต็ม
+- [ ] ดูฟาร์มทั้งหมดพร้อมสินค้า
+- [ ] ดูฟาร์มตาม ID
+- [ ] ดูฟาร์มตามเจ้าของ
+- [ ] ดูสินค้าของฟาร์ม
+- [ ] สร้างฟาร์มใหม่
+- [ ] อัพเดทข้อมูลฟาร์ม
+- [ ] เพิ่มรูปภาพ/วิดีโอ
+- [ ] ลบรูปภาพ/วิดีโอ
 
- 🔘ดูฟาร์มทั้งหมดแบบเต็ม
- 🔘ดูฟาร์มทั้งหมดพร้อมสินค้า
- 🔘ดูฟาร์มตาม ID
- 🔘ดูฟาร์มตามเจ้าของ
- 🔘ดูสินค้าของฟาร์ม
- 🔘สร้างฟาร์มใหม่
- 🔘อัพเดทข้อมูลฟาร์ม
- 🔘เพิ่มรูปภาพ/วิดีโอ
- 🔘ลบรูปภาพ/วิดีโอ
+#### Product Management (6 tests)
+- [ ] ดูสินค้าทั้งหมด
+- [ ] ดูสินค้าตามฟาร์ม
+- [ ] ดูสินค้าตาม ID
+- [ ] สร้างสินค้าใหม่
+- [ ] อัพเดทสินค้า
+- [ ] ลบสินค้า
 
-Product Management (6 tests)
+#### Chat Management (5 tests)
+- [ ] สร้างห้องแชท
+- [ ] ดูห้องแชททั้งหมดของผู้ใช้
+- [ ] ส่งข้อความ
+- [ ] ดูข้อความทั้งหมดในห้องแชท
+- [ ] ลบห้องแชท
 
- 🔘ดูสินค้าทั้งหมด
- 🔘ดูสินค้าตามฟาร์ม
- 🔘ดูสินค้าตาม ID
- 🔘สร้างสินค้าใหม่
- 🔘อัพเดทสินค้า
- 🔘ลบสินค้า
+#### Error Cases (5 tests)
+- [ ] ลงทะเบียนด้วย Username ซ้ำ
+- [ ] เข้าสู่ระบบด้วยรหัสผ่านผิด
+- [ ] สร้างฟาร์มโดย Customer
+- [ ] สร้างสินค้าในฟาร์มที่ไม่ใช่เจ้าของ
+- [ ] ดูฟาร์มที่ไม่มีอยู่
 
-Chat Management (5 tests)
+**รวมทั้งหมด: 30 tests**
 
- สร้างห้องแชท
- ดูห้องแชททั้งหมดของผู้ใช้
- ส่งข้อความ
- ดูข้อความทั้งหมดในห้องแชท
- ลบห้องแชท
+---
 
-Error Cases (5 tests)
+### 💡 Tips สำหรับการทดสอบ
 
- 🔘ลงทะเบียนด้วย Username ซ้ำ
- 🔘เข้าสู่ระบบด้วยรหัสผ่านผิด
- 🔘สร้างฟาร์มโดย Customer
- 🔘สร้างสินค้าในฟาร์มที่ไม่ใช่เจ้าของ
- 🔘ดูฟาร์มที่ไม่มีอยู่
+1. **ใช้ Postman Environment Variables:**
+   - สร้างตัวแปรสำหรับ `base_url`, `token`, `NID`, `FID`, `PID`
+   - จะช่วยให้เปลี่ยน endpoint ได้ง่าย
 
-รวมทั้งหมด: 30 tests
-
-
-#### 💡 Tips สำหรับการทดสอบ
-
-ใช้ Postman Environment Variables:
-
-สร้างตัวแปรสำหรับ base_url, token, NID, FID, PID
-จะช่วยให้เปลี่ยน endpoint ได้ง่าย
-
-
-ใช้ Postman Tests Scripts:
-
-javascript   // ตัวอย่างการบันทึก token
+2. **ใช้ Postman Tests Scripts:**
+   ```javascript
+   // ตัวอย่างการบันทึก token
    pm.test("Status code is 200", function () {
        pm.response.to.have.status(200);
    });
@@ -1459,20 +1660,20 @@ javascript   // ตัวอย่างการบันทึก token
    var jsonData = pm.response.json();
    pm.environment.set("token", jsonData.token);
    pm.environment.set("NID", jsonData.NID);
+   ```
 
-ทดสอบตามลำดับ:
+3. **ทดสอบตามลำดับ:**
+   - เริ่มจาก User Management
+   - จากนั้น Farm Management
+   - ตามด้วย Product Management
+   - สุดท้าย Chat Management
 
-เริ่มจาก User Management
-จากนั้น Farm Management
-ตามด้วย Product Management
-สุดท้าย Chat Management
+4. **บันทึกผลการทดสอบ:**
+   - สร้างเอกสาร Test Report
+   - บันทึก bugs ที่พบ
+   - รวบรวม screenshots
 
-
-บันทึกผลการทดสอบ:
-
-สร้างเอกสาร Test Report
-บันทึก bugs ที่พบ
-รวบรวม screenshots
+---
 
 ## 🗄 Database Schema
 
@@ -1683,4 +1884,4 @@ For support, please open an issue in the GitHub repository.
 
 - Organic farming communities in Thailand
 - Open source libraries and frameworks used in this project
-- Hackathon organizers and mentors
+- Hackathon organizers and mentorsvvvvvv
