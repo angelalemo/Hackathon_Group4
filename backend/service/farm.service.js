@@ -1,4 +1,4 @@
-const { Farm, User, Storage, Certificate } = require("../models");
+const { Farm, User, Storage, Product, Certificate } = require("../models");
 const fs = require("fs");
 const path = require("path");
 
@@ -21,10 +21,7 @@ class FarmService {
   static async getAllFarmsWithProducts() {
     const farms = await Farm.findAll({
       include: [
-        {
-          model: Product,
-          as: "Products",
-        },
+        { model: Product, attributes: ["PID", "productName", "category", "saleType", "price", "image"] },
       ],
     });
     return farms;
@@ -36,6 +33,7 @@ class FarmService {
         { model: User, attributes: ["NID", "username", "type", "email", "phoneNumber"] },
         { model: Storage, attributes: ["file", "typeStorage"] },
         { model: Certificate, attributes: ["institution", "file"] },
+        { model: Product, attributes: ["PID", "productName", "category", "saleType", "price", "image"] },
       ],
     });
 
@@ -43,23 +41,7 @@ class FarmService {
       const data = farm.toJSON();
 
       return {
-        ...data,
-
-        // ⚡ storages
-        storages: data.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
-
-        // ⚡ certificates
-        certificates: data.Certificates?.map((c) => ({
-          institution: c.institution,
-          file: c.file,
-        })) || [],
-
-        // ⚡ location fields (ดึงจาก Farm โดยตรง)
-        location: {
-          province: data.province,
-          district: data.district,
-          subDistrict: data.subDistrict,
-        },
+        ...data
       };
     });
 
@@ -70,77 +52,32 @@ class FarmService {
 
   static async getFarmbyFarmID({FID}) {
 
-    const farms = await Farm.findAll({
+    const farms = await Farm.findOne({
       where : { FID: FID },
       include: [
         { model: User, attributes: ["NID", "username", "email", "phoneNumber", "type"] },
         { model: Storage, attributes: ["file", "typeStorage"] },
         { model: Certificate, attributes: ["institution", "file"] },
+        { model: Product, attributes: ["PID", "productName", "category", "saleType", "price", "image"] },
       ],
     });
 
-    if (!farms || farms.length === 0) throw new Error("No farms found");
+    return farms;
 
-    return farms.map((farm) => {
-      const data = farm.toJSON();
-
-      return {
-        ...data,
-
-        // ⚡ storages
-        storages: data.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
-
-        // ⚡ certificates
-        certificates: data.Certificates?.map((c) => ({
-          institution: c.institution,
-          file: c.file,
-        })) || [],
-
-        // ⚡ location จาก Farm model
-        location: {
-          province: data.province,
-          district: data.district,
-          subDistrict: data.subDistrict,
-        },
-      };
-    });
   }
 
   static async getFarmbyNID ({NID}) {
-    const farms = await Farm.findAll({
+    const farms = await Farm.findOne({
       where: { NID },
       include: [
         { model: User, attributes: ["NID", "username", "email", "phoneNumber", "type"] },
         { model: Storage, attributes: ["file", "typeStorage"] },
         { model: Certificate, attributes: ["institution", "file"] },
+        { model: Product, attributes: ["PID", "productName", "category", "saleType", "price", "image"] },
       ],
     });
 
-    if (!farms || farms.length === 0) throw new Error("No farms found");
-
-    return farms.map((farm) => {
-      const data = farm.toJSON();
-
-      return {
-        ...data,
-
-        // ⚡ storages
-        storages: data.Storages?.map((s) => `${s.typeStorage}:${s.file}`) || [],
-
-        // ⚡ certificates
-        certificates: data.Certificates?.map((c) => ({
-          institution: c.institution,
-          file: c.file,
-        })) || [],
-
-        // ⚡ location จาก Farm model
-        location: {
-          province: data.province,
-          district: data.district,
-          subDistrict: data.subDistrict,
-        },
-      };
-    });
+    return farms;
   }
 
   static async createFarm(NID, data) {
@@ -164,6 +101,7 @@ class FarmService {
       subDistrict: data.subDistrict,
       location: data.location,
     });
+
 
     // 🟩 จัดการ Storage (ภาพ/วิดีโอหลายไฟล์)
     if (Array.isArray(data.storages)) {

@@ -1,5 +1,5 @@
 const express = require("express");
-const { User } = require("../models");
+const { User, Farm } = require("../models");
 const bcrypt = require("bcrypt");
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
@@ -15,7 +15,9 @@ class UserService {
   }
 
   static async getUserById(NID) {
-    const user = await User.findByPk(NID);
+    const user = await User.findByPk(NID, {
+      include: [{ model: Farm }]
+    });
     return user;
   }
 
@@ -46,19 +48,46 @@ class UserService {
     return newUser;
   }
 
-  // backend/service/user.service.js
   static async loginUser(username, password) {
-    const user = await User.findOne({ where: { username } });
+    const user = await User.findOne({ 
+      where: { username },
+      include: [{ 
+        model: Farm, 
+        attributes: ['FID', 'farmName'],
+        required: false
+      }]
+    });
+    
     if (!user) throw new Error("User not found");
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new Error("Invalid password");
 
-    // เพิ่ม JWT Token
-    const token = jwt.sign({ id: user.NID }, "your_secret_key", {
-      expiresIn: "7d",
-    });
-    return { user, token };
+    const token = jwt.sign(
+      { id: user.NID, type: user.type }, 
+      "your_secret_key", 
+      { expiresIn: "7d" }
+    );
+
+    console.log("=== LOGIN USER DATA ===");
+    console.log("NID:", user.NID);
+    console.log("Type:", user.type);
+    console.log("Farms:", user.Farms);
+    console.log("FID:", user.Farms?.[0]?.FID);
+
+
+    return {
+      token,
+      NID: user.NID,
+      username: user.username,
+      type: user.type,
+      phoneNumber: user.phoneNumber,
+      email: user.email,
+      line: user.line,
+      facebook: user.facebook,
+      FID: user.Farms?.[0]?.FID || null,
+      farmName: user.Farms?.[0]?.farmName || null
+    };
   }
 
   static async updateUser(NID, data) {
@@ -74,20 +103,23 @@ class UserService {
   }
 
   static async registerOrLoginWithLine(accessToken, type) {
-    // ดึงข้อมูลโปรไฟล์จาก LINE API
     const response = await axios.get("https://api.line.me/v2/profile", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
     const { userId, displayName, pictureUrl } = response.data;
-
     const usertype = type === true ? "Farmer" : "Customer";
 
-    // ตรวจสอบว่าผู้ใช้อยู่ในระบบหรือยัง
-    let user = await User.findOne({ where: { line: userId } });
+    let user = await User.findOne({ 
+      where: { line: userId },
+      include: [{ 
+        model: Farm,
+        attributes: ['FID', 'farmName'],
+        required: false 
+      }]
+    });
 
     if (!user) {
-      // สมัครใหม่ (register)
       user = await User.create({
         username: displayName,
         password: null,
@@ -98,11 +130,19 @@ class UserService {
       });
     }
 
-    // สร้าง token สำหรับเข้าสู่ระบบ
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.NID }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
-    return { user, token };
+    
+    return {
+      token,
+      NID: user.NID,
+      username: user.username,
+      type: user.type,
+      line: user.line,
+      FID: user.Farms?.[0]?.FID || null,
+      farmName: user.Farms?.[0]?.farmName || null
+    };
   }
 
   static async updateUserProfileImage(NID, profileImage) {
@@ -137,6 +177,14 @@ class UserService {
   await user.save();
   return user;
 }
+
+ static async deleteUser(NID) {
+    const user = await User.findByPk(NID);
+    if (!user) throw new Error("User not found");
+
+    await user.destroy();
+    return user;
+  }
 }
 
 module.exports = UserService;

@@ -4,7 +4,7 @@ const ChatController = require('../controllers/chat.controller');
 
 router.get('/:NID', ChatController.getChatsByUser);
 router.post('/create', ChatController.createChat);
-router.get('/:logID', ChatController.getMessages);
+router.get('/log/:logID', ChatController.getMessages);
 router.post('/message', ChatController.sendMessage);
 router.delete('/:logID', ChatController.deleteChat);
 

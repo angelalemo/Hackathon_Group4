@@ -1,123 +1,146 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import { Menu, MessageSquare, BookOpen, Search, ChevronDown, X, Bell, Bookmark, Package, User } from "lucide-react";
+import {
+  Menu,
+  MessageSquare,
+  BookOpen,
+  Search,
+  ChevronDown,
+  X,
+  Bell,
+  Bookmark,
+  Package,
+  User,
+} from "lucide-react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = ({ className, onFilterChange }) => {
   const [selectedFilter, setSelectedFilter] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   const [user, setUser] = useState(null);
+  const [showBellPopup, setShowBellPopup] = useState(false);
+  const [showBookmarkPopup, setShowBookmarkPopup] = useState(false);
   const [filterValues, setFilterValues] = useState({
-    productCategory: '',
-    province: '',
-    district: '',
-    subDistrict: ''
+    productCategory: "",
+    province: "",
+    district: "",
+    subDistrict: "",
   });
   const [loading, setLoading] = useState(false);
   const [filterOptions, setFilterOptions] = useState({
     categories: [],
     provinces: [],
     districts: [],
-    subDistricts: []
+    subDistricts: [],
   });
+
+  const bellRef = useRef(null);
+  const bookmarkRef = useRef(null);
 
   const overlayRef = useRef(null);
   const sidebarRef = useRef(null);
   const navigate = useNavigate();
-  const API_BASE_URL = 'http://localhost:4000';
+  const API_BASE_URL = "http://localhost:4000";
 
   // ตรวจสอบ user จาก localStorage
   useEffect(() => {
-    const userData = localStorage.getItem('user');
+    const userData = localStorage.getItem("user");
     if (userData) {
       try {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser.user || parsedUser);
       } catch (error) {
-        console.error('Error parsing user data:', error);
+        console.error("Error parsing user data:", error);
       }
     }
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (bellRef.current && !bellRef.current.contains(e.target)) {
+        setShowBellPopup(false);
+      }
+      if (bookmarkRef.current && !bookmarkRef.current.contains(e.target)) {
+        setShowBookmarkPopup(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // ปิด sidebar เมื่อคลิกข้างนอก
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (showSidebar && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-        const menuButton = event.target.closest('.menu-icon');
-        if (!menuButton) {
-          setShowSidebar(false);
-        }
+      if (
+        showSidebar &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target)
+      ) {
+        const menuButton = event.target.closest(".menu-icon");
+        if (!menuButton) setShowSidebar(false);
       }
     };
-
-    if (showSidebar) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    if (showSidebar) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showSidebar]);
 
   // ปิด overlay เมื่อคลิกข้างนอก
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (showSearchOverlay && overlayRef.current && !overlayRef.current.contains(event.target)) {
-        const searchButton = event.target.closest('.search-icon-button');
-        if (!searchButton) {
-          setShowSearchOverlay(false);
-        }
+      if (
+        showSearchOverlay &&
+        overlayRef.current &&
+        !overlayRef.current.contains(event.target)
+      ) {
+        const searchButton = event.target.closest(".search-icon-button");
+        if (!searchButton) setShowSearchOverlay(false);
       }
     };
-
-    if (showSearchOverlay) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    if (showSearchOverlay)
+      document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showSearchOverlay]);
 
-  // ดึงข้อมูล options สำหรับ dropdown
+  // ดึง options สำหรับ filter
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/filter`);
-        const farms = response.data.data || [];
+        const response = await axios.get(
+          `${API_BASE_URL}/farms/AllwithProducts`
+        );
+        const farms = response.data || [];
 
-        const categories = [...new Set(
-          farms.flatMap(farm => 
-            (farm.products || []).map(p => p.category).filter(Boolean)
-          )
-        )];
-
-        const provinces = [...new Set(
-          farms.map(farm => farm.province).filter(Boolean)
-        )];
-
-        const districts = [...new Set(
-          farms.map(farm => farm.district).filter(Boolean)
-        )];
-
-        const subDistricts = [...new Set(
-          farms.map(farm => farm.subDistrict).filter(Boolean)
-        )];
+        const categories = [
+          ...new Set(
+            farms.flatMap((farm) =>
+              (farm.Products || []).map((p) => p.category).filter(Boolean)
+            )
+          ),
+        ];
+        const provinces = [
+          ...new Set(farms.map((farm) => farm.province).filter(Boolean)),
+        ];
+        const districts = [
+          ...new Set(farms.map((farm) => farm.district).filter(Boolean)),
+        ];
+        const subDistricts = [
+          ...new Set(farms.map((farm) => farm.subDistrict).filter(Boolean)),
+        ];
 
         setFilterOptions({
           categories: categories.sort(),
           provinces: provinces.sort(),
           districts: districts.sort(),
-          subDistricts: subDistricts.sort()
+          subDistricts: subDistricts.sort(),
         });
       } catch (error) {
-        console.error('Error fetching filter options:', error);
+        console.error("Error fetching filter options:", error);
       }
     };
-
     fetchFilterOptions();
   }, []);
 
@@ -126,98 +149,89 @@ const Navbar = ({ className, onFilterChange }) => {
     const fetchFilteredData = async () => {
       setLoading(true);
       try {
-        const params = {
-          page: 1,
-          limit: 20
-        };
-
+        const params = { page: 1, limit: 20 };
         if (searchQuery) {
           params.productName = searchQuery;
           params.farmName = searchQuery;
         }
-
-        if (selectedFilter === 'ชนิดผัก' && filterValues.productCategory) {
+        if (selectedFilter === "ชนิดผัก" && filterValues.productCategory)
           params.productCategory = filterValues.productCategory;
-        } else if (selectedFilter === 'จังหวัด' && filterValues.province) {
+        if (selectedFilter === "จังหวัด" && filterValues.province)
           params.province = filterValues.province;
-        } else if (selectedFilter === 'อำเภอ' && filterValues.district) {
+        if (selectedFilter === "อำเภอ" && filterValues.district)
           params.district = filterValues.district;
-        } else if (selectedFilter === 'ตำบล' && filterValues.subDistrict) {
+        if (selectedFilter === "ตำบล" && filterValues.subDistrict)
           params.subDistrict = filterValues.subDistrict;
-        }
 
-        const response = await axios.get(`${API_BASE_URL}/filter`, { params });
-        
-        if (onFilterChange) {
-          onFilterChange(response.data);
-        }
+        const response = await axios.get(`${API_BASE_URL}/farms/All`, {
+          params,
+        });
+        if (onFilterChange) onFilterChange(response.data);
       } catch (error) {
-        console.error('Error fetching filtered data:', error);
+        console.error("Error fetching filtered data:", error);
       } finally {
         setLoading(false);
       }
     };
 
     const timeoutId = setTimeout(() => {
-      if (showSearchOverlay) {
-        fetchFilteredData();
-      }
+      if (showSearchOverlay) fetchFilteredData();
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, selectedFilter, filterValues, onFilterChange, showSearchOverlay]);
+  }, [
+    searchQuery,
+    selectedFilter,
+    filterValues,
+    onFilterChange,
+    showSearchOverlay,
+  ]);
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
+    const value = e.target.value;
+    setSearchQuery(value);
 
-  const handleFilterClick = (filterId) => {
-    if (selectedFilter === filterId) {
-      setSelectedFilter(null);
-    } else {
-      setSelectedFilter(filterId);
+    // พิมพ์แล้วไปหน้า filter โดยส่ง query ไปด้วย
+    if (value.trim().length > 0) {
+      navigate(`/filter?search=${value}`);
     }
   };
 
+  const handleFilterClick = (filterId) =>
+    setSelectedFilter((prev) => (prev === filterId ? null : filterId));
+
   const handleFilterValueChange = (value) => {
-    setFilterValues(prev => {
+    setFilterValues((prev) => {
       const newValues = {
-        productCategory: '',
-        province: '',
-        district: '',
-        subDistrict: ''
+        productCategory: "",
+        province: "",
+        district: "",
+        subDistrict: "",
       };
-
-      if (selectedFilter === 'ชนิดผัก') {
-        newValues.productCategory = value;
-      } else if (selectedFilter === 'จังหวัด') {
-        newValues.province = value;
-      } else if (selectedFilter === 'อำเภอ') {
-        newValues.district = value;
-      } else if (selectedFilter === 'ตำบล') {
-        newValues.subDistrict = value;
-      }
-
+      if (selectedFilter === "ชนิดผัก") newValues.productCategory = value;
+      if (selectedFilter === "จังหวัด") newValues.province = value;
+      if (selectedFilter === "อำเภอ") newValues.district = value;
+      if (selectedFilter === "ตำบล") newValues.subDistrict = value;
       return { ...prev, ...newValues };
     });
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
     setUser(null);
     setShowSidebar(false);
-    navigate('/');
+    navigate("/");
   };
 
   const getCurrentOptions = () => {
     switch (selectedFilter) {
-      case 'ชนิดผัก':
+      case "ชนิดผัก":
         return filterOptions.categories;
-      case 'จังหวัด':
+      case "จังหวัด":
         return filterOptions.provinces;
-      case 'อำเภอ':
+      case "อำเภอ":
         return filterOptions.districts;
-      case 'ตำบล':
+      case "ตำบล":
         return filterOptions.subDistricts;
       default:
         return [];
@@ -226,27 +240,27 @@ const Navbar = ({ className, onFilterChange }) => {
 
   const getCurrentValue = () => {
     switch (selectedFilter) {
-      case 'ชนิดผัก':
+      case "ชนิดผัก":
         return filterValues.productCategory;
-      case 'จังหวัด':
+      case "จังหวัด":
         return filterValues.province;
-      case 'อำเภอ':
+      case "อำเภอ":
         return filterValues.district;
-      case 'ตำบล':
+      case "ตำบล":
         return filterValues.subDistrict;
       default:
-        return '';
+        return "";
     }
   };
 
   const filters = [
-    { id: 'ชนิดผัก', label: 'ชนิดผัก' },
-    { id: 'ตำบล', label: 'ตำบล' },
-    { id: 'อำเภอ', label: 'อำเภอ' },
-    { id: 'จังหวัด', label: 'จังหวัด' }
+    { id: "ชนิดผัก", label: "ชนิดผัก" },
+    { id: "ตำบล", label: "ตำบล" },
+    { id: "อำเภอ", label: "อำเภอ" },
+    { id: "จังหวัด", label: "จังหวัด" },
   ];
 
-  const isFarmer = user && (user.type === 'Farmer' || user.type === true);
+  const isFarmer = user && (user.type === "Farmer" || user.type === true);
 
   return (
     <div className={className}>
@@ -254,46 +268,63 @@ const Navbar = ({ className, onFilterChange }) => {
       <header className="header">
         <div className="header-content">
           <div className="left-section">
-            <button 
+            <button
               className="menu-icon"
               onClick={() => setShowSidebar(!showSidebar)}
-              onMouseEnter={() => setShowSidebar(true)}
             >
               <Menu size={24} />
             </button>
-            <h1 className="logo">Phaktae</h1>
+            <h1 className="logo">
+              <Link to="/">Phaktae</Link></h1>
           </div>
           <div className="right-section">
-            <button 
+            {/* Search */}
+            <button
               className="icon-button search-icon-button"
               onClick={() => setShowSearchOverlay(!showSearchOverlay)}
             >
               <Search size={24} />
             </button>
-            <button className="icon-button">
-              <MessageSquare size={24} />
-            </button>
-            <button className="icon-button">
-              <BookOpen size={24} />
-            </button>
-            {user ? (
-              <div className="user-info">
-                <span className="user-name">{user.username}</span>
-                <span className="user-role">{user.type || 'User'}</span>
-                <button className="logout-button" onClick={handleLogout}>
-                  ออกจากระบบ
-                </button>
-              </div>
-            ) : (
-              <div className="auth-buttons">
-                <Link to="/login" className="login-button">
-                  เข้าสู่ระบบ
-                </Link>
-                <Link to="/register" className="register-button">
-                  สมัครสมาชิก
-                </Link>
-              </div>
-            )}
+
+            {/* Bell Popup */}
+            <div className="popup-wrapper" ref={bellRef}>
+              <button
+                className="icon-button"
+                onClick={() => {
+                  setShowBellPopup(!showBellPopup);
+                  setShowBookmarkPopup(false); // ปิดอันอื่น
+                }}
+              >
+                <Bell size={24} />
+              </button>
+
+              {showBellPopup && (
+                <div className="popup-box">
+                  <h4>การแจ้งเตือน</h4>
+                  <p>ยังไม่มีการแจ้งเตือน</p>
+                </div>
+              )}
+            </div>
+
+            {/* Bookmark Popup */}
+            <div className="popup-wrapper" ref={bookmarkRef}>
+              <button
+                className="icon-button"
+                onClick={() => {
+                  setShowBookmarkPopup(!showBookmarkPopup);
+                  setShowBellPopup(false);
+                }}
+              >
+                <Bookmark size={24} />
+              </button>
+
+              {showBookmarkPopup && (
+                <div className="popup-box">
+                  <h4>บุ๊กมาร์ก</h4>
+                  <p>ยังไม่มีรายการที่บันทึก</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -301,11 +332,14 @@ const Navbar = ({ className, onFilterChange }) => {
       {/* Sidebar */}
       {showSidebar && (
         <>
-          <div className="sidebar-backdrop" onClick={() => setShowSidebar(false)} />
+          <div
+            className="sidebar-backdrop"
+            onClick={() => setShowSidebar(false)}
+          />
           <div className="sidebar" ref={sidebarRef}>
             <div className="sidebar-header">
               <h1 className="sidebar-logo">Phaktae</h1>
-              <button 
+              <button
                 className="sidebar-close"
                 onClick={() => setShowSidebar(false)}
               >
@@ -315,15 +349,15 @@ const Navbar = ({ className, onFilterChange }) => {
             <div className="sidebar-content">
               {!user ? (
                 <div className="sidebar-auth">
-                  <Link 
-                    to="/login" 
+                  <Link
+                    to="/login"
                     className="sidebar-login-button"
                     onClick={() => setShowSidebar(false)}
                   >
                     เข้าสู่ระบบ
                   </Link>
-                  <Link 
-                    to="/register" 
+                  <Link
+                    to="/register"
                     className="sidebar-register-button"
                     onClick={() => setShowSidebar(false)}
                   >
@@ -334,46 +368,72 @@ const Navbar = ({ className, onFilterChange }) => {
                 <>
                   <div className="user-profile-box">
                     <div className="user-avatar">
-                      {user.username?.charAt(0).toUpperCase() || 'U'}
+                      {user.username?.charAt(0).toUpperCase() || "U"}
                     </div>
                     <div className="user-details">
                       <span className="user-profile-name">{user.username}</span>
-                      <span className="user-profile-role">{user.type || 'User'}</span>
+                      <span className="user-profile-role">
+                        {user.type || "User"}
+                      </span>
                     </div>
                   </div>
-                  
+
                   {isFarmer ? (
                     <div className="sidebar-menu">
-                      <Link to="/profile" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                      <Link
+                        to="/createfarm"
+                        className="sidebar-menu-item"
+                        onClick={() => setShowSidebar(false)}
+                      >
                         <User size={20} />
                         <span>หน้าโปรไฟล์</span>
                       </Link>
-                      <Link to="/chat" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                      <Link
+                        to="/chat"
+                        className="sidebar-menu-item"
+                        onClick={() => setShowSidebar(false)}
+                      >
                         <MessageSquare size={20} />
                         <span>แชทลูกค้า</span>
                       </Link>
-                      <Link to="/inventory" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                      <Link
+                        to="/product-management"
+                        className="sidebar-menu-item"
+                        onClick={() => setShowSidebar(false)}
+                      >
                         <Package size={20} />
                         <span>คลังสินค้า</span>
                       </Link>
                     </div>
                   ) : (
                     <div className="sidebar-menu">
-                      <Link to="/chat-history" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                      <Link
+                        to="/chat-history"
+                        className="sidebar-menu-item"
+                        onClick={() => setShowSidebar(false)}
+                      >
                         <MessageSquare size={20} />
                         <span>ประวัติการแชท</span>
                       </Link>
-                      <Link to="/notifications" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                      <Link
+                        to="/notifications"
+                        className="sidebar-menu-item"
+                        onClick={() => setShowSidebar(false)}
+                      >
                         <Bell size={20} />
                         <span>การแจ้งเตือน</span>
                       </Link>
-                      <Link to="/bookmarks" className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                      <Link
+                        to="/bookmarks"
+                        className="sidebar-menu-item"
+                        onClick={() => setShowSidebar(false)}
+                      >
                         <Bookmark size={20} />
                         <span>บุ๊กมาร์ก</span>
                       </Link>
                     </div>
                   )}
-                  
+
                   <button className="sidebar-logout" onClick={handleLogout}>
                     ออกจากระบบ
                   </button>
@@ -387,19 +447,21 @@ const Navbar = ({ className, onFilterChange }) => {
       {/* Search Overlay */}
       {showSearchOverlay && (
         <>
-          <div className="overlay-backdrop" onClick={() => setShowSearchOverlay(false)} />
+          <div
+            className="overlay-backdrop"
+            onClick={() => setShowSearchOverlay(false)}
+          />
           <div className="search-overlay" ref={overlayRef}>
             <div className="overlay-content">
-              {/* Search Bar */}
               <div className="search-section">
                 <div className="search-container">
                   <div className="search-icon">
                     <Search size={20} />
                   </div>
-                  <input 
-                    type="text" 
-                    className="search-input" 
-                    placeholder="Search" 
+                  <input
+                    type="text"
+                    className="search-input"
+                    placeholder="Search"
                     value={searchQuery}
                     onChange={handleSearchChange}
                     autoFocus
@@ -407,25 +469,27 @@ const Navbar = ({ className, onFilterChange }) => {
                 </div>
               </div>
 
-              {/* Category Filters */}
               <div className="category-section">
                 <span className="category-label">หมวดหมู่</span>
                 <div className="filter-buttons">
                   {filters.map((filter) => (
                     <div key={filter.id} className="filter-wrapper">
                       <button
-                        className={`filter-button ${selectedFilter === filter.id ? 'selected' : ''}`}
+                        className={`filter-button ${
+                          selectedFilter === filter.id ? "selected" : ""
+                        }`}
                         onClick={() => handleFilterClick(filter.id)}
                       >
-                        {filter.label}
-                        <ChevronDown size={16} />
+                        {filter.label} <ChevronDown size={16} />
                       </button>
                       {selectedFilter === filter.id && (
                         <div className="filter-dropdown">
                           <select
                             className="filter-select"
                             value={getCurrentValue()}
-                            onChange={(e) => handleFilterValueChange(e.target.value)}
+                            onChange={(e) =>
+                              handleFilterValueChange(e.target.value)
+                            }
                           >
                             <option value="">เลือก{filter.label}</option>
                             {getCurrentOptions().map((option) => (
@@ -1085,5 +1149,37 @@ export default styled(Navbar)`
       font-size: 16px;
       border-radius: 28px;
     }
+  }
+
+  /* Popup Wrapper */
+  .popup-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* Popup Box */
+  .popup-box {
+    position: absolute;
+    top: 36px;
+    right: 0;
+    width: 240px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.12);
+    z-index: 999;
+  }
+
+  .popup-box h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .popup-box p {
+    font-size: 13px;
+    color: #6b7280;
   }
 `;

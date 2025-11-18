@@ -29,11 +29,20 @@ class UserController {
             res.status(400).json({ error: error.message });
         }
     }
+    
+    // ✅ เพิ่ม Debug log
     static async loginUser(req, res) {
         try {
             const { username, password } = req.body;
-            const user = await UserService.loginUser(username, password);
-            res.status(200).json(user);
+            const result = await UserService.loginUser(username, password);
+            
+            // 🔍 Debug: ดูว่า return อะไร
+            console.log("=== LOGIN SUCCESS ===");
+            console.log("Response:", result);
+            console.log("NID:", result.NID);
+            console.log("FID:", result.FID);
+            
+            res.status(200).json(result);
         } catch (error) {
             res.status(401).json({ error: error.message });
         }

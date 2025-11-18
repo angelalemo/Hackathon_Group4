@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 # Hackathon_Group4
 
 # Phaktae 🌾
-=======
-# Farm Bridge 🌾
->>>>>>> dev
 
 Platform connecting organic farmers directly with consumers, promoting transparency and trust in the organic agriculture supply chain.
 
@@ -18,6 +14,7 @@ Platform connecting organic farmers directly with consumers, promoting transpare
   - [Installation](#installation)
   - [Running the Application](#running-the-application)
 - [API Documentation](#api-documentation)
+- [API Testing Guide (Postman)](#api-testing-guide-postman)
 - [Database Schema](#database-schema)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
@@ -223,57 +220,192 @@ POST /users/login
 
 #### Get All Farms
 ```http
-GET /farms
+GET /farms/All
+//ได้ทั้งfarm, รูปภาพ/วิดีโอ, ใบรับรอง, product
 ```
-**Response (200 OK):**
+**ผลที่ได้ (200 OK):**
 ```json
 [
+    {
+        "FID": 5,
+        "NID": 1,
+        "farmName": "สมบูรณ์ฟาร์ม",
+        "line": "@sombunfarm",
+        "facebook": "facebook.com/sombunfarm",
+        "email": "farm@example.com",
+        "phoneNumber": "0801112222",
+        "description": "ฟาร์มเกษตรอินทรีย์",
+        "lineToken": null,
+        "lineUserId": null,
+        "province": null,
+        "district": null,
+        "subDistrict": null,
+        "location": null,
+        "locationID": null,
+        "User": {
+            "NID": 1,
+            "username": "testuser",
+            "type": "Farmer",
+            "email": "newemail@example.com",
+            "phoneNumber": "0899999999"
+        },
+        "Storages": [
+            {
+                "file": "ตรงนี้จะได้เป็น url หรือ รูปหรือวิดีโอแบบbase 64",
+                "typeStorage": "image หรือ video",
+            }
+        ],
+        "Certificates": [
+            {
+                "institution": "test",
+                "file": "รูปแบบbase 64",
+            }
+        ],
+        "Products":
+        [
+            {
+                "PID": 2,
+                "productName": "มะเขือเทศ",
+                "category": "ผักกินผล",
+                "saleType": "1 กก.",
+                "price": 150,
+                "image": "https://example.com/image.jpg"
+            },
+            {
+                "PID": 1,
+                "productName": "ผัก",
+                "category": "ผักใบเขียว",
+                "saleType": "1 กก.",
+                "price": 50,
+                "image": "https://example.com/image.jpg"
+            },
+        ]
+      },
   {
-    "FID": 1,
-    "farmName": "Green Valley Farm",
-    "description": "Organic vegetable farm",
-    "Location": {
-      "province": "เชียงใหม่",
-      "district": "เมือง",
-      "subDistrict": "สุเทพ"
+      "FID": 6,
+      "NID": 3,
+      //............................   
+]
+```
+```http
+GET /farms/AllwithProducts
+//ได้ทั้งfarm, product
+```
+**ผลที่ได้ (200 OK):**
+```json
+[
+    {
+        "FID": 6,
+        "NID": 1,
+        "farmName": "Markfarm",
+        "line": "Mark",
+        "facebook": "Mark",
+        "email": "marknarudon@gmail.com",
+        "phoneNumber": "0843677079",
+        "description": "1234",
+        "lineToken": null,
+        "lineUserId": "Uc58b0f5b9789156c962bfb0b9e64f340",
+        "province": "เชียงใหม่",
+        "district": "หางดง",
+        "subDistrict": "สันผักหวาน",
+        "location": null,
+        "locationID": null,
+        "Products": [
+            {
+                "PID": 1,
+                "productName": "ผัก",
+                "category": "ผักใบเขียว",
+                "saleType": "1 กก.",
+                "price": 50,
+                "image": "https://example.com/image.jpg"
+            },
+            {
+                "PID": 2,
+                "productName": "มะเขือเทศ",
+                "category": "ผักกินผล",
+                "saleType": "1 กก.",
+                "price": 150,
+                "image": "https://example.com/image.jpg"
+            }
+        ]
     },
-    "User": {
-      "username": "farmer_john",
-      "email": "john@farm.com"
-    },
-    "storages": ["image:base64...", "video:base64..."],
-    "certificates": [
-      {
-        "institution": "Organic Thailand",
-        "file": "base64..."
-      }
-    ]
-  }
+    {
+        "FID": 2,
+        "NID": 1,
+      //............................   
 ]
 ```
 
 #### Get Farm by ID or User
 ```http
-<<<<<<< HEAD
-GET /farms/ID?farmID=1
-GET /farms/ID?userNID=1
+GET /farms/:FID
+GET /farms/user/:NID
+//ได้ทั้งfarm, รูปภาพ/วิดีโอ, ใบรับรอง, product
+```
+**ผลที่ได้ (200 OK):**
+```json
+{
+    "FID": 3,
+    "NID": 1,
+    "farmName": "สมบูรณ์ฟาร์ม",
+    "line": "@sombunfarm",
+    "facebook": "facebook.com/sombunfarm",
+    "email": "farm@example.com",
+    "phoneNumber": "0801112222",
+    "description": "ฟาร์มเกษตรอินทรีย์",
+    "lineToken": null,
+    "lineUserId": null,
+    "province": null,
+    "district": null,
+    "subDistrict": null,
+    "location": null,
+    "locationID": null,
+    "User": {
+        "NID": 1,
+        "username": "testuser",
+        "email": "newemail@example.com",
+        "phoneNumber": "0899999999",
+        "type": "Farmer"
+    },
+    "Storages": [],
+    "Certificates": [],
+    "Products": []
+}
+```
+#### Get Farm by ID or User
+```http
+GET /farms/:FID/products
+//ได้ทั้งfarm, product
+```
+**ผลที่ได้ (200 OK):**
+```json
+{
+    {
+    "FID": 3,
+    "NID": 1,
+    "farmName": "สมบูรณ์ฟาร์ม",
+    "line": "@sombunfarm",
+    "facebook": "facebook.com/sombunfarm",
+    "email": "farm@example.com",
+    "phoneNumber": "0801112222",
+    "description": "ฟาร์มเกษตรอินทรีย์",
+    "lineToken": null,
+    "lineUserId": null,
+    "province": null,
+    "district": null,
+    "subDistrict": null,
+    "location": null,
+    "locationID": null,
+    "Products": []
+}
+}
 ```
 
-=======
-GET /farms/:farmID
-GET /farms/user/:userNID
-```
-
-**URL Parameters:**
-- `farmID` - ID ของฟาร์ม
-- `userNID` - ID ของเกษตรกร (ดึงฟาร์มทั้งหมดของเกษตรกรคนนั้น)
-
->>>>>>> dev
 #### Create Farm
 ```http
-POST /farms
+POST /farms/create
 ```
-**Request Body:**
+**ข้อมูลที่ต้องการ**
 ```json
 {
   "NID": 1,
@@ -283,10 +415,10 @@ POST /farms
   "email": "contact@greenfarm.com",
   "phoneNumber": "0812345678",
   "description": "Organic vegetable farm",
-<<<<<<< HEAD
   "province": "Chiang Mai",
   "district": "Mueang",
   "subDistrict": "Suthep",
+  "location":"17/8",
 
   "storages": [
     {
@@ -299,37 +431,136 @@ POST /farms
     {
       "institution": "Organic Thailand",
       "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA"
-=======
-  "locationID": 1,
-  "storages": [
-    {
-      "file": "base64_or_url",
-      "typeStorage": "image"
-    }
-  ],
-  "certificates": [
-    {
-      "institution": "Organic Thailand",
-      "file": "base64_or_url"
->>>>>>> dev
     }
   ]
+}
+```
+**ผลที่ได้ (201 Created):**
+```json
+{
+    "message": "Farm created successfully",
+    "farm": {
+        "FID": 8,
+        "NID": 1,
+        "farmName": "Green Valley Farm",
+        "line": "@greenfarm",
+        "facebook": "greenfarm",
+        "email": "contact@greenfarm.com",
+        "phoneNumber": "0812345678",
+        "description": "Organic vegetable farm",
+        "lineToken": null,
+        "lineUserId": null,
+        "province": "Chiang Mai",
+        "district": "Mueang",
+        "subDistrict": "Suthep",
+        "location": "17/8",
+        "locationID": null
+    }
 }
 ```
 
 #### Update Farm
 ```http
-PUT /farms
+PUT /farms/updateInfo
 ```
-**Request Body:**
+**ข้อมูลที่ต้องการ**
 ```json
 {
   "NID": 1,
   "FID": 1,
   "farmName": "Updated Farm Name",
   "description": "Updated description",
-  "storages": [...],
-  "certificates": [...]
+  "phoneNumber": "0801112222",
+  "lineToken": null,
+  "lineUserId": null,
+  "province": "กรุงเทพ",
+  "district": "เมือง",
+  "subDistrict": "-",
+  "location": null
+       
+}
+```
+**ผลที่ได้ (200OK):**
+```json
+{
+    "message": "Farm updated successfully",
+    "farm": {
+        "FID": 1,
+        "NID": 1,
+        "farmName": "Updated Farm Name",
+        "line": "@sombunfarm",
+        "facebook": "facebook.com/sombunfarm",
+        "email": "farm@example.com",
+        "phoneNumber": "0801112222",
+        "description": "Updated description",
+        "lineToken": null,
+        "lineUserId": null,
+        "province": "กรุงเทพ",
+        "district": "เมือง",
+        "subDistrict": "-",
+        "location": null,
+        "locationID": null
+    }
+}
+```
+#### เพิ่มรูปใน farm
+```http
+PUT /farms/addStorage
+``` 
+**ข้อมูลที่ต้องการ**
+```json
+{
+  "NID": 1,
+  "FID": 1,
+  "storages": [
+    {
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA" 
+    },
+    {
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA"
+    }
+  ]
+}
+```
+**ผลที่ได้ (200OK):**
+```
+{
+    "message": "Farm image added successfully",
+    "farm": [
+        {
+            "id": 3,
+            "FID": 1,
+            "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA",
+            "typeStorage": "image"
+        },
+        {
+            "id": 4,
+            "FID": 1,
+            "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA",
+            "typeStorage": "image"
+        }
+    ]
+}
+```
+#### ลบรูปหรือวิดีโอ
+```http
+PUT /farms/deleteStorage
+``` 
+**ข้อมูลที่ต้องการ**
+```json
+{
+  "NID": 1,
+  "FID": 1,
+  "storagesID": 3
+}
+```
+**ผลที่ได้ (200OK):**
+```
+{
+    "message": "Farm image deleted successfully",
+    "farm": {
+        "message": "Storage deleted successfully"
+    }
 }
 ```
 
@@ -339,28 +570,7 @@ PUT /farms
 
 #### Get All Products by Farm
 ```http
-<<<<<<< HEAD
 GET /products?FID=1
-=======
-GET /products/
-```
-**Query Parameters:**
-- `FID` - Farm ID (optional, filter by specific farm)
-
-**Response (200 OK):**
-```json
-[
-  {
-    "PID": 1,
-    "productName": "Organic Tomato",
-    "category": "Vegetables",
-    "saleType": "Organic",
-    "price": 50.00,
-    "image": "base64_or_url",
-    "FID": 1
-  }
-]
->>>>>>> dev
 ```
 
 #### Get Product by ID
@@ -368,37 +578,9 @@ GET /products/
 GET /products/:PID
 ```
 
-<<<<<<< HEAD
 #### Create Product
 ```http
 POST /products
-=======
-**URL Parameters:**
-- `PID` - Product ID
-
-**Response (200 OK):**
-```json
-{
-  "PID": 1,
-  "productName": "Organic Tomato",
-  "category": "Vegetables",
-  "saleType": "Organic",
-  "price": 50.00,
-  "image": "base64_or_url",
-  "FID": 1,
-  "Farm": {
-    "farmName": "Green Valley Farm",
-    "Location": {
-      "province": "เชียงใหม่"
-    }
-  }
-}
-```
-
-#### Create Product
-```http
-POST /products/
->>>>>>> dev
 ```
 **Request Body:**
 ```json
@@ -413,66 +595,23 @@ POST /products/
 }
 ```
 
-<<<<<<< HEAD
 #### Update Product
 ```http
 PUT /products
-=======
-**Response (201 Created):**
-```json
-{
-  "PID": 1,
-  "productName": "Organic Tomato",
-  "category": "Vegetables",
-  "saleType": "Organic",
-  "price": 50.00,
-  "image": "base64_or_url",
-  "FID": 1
-}
-```
-
-#### Update Product
-```http
-PUT /products/
->>>>>>> dev
 ```
 **Request Body:**
 ```json
 {
   "NID": 1,
   "PID": 1,
-<<<<<<< HEAD
   "productName": "Updated Name",
   "price": 60.00
-=======
-  "productName": "Updated Product Name",
-  "category": "Vegetables",
-  "saleType": "Organic",
-  "price": 60.00,
-  "image": "base64_or_url"
-}
-```
-
-**Response (200 OK):**
-```json
-{
-  "message": "Product updated successfully",
-  "product": {
-    "PID": 1,
-    "productName": "Updated Product Name",
-    "price": 60.00
-  }
->>>>>>> dev
 }
 ```
 
 #### Delete Product
 ```http
-<<<<<<< HEAD
 DELETE /products
-=======
-DELETE /products/
->>>>>>> dev
 ```
 **Request Body:**
 ```json
@@ -482,16 +621,1058 @@ DELETE /products/
 }
 ```
 
-<<<<<<< HEAD
-=======
-**Response (200 OK):**
+---
+
+## 🧪 API Testing Guide (Postman)
+
+คู่มือการทดสอบ API ด้วย Postman สำหรับทีมทดสอบ
+
+### การเตรียมพร้อม
+
+1. ติดตั้ง [Postman](https://www.postman.com/downloads/)
+2. เปิดเซิร์ฟเวอร์ที่ `http://localhost:4000`
+3. สร้าง Collection ใหม่ชื่อ "Phaktae API Tests"
+
+---
+
+### 🧑‍🌾 User Management Tests
+
+#### Test 1: ลงทะเบียนผู้ใช้ใหม่ (Register User)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/users/register`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
 ```json
 {
-  "message": "Product deleted successfully"
+  "username": "farmer_john",
+  "password": "securepassword123",
+  "type": true,
+  "line": "@farmerjohn",
+  "facebook": "facebook.com/farmerjohn",
+  "email": "john@farm.com",
+  "phoneNumber": "0812345678"
 }
 ```
 
->>>>>>> dev
+**Expected Response (201):**
+```json
+{
+  "NID": 6,
+  "username": "farmer_john",
+  "password": "$2b$10$7i81VbWxEFhEVTK6MdLVYOVFjM4HY7eYaZBgeQzrl1h1uzMUVX.fa",
+  "type": "Farmer",
+  "line": "@farmerjohn",
+  "facebook": "facebook.com/farmerjohn",
+  "email": "john@farm.com",
+  "phoneNumber": "0812345678",
+  "ProfileImage": null
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 201
+- ✅ Response มี NID
+- ✅ type ถูกแปลงเป็น "Farmer"
+- ✅ password ถูก hash
+
+---
+
+#### Test 2: เข้าสู่ระบบ (Login User)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/users/login`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
+  "username": "farmer_john",
+  "password": "securepassword123"
+}
+```
+
+**Expected Response (200):**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "NID": 6,
+  "username": "farmer_john",
+  "type": "Farmer",
+  "phoneNumber": "0812345678",
+  "email": "john@farm.com",
+  "line": "@farmerjohn",
+  "facebook": "facebook.com/farmerjohn",
+  "FID": null,
+  "farmName": null
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ Response มี token
+- ✅ ข้อมูล user ถูกต้อง
+- 💾 **บันทึก token และ NID ไว้ใช้ในการทดสอบต่อไป**
+
+---
+
+#### Test 3: ดูข้อมูลผู้ใช้ทั้งหมด (Get All Users)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/users/All`
+
+**Expected Response (200):**
+```json
+[
+  {
+    "NID": 1,
+    "username": "yaya_updated",
+    "type": "Farmer",
+    "email": "yaya@example.com",
+    "phoneNumber": "0999999999",
+    "ProfileImage": null
+  }
+]
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ Response เป็น array
+- ✅ แต่ละ user มี NID, username, type
+
+---
+
+#### Test 4: ดูข้อมูลผู้ใช้ตาม ID (Get User by ID)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/users/3`
+
+**Expected Response (200):**
+```json
+{
+  "NID": 3,
+  "username": "Farmer stam",
+  "type": "Farmer",
+  "line": "line_id000",
+  "facebook": "fb_id000",
+  "email": "stam@example.com",
+  "phoneNumber": "000000000",
+  "ProfileImage": null,
+  "Farms": []
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ NID ตรงกับที่ร้องขอ
+- ✅ มี Farms array
+
+---
+
+#### Test 5: อัพเดทข้อมูลผู้ใช้ (Update User)
+
+**Method:** `PUT`  
+**URL:** `http://localhost:4000/users/update/6`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
+  "username": "farmer_john_updated",
+  "phoneNumber": "0887777777"
+}
+```
+
+**Expected Response (200):**
+```json
+{
+  "NID": 6,
+  "username": "farmer_john_updated",
+  "phoneNumber": "0887777777",
+  "type": "Farmer",
+  "email": "john@farm.com"
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ ข้อมูลที่ส่งไปถูกอัพเดท
+- ✅ ข้อมูลอื่นๆ ไม่เปลี่ยนแปลง
+
+---
+
+### 🚜 Farm Management Tests
+
+#### Test 6: ดูฟาร์มทั้งหมดแบบเต็ม (Get All Farms - Full)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/All`
+
+**Expected Response (200):**
+```json
+[
+  {
+    "FID": 5,
+    "NID": 1,
+    "farmName": "สมบูรณ์ฟาร์ม",
+    "line": "@sombunfarm",
+    "email": "farm@example.com",
+    "phoneNumber": "0801112222",
+    "description": "ฟาร์มเกษตรอินทรีย์",
+    "province": "เชียงใหม่",
+    "district": "เมือง",
+    "User": {
+      "NID": 1,
+      "username": "testuser"
+    },
+    "Storages": [],
+    "Certificates": [],
+    "Products": []
+  }
+]
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ มี User, Storages, Certificates, Products
+- ✅ Response เป็น array
+
+---
+
+#### Test 7: ดูฟาร์มทั้งหมดพร้อมสินค้า (Get All Farms with Products)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/AllwithProducts`
+
+**Expected Response (200):**
+```json
+[
+  {
+    "FID": 6,
+    "farmName": "Markfarm",
+    "province": "เชียงใหม่",
+    "Products": [
+      {
+        "PID": 1,
+        "productName": "ผัก",
+        "price": 50
+      }
+    ]
+  }
+]
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ มี Products array
+- ✅ ไม่มี Storages และ Certificates
+
+---
+
+#### Test 8: ดูฟาร์มตาม ID (Get Farm by ID)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/3`
+
+**Expected Response (200):**
+```json
+{
+  "FID": 3,
+  "farmName": "สมบูรณ์ฟาร์ม",
+  "User": {
+    "NID": 1,
+    "username": "testuser"
+  },
+  "Storages": [],
+  "Certificates": [],
+  "Products": []
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ FID ตรงกับที่ร้องขอ
+- ✅ มีข้อมูลครบถ้วน
+
+---
+
+#### Test 9: ดูฟาร์มตามเจ้าของ (Get Farm by User)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/user/1`
+
+**Expected Response (200):**
+```json
+[
+  {
+    "FID": 3,
+    "NID": 1,
+    "farmName": "สมบูรณ์ฟาร์ม"
+  }
+]
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ NID ของฟาร์มตรงกับที่ร้องขอ
+- ✅ Response เป็น array
+
+---
+
+#### Test 10: ดูสินค้าของฟาร์ม (Get Farm Products)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/3/products`
+
+**Expected Response (200):**
+```json
+{
+  "FID": 3,
+  "farmName": "สมบูรณ์ฟาร์ม",
+  "Products": [
+    {
+      "PID": 1,
+      "productName": "ผักกาดหอม",
+      "price": 50
+    }
+  ]
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ มี Products array
+- ✅ ไม่มีข้อมูลอื่นๆ นอกจากฟาร์มและสินค้า
+
+---
+
+#### Test 11: สร้างฟาร์มใหม่ (Create Farm)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/farms/create`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
+  "NID": 1,
+  "farmName": "Green Valley Farm",
+  "line": "@greenfarm",
+  "facebook": "greenfarm",
+  "email": "contact@greenfarm.com",
+  "phoneNumber": "0812345678",
+  "description": "ฟาร์มผักออร์แกนิกคุณภาพสูง",
+  "province": "เชียงใหม่",
+  "district": "เมือง",
+  "subDistrict": "สุเทพ",
+  "location": "17/8",
+  "storages": [
+    {
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA",
+      "typeStorage": "image"
+    }
+  ],
+  "certificates": [
+    {
+      "institution": "สำนักงานมาตรฐานสินค้าเกษตรและอาหารแห่งชาติ",
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA"
+    }
+  ]
+}
+```
+
+**Expected Response (201):**
+```json
+{
+  "message": "Farm created successfully",
+  "farm": {
+    "FID": 8,
+    "NID": 1,
+    "farmName": "Green Valley Farm",
+    "province": "เชียงใหม่"
+  }
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 201
+- ✅ Response มี FID ใหม่
+- ✅ เฉพาะ Farmer เท่านั้นที่สร้างได้
+- 💾 **บันทึก FID ไว้ใช้ในการทดสอบต่อไป**
+
+---
+
+#### Test 12: อัพเดทข้อมูลฟาร์ม (Update Farm)
+
+**Method:** `PUT`  
+**URL:** `http://localhost:4000/farms/updateInfo`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
+  "NID": 1,
+  "FID": 8,
+  "farmName": "Updated Farm Name",
+  "description": "คำอธิบายฟาร์มใหม่ที่อัพเดทแล้ว",
+  "phoneNumber": "0801112222",
+  "province": "กรุงเทพมหานคร"
+}
+```
+
+**Expected Response (200):**
+```json
+{
+  "message": "Farm updated successfully",
+  "farm": {
+    "FID": 8,
+    "farmName": "Updated Farm Name",
+    "description": "คำอธิบายฟาร์มใหม่ที่อัพเดทแล้ว"
+  }
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ ข้อมูลที่ส่งไปถูกอัพเดท
+- ✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่แก้ไขได้
+
+---
+
+#### Test 13: เพิ่มรูปภาพ/วิดีโอในฟาร์ม (Add Farm Storage)
+
+**Method:** `PUT`  
+**URL:** `http://localhost:4000/farms/addStorage`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
+  "NID": 1,
+  "FID": 8,
+  "storages": [
+    {
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA",
+      "typeStorage": "image"
+    },
+    {
+      "file": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD",
+      "typeStorage": "image"
+    }
+  ]
+}
+```
+
+**Expected Response (200):**
+```json
+{
+  "message": "Farm image added successfully",
+  "farm": [
+    {
+      "id": 3,
+      "FID": 8,
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA",
+      "typeStorage": "image"
+    },
+    {
+      "id": 4,
+      "FID": 8,
+      "file": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD",
+      "typeStorage": "image"
+    }
+  ]
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ สามารถเพิ่มหลายรูปพร้อมกันได้
+- ✅ แต่ละรูปมี id และ typeStorage
+- 💾 **บันทึก storage id ไว้ใช้ทดสอบการลบ**
+
+---
+
+#### Test 14: ลบรูปภาพ/วิดีโอในฟาร์ม (Delete Farm Storage)
+
+**Method:** `PUT`  
+**URL:** `http://localhost:4000/farms/deleteStorage`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
+  "NID": 1,
+  "FID": 8,
+  "storagesID": 3
+}
+```
+
+**Expected Response (200):**
+```json
+{
+  "message": "Farm image deleted successfully",
+  "farm": {
+    "message": "Storage deleted successfully"
+  }
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ รูปที่ระบุถูกลบ
+- ✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่ลบได้
+
+---
+
+### 🛒 Product Management Tests
+
+#### Test 15: ดูสินค้าทั้งหมด (Get All Products)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/products/All`
+
+**Expected Response (200):**
+```json
+[
+  {
+    "PID": 1,
+    "FID": 1,
+    "productName": "Organic Tomato",
+    "category": "Vegetable",
+    "saleType": "retail",
+    "price": 30,
+    "image": "https://example.com/tomato.jpg"
+  },
+  {
+    "PID": 2,
+    "FID": 1,
+    "productName": "Organic Cabbage",
+    "category": "Vegetables",
+    "saleType": "Organic",
+    "price": 60,
+    "image": "https://example.com/cabbage.jpg"
+  }
+]
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ Response เป็น array
+- ✅ แต่ละสินค้ามี PID, FID, productName, price
+
+---
+
+#### Test 16: ดูสินค้าตามฟาร์ม (Get Products by Farm)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/products/farms/1`
+
+**Expected Response (200):**
+```json
+[
+  {
+    "PID": 1,
+    "FID": 1,
+    "productName": "Organic Tomato",
+    "category": "Vegetable",
+    "price": 30
+  }
+]
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ สินค้าทั้งหมดมี FID เท่ากับ 1
+- ✅ Response เป็น array
+
+---
+
+#### Test 17: ดูสินค้าตาม ID (Get Product by ID)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/products/2`
+
+**Expected Response (200):**
+```json
+{
+  "PID": 2,
+  "FID": 1,
+  "productName": "Organic Cabbage",
+  "category": "Vegetables",
+  "saleType": "Organic",
+  "price": 60,
+  "image": "https://example.com/cabbage.jpg"
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ PID ตรงกับที่ร้องขอ
+- ✅ มีข้อมูลครบถ้วน
+
+---
+
+#### Test 18: สร้างสินค้าใหม่ (Create Product)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/products/create`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
+  "NID": 1,
+  "FID": 8,
+  "productName": "มะเขือเทศอินทรีย์",
+  "category": "ผักกินผล",
+  "saleType": "1 กิโลกรัม",
+  "price": 80,
+  "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD"
+}
+```
+
+**Expected Response (201):**
+```json
+{
+  "message": "Product created successfully",
+  "product": {
+    "PID": 4,
+    "FID": 8,
+    "productName": "มะเขือเทศอินทรีย์",
+    "category": "ผักกินผล",
+    "saleType": "1 กิโลกรัม",
+    "price": 80,
+    "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD"
+  }
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 201
+- ✅ Response มี PID ใหม่
+- ✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่สร้างได้
+- 💾 **บันทึก PID ไว้ใช้ในการทดสอบต่อไป**
+
+---
+
+#### Test 19: อัพเดทสินค้า (Update Product)
+
+**Method:** `PUT`  
+**URL:** `http://localhost:4000/products/update`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
+  "NID": 1,
+  "PID": 4,
+  "productName": "มะเขือเทศอินทรีย์ Grade A",
+  "price": 90
+}
+```
+
+**Expected Response (200):**
+```json
+{
+  "message": "Product updated successfully",
+  "product": {
+    "PID": 4,
+    "FID": 8,
+    "productName": "มะเขือเทศอินทรีย์ Grade A",
+    "category": "ผักกินผล",
+    "price": 90
+  }
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ ข้อมูลที่ส่งไปถูกอัพเดท
+- ✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่แก้ไขได้
+
+---
+
+#### Test 20: ลบสินค้า (Delete Product)
+
+**Method:** `DELETE`  
+**URL:** `http://localhost:4000/products/delete`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
+  "NID": 1,
+  "PID": 4
+}
+```
+
+**Expected Response (200):**
+```json
+{
+  "message": "Product 4 deleted successfully"
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ สินค้าถูกลบจากระบบ
+- ✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่ลบได้
+
+---
+
+### 💬 Chat Management Tests
+
+#### Test 21: สร้างห้องแชท (Create Chat)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/chats/create`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
+  "NID": 1,
+  "FID": 5
+}
+```
+
+**Expected Response (201):**
+```json
+{
+  "message": "Chat created",
+  "chat": {
+    "logID": 1,
+    "NID": 1,
+    "FID": 5
+  }
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 201
+- ✅ Response มี logID ใหม่
+- ✅ มีการเชื่อมโยงระหว่าง User และ Farm
+- 💾 **บันทึก logID ไว้ใช้ในการทดสอบต่อไป**
+
+---
+
+#### Test 22: ดูห้องแชททั้งหมดของผู้ใช้ (Get Chats by User)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/chats/user/1`
+
+**Expected Response (200):**
+```json
+[
+  {
+    "logID": 1,
+    "NID": 1,
+    "FID": 5,
+    "Farm": {
+      "FID": 5,
+      "farmName": "Green Valley Farm"
+    }
+  }
+]
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ Response เป็น array
+- ✅ แต่ละห้องมีข้อมูลฟาร์มที่เกี่ยวข้อง
+
+---
+
+#### Test 23: ส่งข้อความ (Send Message)
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/chats/message`  
+**Headers:** `Content-Type: application/json`
+
+**Body (raw JSON):**
+```json
+{
+  "logID": 1,
+  "senderNID": 1,
+  "messageText": "สวัสดีครับ สนใจสินค้าของฟาร์มครับ"
+}
+```
+
+**Expected Response (201):**
+```json
+{
+  "message": "Message sent",
+  "data": {
+    "timestamp": "2025-11-17T08:48:22.208Z",
+    "messageID": 1,
+    "logID": 1,
+    "senderNID": 1,
+    "messageText": "สวัสดีครับ สนใจสินค้าของฟาร์มครับ"
+  }
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 201
+- ✅ Response มี messageID และ timestamp
+- ✅ ข้อความถูกบันทึกในห้องแชทที่ถูกต้อง
+
+---
+
+#### Test 24: ดูข้อความทั้งหมดในห้องแชท (Get Messages)
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/chats/room/1/messages`
+
+**Expected Response (200):**
+```json
+[
+  {
+    "messageID": 1,
+    "logID": 1,
+    "senderNID": 1,
+    "messageText": "สวัสดีครับ สนใจสินค้าของฟาร์มครับ",
+    "timestamp": "2025-11-17T08:48:22.208Z",
+    "User": {
+      "username": "yaya_updated"
+    }
+  }
+]
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ ข้อความเรียงตามเวลา
+- ✅ แต่ละข้อความมีข้อมูลผู้ส่ง
+
+---
+
+#### Test 25: ลบห้องแชท (Delete Chat)
+
+**Method:** `DELETE`  
+**URL:** `http://localhost:4000/chats/room/1`
+
+**Expected Response (200):**
+```json
+{
+  "message": "Chat 1 deleted"
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 200
+- ✅ ห้องแชทถูกลบจากระบบ
+- ✅ ข้อความทั้งหมดในห้องถูกลบด้วย
+
+---
+
+### 🔍 การทดสอบ Error Cases
+
+#### Test 26: ลงทะเบียนด้วย Username ซ้ำ
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/users/register`
+
+**Body:**
+```json
+{
+  "username": "farmer_john",
+  "password": "password123",
+  "type": true
+}
+```
+
+**Expected Response (400):**
+```json
+{
+  "error": "Username already exists"
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 400
+- ✅ Error message ชัดเจน
+
+---
+
+#### Test 27: เข้าสู่ระบบด้วยรหัสผ่านผิด
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/users/login`
+
+**Body:**
+```json
+{
+  "username": "farmer_john",
+  "password": "wrongpassword"
+}
+```
+
+**Expected Response (401):**
+```json
+{
+  "error": "Invalid password"
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 401
+- ✅ ไม่มี token ถูกส่งกลับ
+
+---
+
+#### Test 28: สร้างฟาร์มโดย Customer
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/farms/create`
+
+**Body:**
+```json
+{
+  "NID": 6,
+  "farmName": "Test Farm"
+}
+```
+
+**หมายเหตุ:** NID 6 เป็น Customer
+
+**Expected Response (400):**
+```json
+{
+  "error": "Permission denied: Only farmers can create farms"
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 400 หรือ 403
+- ✅ ระบบตรวจสอบ permission
+
+---
+
+#### Test 29: สร้างสินค้าในฟาร์มที่ไม่ใช่เจ้าของ
+
+**Method:** `POST`  
+**URL:** `http://localhost:4000/products/create`
+
+**Body:**
+```json
+{
+  "NID": 2,
+  "FID": 1,
+  "productName": "Test Product",
+  "price": 100
+}
+```
+
+**หมายเหตุ:** NID 2 ไม่ใช่เจ้าของ FID 1
+
+**Expected Response (400):**
+```json
+{
+  "error": "Permission denied: You don't own this farm"
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 400 หรือ 403
+- ✅ ระบบตรวจสอบความเป็นเจ้าของ
+
+---
+
+#### Test 30: ดูฟาร์มที่ไม่มีอยู่
+
+**Method:** `GET`  
+**URL:** `http://localhost:4000/farms/99999`
+
+**Expected Response (404):**
+```json
+{
+  "error": "Farm not found"
+}
+```
+
+**Test Points:**
+- ✅ Status code เป็น 404
+- ✅ Error message ชัดเจน
+
+---
+
+### 📊 Test Summary Checklist
+
+#### User Management (5 tests)
+- [ ] ลงทะเบียนผู้ใช้ใหม่
+- [ ] เข้าสู่ระบบ
+- [ ] ดูข้อมูลผู้ใช้ทั้งหมด
+- [ ] ดูข้อมูลผู้ใช้ตาม ID
+- [ ] อัพเดทข้อมูลผู้ใช้
+
+#### Farm Management (9 tests)
+- [ ] ดูฟาร์มทั้งหมดแบบเต็ม
+- [ ] ดูฟาร์มทั้งหมดพร้อมสินค้า
+- [ ] ดูฟาร์มตาม ID
+- [ ] ดูฟาร์มตามเจ้าของ
+- [ ] ดูสินค้าของฟาร์ม
+- [ ] สร้างฟาร์มใหม่
+- [ ] อัพเดทข้อมูลฟาร์ม
+- [ ] เพิ่มรูปภาพ/วิดีโอ
+- [ ] ลบรูปภาพ/วิดีโอ
+
+#### Product Management (6 tests)
+- [ ] ดูสินค้าทั้งหมด
+- [ ] ดูสินค้าตามฟาร์ม
+- [ ] ดูสินค้าตาม ID
+- [ ] สร้างสินค้าใหม่
+- [ ] อัพเดทสินค้า
+- [ ] ลบสินค้า
+
+#### Chat Management (5 tests)
+- [ ] สร้างห้องแชท
+- [ ] ดูห้องแชททั้งหมดของผู้ใช้
+- [ ] ส่งข้อความ
+- [ ] ดูข้อความทั้งหมดในห้องแชท
+- [ ] ลบห้องแชท
+
+#### Error Cases (5 tests)
+- [ ] ลงทะเบียนด้วย Username ซ้ำ
+- [ ] เข้าสู่ระบบด้วยรหัสผ่านผิด
+- [ ] สร้างฟาร์มโดย Customer
+- [ ] สร้างสินค้าในฟาร์มที่ไม่ใช่เจ้าของ
+- [ ] ดูฟาร์มที่ไม่มีอยู่
+
+**รวมทั้งหมด: 30 tests**
+
+---
+
+### 💡 Tips สำหรับการทดสอบ
+
+1. **ใช้ Postman Environment Variables:**
+   - สร้างตัวแปรสำหรับ `base_url`, `token`, `NID`, `FID`, `PID`
+   - จะช่วยให้เปลี่ยน endpoint ได้ง่าย
+
+2. **ใช้ Postman Tests Scripts:**
+   ```javascript
+   // ตัวอย่างการบันทึก token
+   pm.test("Status code is 200", function () {
+       pm.response.to.have.status(200);
+   });
+   
+   var jsonData = pm.response.json();
+   pm.environment.set("token", jsonData.token);
+   pm.environment.set("NID", jsonData.NID);
+   ```
+
+3. **ทดสอบตามลำดับ:**
+   - เริ่มจาก User Management
+   - จากนั้น Farm Management
+   - ตามด้วย Product Management
+   - สุดท้าย Chat Management
+
+4. **บันทึกผลการทดสอบ:**
+   - สร้างเอกสาร Test Report
+   - บันทึก bugs ที่พบ
+   - รวบรวม screenshots
+
 ---
 
 ## 🗄 Database Schema
@@ -552,15 +1733,9 @@ CREATE TABLE locations (
 ```sql
 CREATE TABLE storages (
   id SERIAL PRIMARY KEY,
-<<<<<<< HEAD
   FID INTEGER REFERENCES farms(FID),
   file TEXT,
   typeStorage VARCHAR(50)  -- 'image' or 'video'
-=======
-  FID INTEGER REFERENCES farms(FID) ON DELETE CASCADE ON UPDATE CASCADE,
-  file TEXT,
-  typeStorage VARCHAR(255)  -- 'image' or 'video'
->>>>>>> dev
 );
 ```
 
@@ -588,7 +1763,6 @@ CREATE TABLE chats (
 ## 📁 Project Structure
 
 ```
-<<<<<<< HEAD
 Hackathon_Group4/
 ├── .github/
 │   └── workflows/
@@ -603,26 +1777,6 @@ Hackathon_Group4/
 │   │   ├── farm.controller.js
 │   │   ├── product.controller.js
 │   │   └── user.controller.js
-=======
-HACKATHON_GROUP4/
-├── .github/
-│   └── workflows/
-│       ├── backend-cd.yml
-│       ├── backend-ci.yml
-│       ├── frontend-cd.yml
-│       └── frontend-ci.yml
-│
-├── backend/
-│   ├── config/
-│   │   └── db.js
-│   │
-│   ├── controllers/
-│   │   ├── description/
-│   │   ├── farm.controller.js
-│   │   ├── product.controller.js
-│   │   └── user.controller.js
-│   │
->>>>>>> dev
 │   ├── models/
 │   │   ├── Certificate.js
 │   │   ├── Chat.js
@@ -632,7 +1786,6 @@ HACKATHON_GROUP4/
 │   │   ├── Storage.js
 │   │   ├── User.js
 │   │   └── index.js
-<<<<<<< HEAD
 │   ├── routes/
 │   │   ├── farm.routes.js
 │   │   ├── product.routes.js
@@ -651,57 +1804,6 @@ HACKATHON_GROUP4/
 ├── server.js
 ├── package.json
 └── README.md
-=======
-│   │
-│   ├── routes/
-│   │   ├── description/
-│   │   ├── farm.routes.js
-│   │   ├── product.routes.js
-│   │   └── user.routes.js
-│   │
-│   └── service/
-│       ├── description/
-│       ├── farm.service.js
-│       ├── filter.service.js
-│       ├── product.service.js
-│       └── user.service.js
-│
-├── feature/
-│
-├── public/
-│   ├── images/
-│   │   ├── PhaktaeTG.png
-│   │   ├── PhaktaeTW.png
-│   │   ├── logo192.png
-│   │   └── logo512.png
-│   ├── favicon.ico
-│   ├── index.html
-│   ├── manifest.json
-│   └── robots.txt
-│
-├── src/
-│   ├── frontend/
-│   │   └── Auth/
-│   │       ├── Login/
-│   │       │   └── index.js
-│   │       └── Register/
-│   │           └── index.js
-│   ├── App.css
-│   ├── App.js
-│   ├── App.test.js
-│   ├── GlobalStyle.js
-│   ├── index.css
-│   ├── index.js
-│   ├── logo.svg
-│   ├── reportWebVitals.js
-│   └── setupTests.js
-│
-├── .gitignore
-├── package-lock.json
-├── package.json
-├── README.md
-└── server.js
->>>>>>> dev
 ```
 
 ---
@@ -713,36 +1815,8 @@ HACKATHON_GROUP4/
 The project follows a **3-layer architecture**:
 
 1. **Routes Layer** (`routes/`): Handles HTTP requests and defines API endpoints
-<<<<<<< HEAD
 2. **Controller Layer** (`controllers/`): Processes requests, validates input, and coordinates responses
 3. **Service Layer** (`service/`): Contains business logic and database operations
-=======
-   - `product.routes.js`: Defines product-related endpoints
-   - `farm.routes.js`: Defines farm-related endpoints
-   - `user.routes.js`: Defines authentication endpoints
-
-2. **Controller Layer** (`controllers/`): Processes requests, validates input, and coordinates responses
-   - `product.controller.js`: Handles product CRUD operations
-   - `farm.controller.js`: Handles farm management
-   - `user.controller.js`: Handles authentication and user management
-
-3. **Service Layer** (`service/`): Contains business logic and database operations
-   - `product.service.js`: Product business logic
-   - `farm.service.js`: Farm business logic
-   - `user.service.js`: User and authentication logic
-   - `filter.service.js`: Search and filtering logic
-
-### Route Definitions
-
-#### Product Routes (product.routes.js)
-```javascript
-router.get("/", ProductController.getAllByFarm);
-router.get("/:PID", ProductController.getById);
-router.post("/", ProductController.create);
-router.put("/", ProductController.update);
-router.delete("/", ProductController.delete);
-```
->>>>>>> dev
 
 ### Adding a New Feature
 
@@ -810,8 +1884,4 @@ For support, please open an issue in the GitHub repository.
 
 - Organic farming communities in Thailand
 - Open source libraries and frameworks used in this project
-<<<<<<< HEAD
 - Hackathon organizers and mentors
-=======
-- Hackathon organizers and mentors
->>>>>>> dev
