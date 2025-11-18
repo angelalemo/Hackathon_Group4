@@ -11,6 +11,8 @@ import FarmListPage from './frontend/Farm';
 import Filter from './frontend/FilterPage';
 import Product from './frontend/Product';
 import ProductManagement from './frontend/ProductManagememt';
+import ChatPage from './frontend/Chatfeatures';
+import ChatList from './frontend/Chatfeatures/ChatList';
 
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
         <Route path="/farms" element={<FarmListPage />} />
         <Route path="/filter" element={<Filter />} />
         <Route path="/product-management" element={<ProductManagement />} />
+        <Route path="/chat" element={<ChatList />} />
+        <Route path="/chat/:logID/:FID" element={<ChatPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
