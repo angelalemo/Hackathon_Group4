@@ -33,6 +33,7 @@ const Login = ({ className }) => {
       });
 
       localStorage.setItem("user", JSON.stringify(response.data));
+
       window.location.href = "/";
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");

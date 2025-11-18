@@ -7,7 +7,7 @@ const Createfarm = ({ className }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
-  const farmerNID = 1; // TODO: ดึงจาก Login จริง
+  const farmerNID = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).NID : "";
 
   const [form, setForm] = useState({
     NID: farmerNID,
@@ -17,7 +17,10 @@ const Createfarm = ({ className }) => {
     email: "",
     phoneNumber: "",
     description: "",
-    locationID: "",
+    location: "",
+    province: "",
+    district: "",
+    subDistrict: "",
     storages: [],
     certificates: [],
   });
@@ -26,8 +29,8 @@ const Createfarm = ({ className }) => {
   useEffect(() => {
     const checkFarm = async () => {
       try {
-        const res = await axios.get(`/farms/user/${farmerNID}`);
-        if (res.data && res.data.length > 0) {
+        const res = await axios.get(`http://localhost:4000/farms/user/${farmerNID}`);
+        if (res.data) {
           navigate("/farms");
         } else {
           setLoading(false);
@@ -100,9 +103,9 @@ const Createfarm = ({ className }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/farms/create", form);
+      await axios.post("http://localhost:4000/farms/create", form);
       alert("สร้างฟาร์มสำเร็จ!");
-      navigate("/farm/dashboard");
+      navigate("/farms");
     } catch (err) {
       console.error(err);
       alert("เกิดข้อผิดพลาดในการสร้างฟาร์ม");
@@ -159,16 +162,57 @@ const Createfarm = ({ className }) => {
               />
             </div>
 
-            <div className="input-group">
-              <label>Location ID *</label>
-              <input 
-                name="locationID" 
-                value={form.locationID} 
-                onChange={handleChange}
-                placeholder="รหัสที่ตั้ง"
-                required 
-              />
+            <div className="section">
+              <h3 className="section-title">
+                <span className="section-icon">📍</span
+                >ที่อยู่ฟาร์ม</h3>
+              <div className="grid-2">
+                <div className="input-group">
+                  <label>ที่อยู่</label>
+                  <input 
+                    name="location" 
+                    value={form.location} 
+                    onChange={handleChange}
+                    placeholder="เช่น 123 หมู่ 4 "
+                  />
+                </div>
+            
+                <div className="input-group">
+                  <label>ตำบล/แขวง</label>
+                  <input 
+                    name="subDistrict" 
+                    value={form.subDistrict} 
+                    onChange={handleChange}
+                    placeholder="เช่น บางรัก"
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>อำเภอ/เขต</label>
+                  <input 
+                    name="district" 
+                    value={form.district} 
+                    onChange={handleChange}
+                    placeholder="เช่น เมือง"
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>จังหวัด</label>
+                  <input 
+                    name="province" 
+                    value={form.province} 
+                    onChange={handleChange}
+                    placeholder="เช่น กรุงเทพมหานคร"
+                  />
+                </div>
+
+              </div>
+
+              
             </div>
+              
+              
           </div>
 
           {/* ข้อมูลติดต่อ */}
