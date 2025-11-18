@@ -13,49 +13,7 @@ const Product = ({ className }) => {
   const [error, setError] = useState(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [isOwner, setIsOwner] = useState(false);
-
-  // ดึงข้อมูล user จาก localStorage
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      try {
-        const parsed = JSON.parse(userData);
-        setCurrentUser(parsed.user || parsed);
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-      }
-    }
-  }, []);
-
-  // ตรวจสอบว่า user เป็นเจ้าของฟาร์มหรือไม่
-  useEffect(() => {
-    if (currentUser && product && product.FID) {
-      const isFarmer = currentUser.type === "Farmer" || currentUser.type === true;
-      
-      if (isFarmer) {
-        const checkFarmOwner = async () => {
-          try {
-            const farmRes = await axios.get(`http://localhost:4000/farms/${product.FID}`);
-            if (farmRes.data?.NID === currentUser.NID) {
-              setIsOwner(true);
-            } else {
-              setIsOwner(false);
-            }
-          } catch (error) {
-            console.error("Error checking farm owner:", error);
-            setIsOwner(false);
-          }
-        };
-        checkFarmOwner();
-      } else {
-        setIsOwner(false);
-      }
-    } else {
-      setIsOwner(false);
-    }
-  }, [currentUser, product]);
+  const [farmInfo, setFarmInfo] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -71,6 +29,16 @@ const Product = ({ className }) => {
         const user = localStorage.getItem("user");
         if (user) {
           checkBookmarkStatus(res.data.PID);
+        }
+
+        // ดึงข้อมูลฟาร์ม
+        if (res.data.FID) {
+          try {
+            const farmRes = await axios.get(`http://localhost:4000/farms/${res.data.FID}`);
+            setFarmInfo(farmRes.data);
+          } catch (farmErr) {
+            console.error("Error fetching farm info:", farmErr);
+          }
         }
       } catch (err) {
         console.error(err);
@@ -156,12 +124,6 @@ const Product = ({ className }) => {
       return;
     }
 
-    // ตรวจสอบว่า user เป็น farmer และเป็นเจ้าของฟาร์มหรือไม่
-    if (isOwner) {
-      alert("ไม่สามารถแชทกับร้านค้าของตัวเองได้");
-      return;
-    }
-
     try {
       // เพิ่มสินค้าเข้า Bookmark
       try {
@@ -231,16 +193,29 @@ const Product = ({ className }) => {
         <div className="info-section">
           <h1 className="product-name">{product.productName}</h1>
 
+          {farmInfo && product.FID && (
+            <div className="farm-info-card" onClick={() => navigate(`/farms/${product.FID}`)}>
+              <div className="farm-icon">🌾</div>
+              <div className="farm-details">
+                <div className="farm-label">ฟาร์ม</div>
+                <div className="farm-name">{farmInfo.farmName || "ฟาร์ม"}</div>
+              </div>
+              <div className="farm-arrow">›</div>
+            </div>
+          )}
+
           <div className="detail-card">
             <div className="detail-row">
               <span className="label">หมวดหมู่:</span>
-              <span className="value">{product.category}</span>
+              <span className="value">
+                {product.category || product.Category || product.CATEGORY || "-"}
+              </span>
             </div>
 
             <div className="detail-row">
               <span className="label">ประเภทการขาย:</span>
               <span className="value">
-                {product.saleType === "retail" ? "ขายปลีก" : "ขายส่ง"}
+                {product.saleType || product.sale_type || product.SaleType || "-"}
               </span>
             </div>
           </div>
@@ -253,12 +228,10 @@ const Product = ({ className }) => {
             </div>
           </div>
 
-          {!isOwner && (
-            <button type="button" className="chat-btn" onClick={handleChatWithFarm}>
-              <span className="icon">💬</span>
-              <span>แชทกับร้านค้า</span>
-            </button>
-          )}
+          <button type="button" className="chat-btn" onClick={handleChatWithFarm}>
+            <span className="icon">💬</span>
+            <span>แชทกับร้านค้า</span>
+          </button>
 
           <button 
             className={`bookmark-btn ${isBookmarked ? 'bookmarked' : ''}`}
@@ -341,6 +314,66 @@ export default styled(Product)`
     color: #1565c0;
     margin: 0 0 24px 0;
     font-weight: 700;
+  }
+
+  .farm-info-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+      background: #f5f5f5;
+      border-color: #1565c0;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(21, 101, 192, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .farm-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+
+  .farm-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .farm-label {
+    font-size: 12px;
+    color: #757575;
+    margin-bottom: 4px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .farm-name {
+    font-size: 18px;
+    color: #1565c0;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .farm-arrow {
+    font-size: 24px;
+    color: #1565c0;
+    flex-shrink: 0;
+    font-weight: 300;
   }
 
   .detail-card {

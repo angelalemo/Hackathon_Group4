@@ -300,24 +300,26 @@ function ProductModal({ mode, product, onSave, onClose }) {
           </FormGroup>
 
           <FormGroup>
-            <Label>รูปแบบการขาย :</Label>
+            <Label>ประเภทผัก :</Label>
             <Select
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             >
+              <option value="">-- เลือกประเภทผัก --</option>
               <option value="ผักกินใบ">ผักกินใบ</option>
               <option value="ผักกินผล">ผักกินผล</option>
-              <option value="ผักรากหัว">ผักรากหัว</option>ฃ
+              <option value="ผักรากหัว">ผักรากหัว</option>
               <option value="สมุนไพร/เครื่องเทศ">สมุนไพร/เครื่องเทศ</option>
             </Select>
           </FormGroup>
 
           <FormGroup>
-            <Label>หน่วยขาย :</Label>
+            <Label>รูปแบบการขาย :</Label>
             <Select
               value={formData.saleType}
               onChange={(e) => setFormData({ ...formData, saleType: e.target.value })}
             >
+              <option value="">-- เลือกรูปแบบการขาย --</option>
               <option value="กก.">กก.</option>
               <option value="ลัง">ลัง</option>
               <option value="กระสอบ">กระสอบ</option>

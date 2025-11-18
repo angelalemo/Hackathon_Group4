@@ -64,7 +64,7 @@ const FarmProfile = ({ className }) => {
           // some endpoints might return array
           setFarm(res.data[0]);
         } else {
-          setFarm(res.data);
+        setFarm(res.data);
         }
         setLoading(false);
       } catch (err) {
@@ -108,7 +108,7 @@ const FarmProfile = ({ className }) => {
               </Link>
             </>
           ) : (
-            <Link to="/" className="back-btn">กลับหน้าหลัก</Link>
+          <Link to="/" className="back-btn">กลับหน้าหลัก</Link>
           )}
         </div>
       </div>
@@ -505,8 +505,8 @@ const FarmProfile = ({ className }) => {
             {/* Story Section */}
             <div className="story-card">
               {/* Farm Profile Image */}
-              <div style={{ marginBottom: "25px", textAlign: "center" }}>
-                <div className="farmer-avatar" style={{ position: "relative", margin: "0 auto", display: "inline-block" }}>
+              <div style={{ marginBottom: "25px", textAlign: "center", width: "100%", overflow: "hidden" }}>
+                <div className="farmer-avatar" style={{ position: "relative" }}>
                   <img 
                     src={farm.profileImage || defaultFarmerImage} 
                     alt="Farm Profile"
@@ -649,8 +649,8 @@ const FarmProfile = ({ className }) => {
               )}
             </div>
 
-                  {/* Image Gallery */}
-              <div className="gallery-section">
+        {/* Image Gallery */}
+          <div className="gallery-section">
                 {isOwner && (
                   <div style={{ marginBottom: "15px", display: "flex", gap: "10px", alignItems: "center", justifyContent: "space-between" }}>
                     <h2 style={{ margin: 0, fontSize: "24px" }}>📸 รูปภาพฟาร์ม</h2>
@@ -682,7 +682,7 @@ const FarmProfile = ({ className }) => {
                 {images.length > 0 ? (
                   <>
                     <div className="main-image" style={{ position: "relative" }}>
-                      <img src={images[activeImage]?.file} alt="Farm" />
+              <img src={images[activeImage]?.file} alt="Farm" />
                       {isOwner && (
                         <button
                           type="button"
@@ -707,17 +707,17 @@ const FarmProfile = ({ className }) => {
                           ×
                         </button>
                       )}
-                    </div>
-                    {images.length > 1 && (
-                      <div className="thumbnail-list">
-                        {images.map((img, idx) => (
-                          <div
-                            key={idx}
-                            className={`thumbnail ${activeImage === idx ? "active" : ""}`}
-                            onClick={() => setActiveImage(idx)}
+            </div>
+            {images.length > 1 && (
+              <div className="thumbnail-list">
+                {images.map((img, idx) => (
+                  <div
+                    key={idx}
+                    className={`thumbnail ${activeImage === idx ? "active" : ""}`}
+                    onClick={() => setActiveImage(idx)}
                             style={{ position: "relative" }}
-                          >
-                            <img src={img.file} alt={`Thumbnail ${idx + 1}`} />
+                  >
+                    <img src={img.file} alt={`Thumbnail ${idx + 1}`} />
                             {isOwner && (
                               <button
                                 type="button"
@@ -745,22 +745,22 @@ const FarmProfile = ({ className }) => {
                                 ×
                               </button>
                             )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                  </div>
+                ))}
+              </div>
+            )}
                   </>
                 ) : (
                   <div style={{ padding: "40px", textAlign: "center", color: "#999" }}>
                     {isOwner ? "ยังไม่มีรูปภาพ กดปุ่มเพิ่มรูป/วิดีโอเพื่ออัปโหลด" : "ยังไม่มีรูปภาพ"}
-                  </div>
-                )}
-              </div>
+          </div>
+        )}
+            </div>
 
             {/* Certificates */}
-            <div className="certificate-card">
+              <div className="certificate-card">
               <div className="card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h2>🏆 ใบรับรองมาตรฐาน</h2>
+                  <h2>🏆 ใบรับรองมาตรฐาน</h2>
                 {isOwner && (
                   <label
                     style={{
@@ -784,7 +784,7 @@ const FarmProfile = ({ className }) => {
                     />
                   </label>
                 )}
-              </div>
+                </div>
               {farm.Certificates && farm.Certificates.length > 0 ? (
                 <div className="cert-grid">
                   {farm.Certificates.map((cert, idx) => (
@@ -826,14 +826,14 @@ const FarmProfile = ({ className }) => {
               ) : (
                 <div style={{ padding: "20px", textAlign: "center", color: "#999" }}>
                   {isOwner ? "ยังไม่มีใบรับรอง กดปุ่มเพิ่มใบรับรองเพื่ออัปโหลด" : "ยังไม่มีใบรับรอง"}
-                </div>
-              )}
+              </div>
+            )}
             </div>
 
             {/* Videos */}
-            <div className="video-card">
+              <div className="video-card">
               <div className="card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h2>🎥 วิดีโอแนะนำฟาร์ม</h2>
+                  <h2>🎥 วิดีโอแนะนำฟาร์ม</h2>
                 {isOwner && (
                   <label
                     style={{
@@ -857,7 +857,7 @@ const FarmProfile = ({ className }) => {
                     />
                   </label>
                 )}
-              </div>
+                </div>
               {videos.length > 0 ? (
                 <div className="video-grid">
                   {videos.map((video, idx) => (
@@ -896,8 +896,8 @@ const FarmProfile = ({ className }) => {
               ) : (
                 <div style={{ padding: "20px", textAlign: "center", color: "#999" }}>
                   {isOwner ? "ยังไม่มีวิดีโอ กดปุ่มเพิ่มรูป/วิดีโอเพื่ออัปโหลด" : "ยังไม่มีวิดีโอ"}
-                </div>
-              )}
+              </div>
+            )}
             </div>
           </div>
 
@@ -1148,44 +1148,44 @@ const FarmProfile = ({ className }) => {
                 </div>
               ) : (
                 <>
-                  {farm.phoneNumber && (
-                    <a href={`tel:${farm.phoneNumber}`} className="contact-item">
-                      <span className="contact-icon">📱</span>
-                      <div>
-                        <div className="contact-label">โทรศัพท์</div>
-                        <div className="contact-value">{farm.phoneNumber}</div>
-                      </div>
-                    </a>
-                  )}
+              {farm.phoneNumber && (
+                <a href={`tel:${farm.phoneNumber}`} className="contact-item">
+                  <span className="contact-icon">📱</span>
+                  <div>
+                    <div className="contact-label">โทรศัพท์</div>
+                    <div className="contact-value">{farm.phoneNumber}</div>
+                  </div>
+                </a>
+              )}
 
-                  {farm.email && (
-                    <a href={`mailto:${farm.email}`} className="contact-item">
-                      <span className="contact-icon">📧</span>
-                      <div>
-                        <div className="contact-label">อีเมล</div>
-                        <div className="contact-value">{farm.email}</div>
-                      </div>
-                    </a>
-                  )}
+              {farm.email && (
+                <a href={`mailto:${farm.email}`} className="contact-item">
+                  <span className="contact-icon">📧</span>
+                  <div>
+                    <div className="contact-label">อีเมล</div>
+                    <div className="contact-value">{farm.email}</div>
+                  </div>
+                </a>
+              )}
 
-                  {farm.line && (
-                    <a href={`https://line.me/ti/p/${farm.line}`} target="_blank" rel="noopener noreferrer" className="contact-item">
-                      <span className="contact-icon">💬</span>
-                      <div>
-                        <div className="contact-label">LINE</div>
-                        <div className="contact-value">{farm.line}</div>
-                      </div>
-                    </a>
-                  )}
+              {farm.line && (
+                <a href={`https://line.me/ti/p/${farm.line}`} target="_blank" rel="noopener noreferrer" className="contact-item">
+                  <span className="contact-icon">💬</span>
+                  <div>
+                    <div className="contact-label">LINE</div>
+                    <div className="contact-value">{farm.line}</div>
+                  </div>
+                </a>
+              )}
 
-                  {farm.facebook && (
-                    <a href={`https://facebook.com/${farm.facebook}`} target="_blank" rel="noopener noreferrer" className="contact-item">
-                      <span className="contact-icon">👥</span>
-                      <div>
-                        <div className="contact-label">Facebook</div>
-                        <div className="contact-value">{farm.facebook}</div>
-                      </div>
-                    </a>
+              {farm.facebook && (
+                <a href={`https://facebook.com/${farm.facebook}`} target="_blank" rel="noopener noreferrer" className="contact-item">
+                  <span className="contact-icon">👥</span>
+                  <div>
+                    <div className="contact-label">Facebook</div>
+                    <div className="contact-value">{farm.facebook}</div>
+                  </div>
+                </a>
                   )}
                 </>
               )}
@@ -1280,11 +1280,11 @@ const FarmProfile = ({ className }) => {
                         onClick={closeProductsModal}
                       >
                         ดูรายละเอียด
-                      </Link>
-                    </div>
-                  </div>
+            </Link>
+          </div>
+        </div>
                 ))}
-              </div>
+      </div>
             )}
           </div>
         </div>
@@ -1296,6 +1296,13 @@ const FarmProfile = ({ className }) => {
 export default styled(FarmProfile)`
   min-height: 100vh;
   background: #f5f7fa;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  
+  * {
+    box-sizing: border-box;
+  }
 
   .loading-container {
     display: flex;
@@ -1303,6 +1310,7 @@ export default styled(FarmProfile)`
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    padding: 20px;
     
     .spinner {
       width: 50px;
@@ -1312,11 +1320,26 @@ export default styled(FarmProfile)`
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
+
+    @media (max-width: 480px) {
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border-width: 3px;
+      }
+    }
     
     p {
       margin-top: 20px;
       color: #666;
       font-size: 16px;
+    }
+
+    @media (max-width: 480px) {
+      p {
+        font-size: 14px;
+        margin-top: 15px;
+      }
     }
   }
 
@@ -1330,15 +1353,39 @@ export default styled(FarmProfile)`
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    padding: 20px;
+    text-align: center;
     
     .error-icon {
       font-size: 80px;
       margin-bottom: 20px;
     }
+
+    @media (max-width: 480px) {
+      .error-icon {
+        font-size: 60px;
+        margin-bottom: 15px;
+      }
+    }
     
     h2 {
       color: #666;
       margin-bottom: 30px;
+      font-size: 24px;
+    }
+
+    @media (max-width: 768px) {
+      h2 {
+        font-size: 22px;
+        margin-bottom: 25px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+      }
     }
     
     .back-btn {
@@ -1349,11 +1396,19 @@ export default styled(FarmProfile)`
       border-radius: 12px;
       font-weight: 600;
       transition: all 0.3s;
+      font-size: 16px;
       
       &:hover {
         background: #5568d3;
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .back-btn {
+        padding: 10px 20px;
+        font-size: 14px;
       }
     }
   }
@@ -1367,12 +1422,36 @@ export default styled(FarmProfile)`
     justify-content: center;
     overflow: hidden;
     
+    @media (max-width: 768px) {
+      height: 300px;
+    }
+
+    @media (max-width: 480px) {
+      height: 250px;
+    }
+
+    @media (max-width: 360px) {
+      height: 220px;
+    }
+    
     &::before {
       content: '🌾🌱🌿';
       position: absolute;
       font-size: 200px;
       opacity: 0.1;
       animation: float 20s infinite;
+    }
+
+    @media (max-width: 768px) {
+      &::before {
+        font-size: 120px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      &::before {
+        font-size: 80px;
+      }
     }
     
     .hero-overlay {
@@ -1386,6 +1465,11 @@ export default styled(FarmProfile)`
       text-align: center;
       color: white;
       z-index: 1;
+      padding: 0 20px;
+      
+      @media (max-width: 480px) {
+        padding: 0 15px;
+      }
       
       .farm-badge {
         display: inline-block;
@@ -1397,17 +1481,66 @@ export default styled(FarmProfile)`
         font-size: 14px;
         font-weight: 600;
       }
+
+      @media (max-width: 768px) {
+        .farm-badge {
+          font-size: 12px;
+          padding: 6px 16px;
+          margin-bottom: 15px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .farm-badge {
+          font-size: 11px;
+          padding: 5px 12px;
+          margin-bottom: 12px;
+        }
+      }
       
       .farm-title {
         font-size: 56px;
         font-weight: 800;
         margin: 0 0 15px 0;
         text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+        line-height: 1.2;
+      }
+
+      @media (max-width: 768px) {
+        .farm-title {
+          font-size: 36px;
+          margin-bottom: 12px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .farm-title {
+          font-size: 24px;
+          margin-bottom: 10px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .farm-title {
+          font-size: 20px;
+        }
       }
       
       .location-tag {
         font-size: 18px;
         opacity: 0.95;
+      }
+
+      @media (max-width: 768px) {
+        .location-tag {
+          font-size: 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .location-tag {
+          font-size: 14px;
+        }
       }
     }
   }
@@ -1420,10 +1553,26 @@ export default styled(FarmProfile)`
 
   .container {
     max-width: 1400px;
+    width: 100%;
     margin: -80px auto 0;
     padding: 0 20px 60px;
     position: relative;
     z-index: 2;
+    box-sizing: border-box;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      margin-top: -60px;
+      padding: 0 15px 40px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      margin-top: -50px;
+      padding: 0 10px 30px;
+    }
   }
 
   .gallery-section {
@@ -1432,6 +1581,20 @@ export default styled(FarmProfile)`
     padding: 30px;
     margin-bottom: 30px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    width: 100%;
+    box-sizing: border-box;
+    
+    @media (max-width: 768px) {
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 480px) {
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
     
     .main-image {
       width: 100%;
@@ -1440,10 +1603,27 @@ export default styled(FarmProfile)`
       overflow: hidden;
       margin-bottom: 20px;
       
+      @media (max-width: 768px) {
+        height: 300px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+      }
+
+      @media (max-width: 480px) {
+        height: 250px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+      }
+
+      @media (max-width: 360px) {
+        height: 200px;
+      }
+      
       img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: center;
       }
     }
     
@@ -1453,8 +1633,22 @@ export default styled(FarmProfile)`
       overflow-x: auto;
       padding-bottom: 10px;
       
+      @media (max-width: 768px) {
+        gap: 12px;
+      }
+
+      @media (max-width: 480px) {
+        gap: 10px;
+      }
+      
       &::-webkit-scrollbar {
         height: 8px;
+      }
+
+      @media (max-width: 480px) {
+        &::-webkit-scrollbar {
+          height: 6px;
+        }
       }
       
       &::-webkit-scrollbar-track {
@@ -1478,6 +1672,24 @@ export default styled(FarmProfile)`
       transition: all 0.3s;
       flex-shrink: 0;
       
+      @media (max-width: 768px) {
+        width: 100px;
+        height: 70px;
+        border-radius: 8px;
+        border-width: 2px;
+      }
+
+      @media (max-width: 480px) {
+        width: 80px;
+        height: 60px;
+        border-radius: 6px;
+      }
+
+      @media (max-width: 360px) {
+        width: 70px;
+        height: 50px;
+      }
+      
       &.active {
         border-color: #667eea;
         transform: scale(1.05);
@@ -1499,12 +1711,17 @@ export default styled(FarmProfile)`
     display: grid;
     grid-template-columns: 1fr 380px;
     gap: 30px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .main-content {
     display: flex;
     flex-direction: column;
     gap: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
   }
 
   .story-card, .certificate-card, .video-card {
@@ -1512,10 +1729,79 @@ export default styled(FarmProfile)`
     border-radius: 24px;
     padding: 35px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .story-card .farmer-avatar {
+    max-width: 300px;
+    width: 300px;
+    height: 300px;
+    margin: 0 auto;
+    display: block;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid #f0f0f0;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .story-card .farmer-avatar {
+      max-width: 250px;
+      width: 250px;
+      height: 250px;
+      border-width: 4px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .story-card .farmer-avatar {
+      max-width: 200px;
+      width: 200px;
+      height: 200px;
+      border-width: 3px;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .story-card .farmer-avatar {
+      max-width: 150px;
+      width: 150px;
+      height: 150px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .story-card, .certificate-card, .video-card {
+      padding: 25px 20px;
+      border-radius: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .story-card, .certificate-card, .video-card {
+      padding: 20px 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
   }
 
   .card-header {
     margin-bottom: 25px;
+    
+    @media (max-width: 480px) {
+      margin-bottom: 15px;
+    }
     
     h2, h3 {
       font-size: 24px;
@@ -1525,6 +1811,21 @@ export default styled(FarmProfile)`
       gap: 10px;
       margin: 0;
     }
+
+    @media (max-width: 768px) {
+      h2, h3 {
+        font-size: 20px;
+        gap: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h2, h3 {
+        font-size: 18px;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+    }
   }
 
   .story-text {
@@ -1532,6 +1833,20 @@ export default styled(FarmProfile)`
     line-height: 1.8;
     color: #555;
     margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .story-text {
+      font-size: 15px;
+      line-height: 1.7;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .story-text {
+      font-size: 14px;
+      line-height: 1.6;
+    }
   }
 
   .cert-grid {
@@ -1550,6 +1865,19 @@ export default styled(FarmProfile)`
     border: 2px solid #f0f0f0;
     transition: all 0.3s;
     
+    @media (max-width: 768px) {
+      padding: 20px;
+      flex-direction: column;
+      text-align: center;
+      gap: 15px;
+    }
+
+    @media (max-width: 480px) {
+      padding: 15px;
+      border-radius: 12px;
+      gap: 12px;
+    }
+    
     &:hover {
       transform: translateY(-3px);
       box-shadow: 0 8px 20px rgba(0,0,0,0.1);
@@ -1559,14 +1887,44 @@ export default styled(FarmProfile)`
     .cert-icon {
       font-size: 48px;
     }
+
+    @media (max-width: 768px) {
+      .cert-icon {
+        font-size: 40px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .cert-icon {
+        font-size: 36px;
+      }
+    }
     
     .cert-info {
       flex: 1;
+      
+      @media (max-width: 768px) {
+        width: 100%;
+      }
       
       h4 {
         margin: 0 0 10px 0;
         font-size: 18px;
         color: #333;
+      }
+
+      @media (max-width: 768px) {
+        h4 {
+          font-size: 16px;
+          margin-bottom: 8px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h4 {
+          font-size: 15px;
+          margin-bottom: 8px;
+        }
       }
       
       .view-cert-btn {
@@ -1579,6 +1937,11 @@ export default styled(FarmProfile)`
         font-weight: 600;
         font-size: 14px;
         transition: all 0.3s;
+        
+        @media (max-width: 480px) {
+          padding: 6px 16px;
+          font-size: 13px;
+        }
         
         &:hover {
           background: #5568d3;
@@ -1607,6 +1970,9 @@ export default styled(FarmProfile)`
     display: flex;
     flex-direction: column;
     gap: 25px;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
   }
 
   .farmer-card {
@@ -1615,6 +1981,18 @@ export default styled(FarmProfile)`
     padding: 35px;
     text-align: center;
     box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    width: 100%;
+    box-sizing: border-box;
+    
+    @media (max-width: 768px) {
+      padding: 25px 20px;
+      border-radius: 16px;
+    }
+
+    @media (max-width: 480px) {
+      padding: 20px 15px;
+      border-radius: 12px;
+    }
     
     .farmer-avatar {
       width: 120px;
@@ -1624,6 +2002,20 @@ export default styled(FarmProfile)`
       overflow: hidden;
       border: 5px solid #f0f0f0;
       box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      
+      @media (max-width: 768px) {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 15px;
+        border-width: 4px;
+      }
+
+      @media (max-width: 480px) {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 12px;
+        border-width: 3px;
+      }
       
       img {
         width: 100%;
@@ -1638,11 +2030,30 @@ export default styled(FarmProfile)`
       color: #333;
       margin: 0 0 5px 0;
     }
+
+    @media (max-width: 768px) {
+      .farmer-name {
+        font-size: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .farmer-name {
+        font-size: 18px;
+      }
+    }
     
     .farmer-role {
       color: #999;
       font-size: 14px;
       margin: 0 0 20px 0;
+    }
+
+    @media (max-width: 480px) {
+      .farmer-role {
+        font-size: 13px;
+        margin-bottom: 15px;
+      }
     }
     
     .farmer-info-item {
@@ -1656,6 +2067,14 @@ export default styled(FarmProfile)`
       font-size: 14px;
       color: #666;
     }
+
+    @media (max-width: 480px) {
+      .farmer-info-item {
+        padding: 10px;
+        font-size: 13px;
+        gap: 8px;
+      }
+    }
   }
 
   .contact-card {
@@ -1663,6 +2082,18 @@ export default styled(FarmProfile)`
     border-radius: 24px;
     padding: 30px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    width: 100%;
+    box-sizing: border-box;
+    
+    @media (max-width: 768px) {
+      padding: 25px 20px;
+      border-radius: 16px;
+    }
+
+    @media (max-width: 480px) {
+      padding: 20px 15px;
+      border-radius: 12px;
+    }
     
     .contact-item {
       display: flex;
@@ -1674,6 +2105,19 @@ export default styled(FarmProfile)`
       border-radius: 14px;
       text-decoration: none;
       transition: all 0.3s;
+      
+      @media (max-width: 768px) {
+        padding: 15px;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      @media (max-width: 480px) {
+        padding: 12px;
+        gap: 10px;
+        margin-top: 10px;
+        border-radius: 12px;
+      }
       
       &:first-of-type {
         margin-top: 0;
@@ -1696,6 +2140,18 @@ export default styled(FarmProfile)`
         font-size: 28px;
         transition: transform 0.3s;
       }
+
+      @media (max-width: 768px) {
+        .contact-icon {
+          font-size: 24px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .contact-icon {
+          font-size: 20px;
+        }
+      }
       
       .contact-label {
         font-size: 12px;
@@ -1704,12 +2160,30 @@ export default styled(FarmProfile)`
         text-transform: uppercase;
         transition: color 0.3s;
       }
+
+      @media (max-width: 480px) {
+        .contact-label {
+          font-size: 11px;
+        }
+      }
       
       .contact-value {
         font-size: 15px;
         color: #333;
         font-weight: 600;
         transition: color 0.3s;
+      }
+
+      @media (max-width: 768px) {
+        .contact-value {
+          font-size: 14px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .contact-value {
+          font-size: 13px;
+        }
       }
     }
   }
@@ -1731,6 +2205,19 @@ export default styled(FarmProfile)`
     border: none;
     cursor: pointer;
     
+    @media (max-width: 768px) {
+      padding: 15px;
+      font-size: 15px;
+      border-radius: 12px;
+    }
+
+    @media (max-width: 480px) {
+      padding: 12px;
+      font-size: 14px;
+      border-radius: 10px;
+      gap: 8px;
+    }
+    
     &:hover {
       transform: translateY(-3px);
       box-shadow: 0 12px 28px rgba(67, 233, 123, 0.4);
@@ -1748,6 +2235,12 @@ export default styled(FarmProfile)`
     z-index: 1000;
   }
 
+  @media (max-width: 480px) {
+    .cert-modal-overlay {
+      padding: 10px;
+    }
+  }
+
   .cert-modal {
     background: white;
     border-radius: 20px;
@@ -1762,6 +2255,23 @@ export default styled(FarmProfile)`
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   }
 
+  @media (max-width: 768px) {
+    .cert-modal {
+      padding: 20px;
+      border-radius: 16px;
+      gap: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cert-modal {
+      padding: 15px;
+      border-radius: 12px;
+      max-width: 95%;
+      gap: 12px;
+    }
+  }
+
   .close-modal-btn {
     position: absolute;
     top: 15px;
@@ -1772,6 +2282,12 @@ export default styled(FarmProfile)`
     cursor: pointer;
     line-height: 1;
     color: #999;
+
+    @media (max-width: 480px) {
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+    }
 
     &:hover {
       color: #333;
@@ -1787,6 +2303,11 @@ export default styled(FarmProfile)`
     background: #f6f7fb;
     padding: 20px;
 
+    @media (max-width: 480px) {
+      padding: 15px;
+      border-radius: 12px;
+    }
+
     img,
     iframe {
       width: 100%;
@@ -1796,6 +2317,20 @@ export default styled(FarmProfile)`
       border-radius: 12px;
       object-fit: contain;
       background: white;
+    }
+
+    @media (max-width: 768px) {
+      img, iframe {
+        max-height: 500px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      img, iframe {
+        height: 60vh;
+        max-height: 400px;
+        border-radius: 8px;
+      }
     }
   }
 
@@ -1830,6 +2365,18 @@ export default styled(FarmProfile)`
     overflow-y: auto;
   }
 
+  @media (max-width: 768px) {
+    .products-modal-overlay {
+      padding: 20px 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .products-modal-overlay {
+      padding: 20px 10px;
+    }
+  }
+
   .products-modal {
     background: white;
     border-radius: 24px;
@@ -1842,10 +2389,38 @@ export default styled(FarmProfile)`
     gap: 20px;
   }
 
+  @media (max-width: 768px) {
+    .products-modal {
+      padding: 20px;
+      border-radius: 16px;
+      gap: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .products-modal {
+      padding: 15px;
+      border-radius: 12px;
+      gap: 12px;
+    }
+  }
+
   .products-modal h3 {
     margin: 0;
     font-size: 26px;
     color: #1f2937;
+  }
+
+  @media (max-width: 768px) {
+    .products-modal h3 {
+      font-size: 22px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .products-modal h3 {
+      font-size: 20px;
+    }
   }
 
   .modal-loading,
@@ -1862,6 +2437,20 @@ export default styled(FarmProfile)`
     gap: 20px;
   }
 
+  @media (max-width: 768px) {
+    .products-grid {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .products-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+
   .product-card {
     background: #f9fafb;
     border-radius: 16px;
@@ -1871,10 +2460,24 @@ export default styled(FarmProfile)`
     box-shadow: inset 0 0 0 1px #e5e7eb;
   }
 
+  @media (max-width: 480px) {
+    .product-card {
+      border-radius: 12px;
+    }
+  }
+
   .product-thumb {
     width: 100%;
     height: 160px;
     background: #eef2ff;
+
+    @media (max-width: 768px) {
+      height: 140px;
+    }
+
+    @media (max-width: 480px) {
+      height: 180px;
+    }
 
     img {
       width: 100%;
@@ -1889,16 +2492,40 @@ export default styled(FarmProfile)`
     flex-direction: column;
     gap: 8px;
 
+    @media (max-width: 480px) {
+      padding: 12px;
+      gap: 6px;
+    }
+
     h4 {
       margin: 0;
       color: #111827;
       font-size: 16px;
     }
 
+    @media (max-width: 768px) {
+      h4 {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h4 {
+        font-size: 15px;
+      }
+    }
+
     .price {
       margin: 0;
       color: #22c55e;
       font-weight: 700;
+      font-size: 18px;
+    }
+
+    @media (max-width: 480px) {
+      .price {
+        font-size: 16px;
+      }
     }
   }
 
@@ -1923,6 +2550,18 @@ export default styled(FarmProfile)`
       max-width: 600px;
       margin: 0 auto;
     }
+
+    .container {
+      padding: 0 15px 50px;
+    }
+
+    .gallery-section {
+      padding: 25px;
+    }
+
+    .gallery-section .main-image {
+      height: 400px;
+    }
   }
 
   @media (max-width: 768px) {
@@ -1931,21 +2570,361 @@ export default styled(FarmProfile)`
       
       .hero-content {
         .farm-title {
-          font-size: 36px;
+          font-size: 32px;
         }
       }
     }
     
     .container {
       margin-top: -60px;
+      padding: 0 15px 40px;
+    }
+    
+    .gallery-section {
+      padding: 20px;
+      margin-bottom: 20px;
     }
     
     .gallery-section .main-image {
       height: 300px;
+      margin-bottom: 15px;
+    }
+
+    .gallery-section .thumbnail {
+      width: 100px;
+      height: 70px;
     }
     
     .story-card, .certificate-card, .video-card {
       padding: 25px 20px;
+      border-radius: 16px;
+    }
+
+    .card-header h2, .card-header h3 {
+      font-size: 20px;
+    }
+
+    .story-text {
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .cert-item {
+      padding: 20px;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .cert-item .cert-icon {
+      font-size: 40px;
+    }
+
+    .cert-item .cert-info h4 {
+      font-size: 16px;
+    }
+
+    .farmer-card {
+      padding: 25px 20px;
+    }
+
+    .farmer-card .farmer-avatar {
+      width: 100px;
+      height: 100px;
+    }
+
+    .farmer-card .farmer-name {
+      font-size: 20px;
+    }
+
+    .contact-card {
+      padding: 25px 20px;
+    }
+
+    .contact-item {
+      padding: 15px;
+    }
+
+    .contact-item .contact-icon {
+      font-size: 24px;
+    }
+
+    .products-modal {
+      padding: 20px;
+      border-radius: 16px;
+    }
+
+    .products-modal h3 {
+      font-size: 22px;
+    }
+
+    .products-grid {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+    }
+
+    .product-thumb {
+      height: 140px;
+    }
+
+    .product-info {
+      padding: 12px;
+    }
+
+    .product-info h4 {
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-section {
+      height: 250px;
+      
+      .hero-content {
+        .farm-title {
+          font-size: 24px;
+        }
+      }
+    }
+    
+    .container {
+      margin-top: -50px;
+      padding: 0 10px 30px;
+    }
+    
+    .gallery-section {
+      padding: 15px;
+      border-radius: 16px;
+      margin-bottom: 15px;
+    }
+
+    .gallery-section .main-image {
+      height: 250px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .gallery-section .thumbnail {
+      width: 80px;
+      height: 60px;
+      border-radius: 8px;
+    }
+
+    .gallery-section .thumbnail-list {
+      gap: 10px;
+    }
+    
+    .story-card, .certificate-card, .video-card {
+      padding: 20px 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    .card-header {
+      margin-bottom: 15px;
+    }
+
+    .card-header h2, .card-header h3 {
+      font-size: 18px;
+    }
+
+    .story-text {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .cert-grid {
+      gap: 15px;
+    }
+
+    .cert-item {
+      padding: 15px;
+      border-radius: 12px;
+    }
+
+    .cert-item .cert-icon {
+      font-size: 36px;
+    }
+
+    .cert-item .cert-info h4 {
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .cert-item .cert-info .view-cert-btn {
+      padding: 6px 16px;
+      font-size: 13px;
+    }
+
+    .video-grid {
+      gap: 15px;
+    }
+
+    .video-item video {
+      border-radius: 12px;
+    }
+
+    .farmer-card {
+      padding: 20px 15px;
+      border-radius: 16px;
+    }
+
+    .farmer-card .farmer-avatar {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 15px;
+      border-width: 3px;
+    }
+
+    .farmer-card .farmer-name {
+      font-size: 18px;
+    }
+
+    .farmer-card .farmer-role {
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    .farmer-card .farmer-info-item {
+      padding: 10px;
+      font-size: 13px;
+    }
+
+    .contact-card {
+      padding: 20px 15px;
+      border-radius: 16px;
+    }
+
+    .contact-item {
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .contact-item .contact-icon {
+      font-size: 20px;
+    }
+
+    .contact-item .contact-label {
+      font-size: 13px;
+    }
+
+    .contact-item .contact-value {
+      font-size: 13px;
+    }
+
+    .products-modal-overlay {
+      padding: 20px 10px;
+    }
+
+    .products-modal {
+      padding: 15px;
+      border-radius: 12px;
+    }
+
+    .products-modal h3 {
+      font-size: 20px;
+    }
+
+    .products-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .product-thumb {
+      height: 180px;
+    }
+
+    .product-info {
+      padding: 12px;
+    }
+
+    .product-info h4 {
+      font-size: 15px;
+    }
+
+    .product-info .price {
+      font-size: 16px;
+    }
+
+    .cert-modal {
+      padding: 20px;
+      max-width: 95%;
+    }
+
+    .cert-modal h3 {
+      font-size: 20px;
+    }
+
+    .cert-modal-content {
+      padding: 15px;
+    }
+
+    .cert-modal-content img {
+      max-height: 400px;
+    }
+
+    .error-container .error-icon {
+      font-size: 60px;
+    }
+
+    .error-container h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .error-container .back-btn {
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+
+    .loading-container .spinner {
+      width: 40px;
+      height: 40px;
+      border-width: 3px;
+    }
+
+    .loading-container p {
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .hero-section {
+      height: 220px;
+      
+      .hero-content {
+        .farm-title {
+          font-size: 20px;
+        }
+      }
+    }
+
+    .gallery-section .main-image {
+      height: 200px;
+    }
+
+    .gallery-section .thumbnail {
+      width: 70px;
+      height: 50px;
+    }
+
+    .products-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .container {
+      padding: 0 8px 25px;
+    }
+
+    .story-card, .certificate-card, .video-card {
+      padding: 15px 12px;
+    }
+
+    .card-header h2, .card-header h3 {
+      font-size: 16px;
+    }
+
+    .story-text {
+      font-size: 13px;
     }
   }
 `;

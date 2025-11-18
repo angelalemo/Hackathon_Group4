@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Homepage = ({ className }) => {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [farmers, setFarmers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Slider images (ตัวอย่าง - ใส่ URL จริงของคุณ)
+  // Slider images จากโฟลเดอร์ Homecomponents
   const slides = [
-    "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200",
-    "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1200",
-    "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1200",
+    require("./Homecomponents/asset/1.jpg"),
+    require("./Homecomponents/asset/2.jpg"),
+    require("./Homecomponents/asset/3.jpg"),
   ];
 
   // หมวดหมู่แถวที่ 1
@@ -43,47 +45,47 @@ const Homepage = ({ className }) => {
         setLoading(true);
         
         // ดึงข้อมูล users ทั้งหมด
-        const usersResponse = await axios.get("้http://localhost:4000/users/All");
+        const usersResponse = await axios.get("http://localhost:4000/users/All");
         
         // กรองเฉพาะ Farmer
         const farmersOnly = usersResponse.data.filter(
-          user => user.type === "Farmer"
+          user => user.type === "Farmer" || user.type === true
         );
 
         // ดึงข้อมูลฟาร์มของแต่ละเกษตรกร
         const farmersWithFarms = await Promise.all(
           farmersOnly.map(async (farmer) => {
             try {
-              const farmResponse = await axios.get(`http://localhost:4000/farms/All`);
+              const farmResponse = await axios.get(`http://localhost:4000/farms/user/${farmer.NID}`);
+              const farmData = Array.isArray(farmResponse.data) ? farmResponse.data[0] : farmResponse.data;
               return {
                 ...farmer,
-                farmName: farmResponse.data?.[0]?.farmName || "ไม่มีฟาร์ม",
-                farmData: farmResponse.data?.[0] || null
+                farmName: farmData?.farmName || "ไม่มีฟาร์ม",
+                farmData: farmData || null,
+                FID: farmData?.FID || null,
+                profileImage: farmData?.profileImage || null,
               };
             } catch (error) {
               console.error(`Error fetching farm for user ${farmer.NID}:`, error);
               return {
                 ...farmer,
                 farmName: "ไม่มีฟาร์ม",
-                farmData: null
+                farmData: null,
+                FID: null,
+                profileImage: null,
               };
             }
           })
         );
         
-        setFarmers(farmersWithFarms);
+        // กรองเฉพาะเกษตรกรที่มีฟาร์ม
+        const farmersWithFarmsOnly = farmersWithFarms.filter(f => f.FID);
+        setFarmers(farmersWithFarmsOnly);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching farmers:", error);
         setLoading(false);
-        
-        // ใช้ข้อมูล mock ถ้า API ไม่พร้อม
-        const mockFarmers = [
-          { NID: 1, username: "สมชาย", farmName: "ฟาร์มสุขใจ", ProfileImage: null },
-          { NID: 2, username: "สมหญิง", farmName: "ฟาร์มอินทรีย์", ProfileImage: null },
-          { NID: 3, username: "สมศักดิ์", farmName: "ฟาร์มปลอดสาร", ProfileImage: null },
-        ];
-        setFarmers(mockFarmers);
+        setFarmers([]);
       }
     };
 
@@ -114,10 +116,6 @@ const Homepage = ({ className }) => {
           {slides.map((slide, index) => (
             <div key={index} className="slide">
               <img src={slide} alt={`Slide ${index + 1}`} />
-              <div className="slide-overlay">
-                <h1>PHAKTAE</h1>
-                <p>เชื่อมโยงเกษตรกรอินทรีย์กับผู้บริโภค</p>
-              </div>
             </div>
           ))}
         </div>
@@ -140,7 +138,6 @@ const Homepage = ({ className }) => {
       <section className="about-section">
         <div className="container">
           <div className="about-content">
-            <div className="icon-large">🌾</div>
             <h2>ความเป็นมาของ PHAKTAE</h2>
             <p className="about-text">
               <strong>PHAKTAE</strong> คือ แพลตฟอร์มเชื่อมโยงเกษตรกรอินทรีย์กับผู้บริโภคโดยตรง 
@@ -179,21 +176,18 @@ const Homepage = ({ className }) => {
               </p>
               <div className="pgs-features">
                 <div className="feature">✓ รับรองโดยชุมชน</div>
-                <div className="feature">✓ โปร่งใส ตรวจสอบได้</div>
+                <div className="feature">✓ ตรวจสอบได้</div>
                 <div className="feature">✓ เหมาะกับท้องถิ่น</div>
                 <div className="feature">✓ พัฒนาอย่างต่อเนื่อง</div>
               </div>
             </div>
             
             <div className="pgs-logo">
-              <div className="logo-circle">
-                <div className="logo-content">
-                  <div className="leaf-icon">🌿</div>
-                  <div className="logo-text">PGS</div>
-                  <div className="logo-subtext">Organic</div>
-                  <div className="logo-subtext">Guarantee</div>
-                </div>
-              </div>
+              <img 
+                src={require("./Homecomponents/asset/logopsg.jpg")} 
+                alt="PGS Logo" 
+                className="pgs-logo-image"
+              />
             </div>
           </div>
         </div>
@@ -216,9 +210,16 @@ const Homepage = ({ className }) => {
             <div className="farmers-scroll">
               <div className="farmers-grid">
                 {farmers.map((farmer) => (
-                  <div key={farmer.NID} className="farmer-card">
+                  <div 
+                    key={farmer.NID} 
+                    className="farmer-card"
+                    onClick={() => farmer.FID && navigate(`/farms/${farmer.FID}`)}
+                    style={{ cursor: farmer.FID ? "pointer" : "default" }}
+                  >
                     <div className="farmer-avatar">
-                      {farmer.ProfileImage ? (
+                      {farmer.farmData?.profileImage ? (
+                        <img src={farmer.farmData.profileImage} alt={farmer.farmName} />
+                      ) : farmer.ProfileImage ? (
                         <img src={farmer.ProfileImage} alt={farmer.username} />
                       ) : (
                         <div className="avatar-placeholder">
@@ -253,7 +254,11 @@ const Homepage = ({ className }) => {
           <div className="category-scroll">
             <div className="category-row">
               {categories1.map((cat, index) => (
-                <div key={index} className="category-item">
+                <div 
+                  key={index} 
+                  className="category-item"
+                  onClick={() => navigate(`/filter?category=${encodeURIComponent(cat.name)}`)}
+                >
                   <div className="category-circle">
                     <span className="category-emoji">{cat.image}</span>
                   </div>
@@ -267,7 +272,11 @@ const Homepage = ({ className }) => {
           <div className="category-scroll">
             <div className="category-row">
               {categories2.map((cat, index) => (
-                <div key={index} className="category-item">
+                <div 
+                  key={index} 
+                  className="category-item"
+                  onClick={() => navigate(`/filter?category=${encodeURIComponent(cat.name)}`)}
+                >
                   <div className="category-circle">
                     <span className="category-emoji">{cat.image}</span>
                   </div>
@@ -372,7 +381,7 @@ export default styled(Homepage)`
     box-sizing: border-box;
   }
 
-  background: #f8fafb;
+  background: #ffffff;
   min-height: 100vh;
 
   .container {
@@ -387,7 +396,19 @@ export default styled(Homepage)`
     width: 100%;
     height: 500px;
     overflow: hidden;
-    background: #1a472a;
+    background: #2E7D32;
+  }
+
+  @media (max-width: 768px) {
+    .slider-container {
+      height: 300px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .slider-container {
+      height: 250px;
+    }
   }
 
   .slider {
@@ -400,36 +421,22 @@ export default styled(Homepage)`
     position: relative;
     min-width: 100%;
     height: 100%;
+    overflow: hidden;
   }
 
   .slide img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.7;
+    object-position: center;
+    display: block;
   }
 
-  .slide-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: white;
-    z-index: 2;
-  }
-
-  .slide-overlay h1 {
-    font-size: 72px;
-    font-weight: 900;
-    margin-bottom: 15px;
-    text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-    letter-spacing: 4px;
-  }
-
-  .slide-overlay p {
-    font-size: 24px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  @media (max-width: 768px) {
+    .slide img {
+      object-fit: cover;
+      object-position: center;
+    }
   }
 
   .slider-btn {
@@ -487,7 +494,13 @@ export default styled(Homepage)`
   /* ========== ABOUT SECTION ========== */
   .about-section {
     padding: 80px 0;
-    background: linear-gradient(135deg, #2E7D32 0%, #1565C0 100%);
+    background: #2E7D32;
+  }
+
+  @media (max-width: 768px) {
+    .about-section {
+      padding: 60px 0;
+    }
   }
 
   .about-content {
@@ -495,35 +508,36 @@ export default styled(Homepage)`
     color: white;
   }
 
-  .icon-large {
-    font-size: 80px;
-    margin-bottom: 20px;
-    animation: float 3s ease-in-out infinite;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-
   .about-content h2 {
-    font-size: 42px;
+    font-size: 36px;
     margin-bottom: 25px;
-    font-weight: 700;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .about-content h2 {
+      font-size: 28px;
+    }
   }
 
   .about-text {
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.8;
     max-width: 900px;
     margin: 0 auto;
   }
 
+  @media (max-width: 768px) {
+    .about-text {
+      font-size: 16px;
+    }
+  }
+
   .highlight {
-    background: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.2);
     padding: 3px 12px;
-    border-radius: 6px;
-    font-weight: 700;
+    border-radius: 4px;
+    font-weight: 600;
   }
 
   /* ========== PGS SECTION ========== */
@@ -532,18 +546,35 @@ export default styled(Homepage)`
     background: white;
   }
 
+  @media (max-width: 768px) {
+    .pgs-section {
+      padding: 60px 0;
+    }
+    .pgs-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+
   .section-title {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 15px;
-    font-size: 38px;
+    font-size: 32px;
     margin-bottom: 50px;
-    color: #1a472a;
+    color: #2E7D32;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 26px;
+    }
   }
 
   .section-title .icon {
-    font-size: 42px;
+    font-size: 36px;
   }
 
   .pgs-grid {
@@ -554,9 +585,10 @@ export default styled(Homepage)`
   }
 
   .pgs-content h3 {
-    font-size: 28px;
+    font-size: 24px;
     margin-bottom: 20px;
     color: #2E7D32;
+    font-weight: 600;
   }
 
   .pgs-content p {
@@ -569,18 +601,24 @@ export default styled(Homepage)`
   .pgs-features {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 12px;
     margin-top: 30px;
   }
 
+  @media (max-width: 768px) {
+    .pgs-features {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .feature {
-    background: linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%);
-    padding: 15px 20px;
-    border-radius: 12px;
-    color: #1a472a;
-    font-weight: 600;
-    font-size: 15px;
-    border: 2px solid #4CAF50;
+    background: #E8F5E9;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #2E7D32;
+    font-weight: 500;
+    font-size: 14px;
+    border: 1px solid #4CAF50;
   }
 
   .pgs-logo {
@@ -589,49 +627,23 @@ export default styled(Homepage)`
     align-items: center;
   }
 
-  .logo-circle {
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #2E7D32 0%, #1565C0 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 20px 60px rgba(46, 125, 50, 0.3);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-
-  .logo-content {
-    text-align: center;
-    color: white;
-  }
-
-  .leaf-icon {
-    font-size: 80px;
-    margin-bottom: 15px;
-  }
-
-  .logo-text {
-    font-size: 48px;
-    font-weight: 900;
-    letter-spacing: 3px;
-  }
-
-  .logo-subtext {
-    font-size: 16px;
-    font-weight: 500;
-    opacity: 0.9;
+  .pgs-logo-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
 
   /* ========== FARMERS SECTION ========== */
   .farmers-section {
     padding: 80px 0;
-    background: linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%);
+    background: #ffffff;
+  }
+
+  @media (max-width: 768px) {
+    .farmers-section {
+      padding: 60px 0;
+    }
   }
 
   .loading-box {
@@ -691,18 +703,18 @@ export default styled(Homepage)`
   .farmer-card {
     min-width: 280px;
     background: white;
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 25px;
-    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.15);
-    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.2s;
     cursor: pointer;
-    border: 2px solid transparent;
+    border: 1px solid #E8F5E9;
   }
 
   .farmer-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.25);
-    border-color: #4CAF50;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+    border-color: #2E7D32;
   }
 
   .farmer-avatar {
@@ -711,7 +723,7 @@ export default styled(Homepage)`
     margin: 0 auto 20px;
     border-radius: 50%;
     overflow: hidden;
-    border: 4px solid #4CAF50;
+    border: 2px solid #2E7D32;
   }
 
   .farmer-avatar img {
@@ -723,13 +735,13 @@ export default styled(Homepage)`
   .avatar-placeholder {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #2E7D32 0%, #1565C0 100%);
+    background: #2E7D32;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 42px;
     color: white;
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .farmer-info {
@@ -737,9 +749,10 @@ export default styled(Homepage)`
   }
 
   .farmer-info h3 {
-    font-size: 22px;
+    font-size: 20px;
     margin-bottom: 10px;
-    color: #1a472a;
+    color: #2E7D32;
+    font-weight: 600;
   }
 
   .farm-name {
@@ -747,18 +760,24 @@ export default styled(Homepage)`
     align-items: center;
     justify-content: center;
     gap: 8px;
-    font-size: 16px;
+    font-size: 14px;
     color: #666;
   }
 
   .farm-icon {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   /* ========== CATEGORIES SECTION ========== */
   .categories-section {
     padding: 80px 0;
     background: white;
+  }
+
+  @media (max-width: 768px) {
+    .categories-section {
+      padding: 60px 0;
+    }
   }
 
   .category-scroll {
@@ -794,41 +813,39 @@ export default styled(Homepage)`
     align-items: center;
     min-width: 120px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
   }
 
   .category-item:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
   }
 
   .category-circle {
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%);
+    background: #E8F5E9;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
-    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.15);
-    transition: all 0.3s;
-    border: 3px solid #fff;
+    transition: all 0.2s;
+    border: 2px solid #2E7D32;
   }
 
   .category-item:hover .category-circle {
-    background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
-    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.3);
-    border-color: #4CAF50;
+    background: #2E7D32;
+    border-color: #1565C0;
   }
 
   .category-emoji {
-    font-size: 48px;
+    font-size: 40px;
   }
 
   .category-name {
-    font-size: 15px;
-    font-weight: 600;
-    color: #1a472a;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2E7D32;
     text-align: center;
   }
 

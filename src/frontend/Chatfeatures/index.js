@@ -405,10 +405,17 @@ const ChatPage = ({ className }) => {
         <ProfileIcon>
           <FaUser />
         </ProfileIcon>
-        <FarmInfo>
-          <FarmName>{headerTitle}</FarmName>
-          <FarmAddress>{headerSubtitle}</FarmAddress>
-        </FarmInfo>
+        {!isFarmer && FID ? (
+          <FarmInfoLink onClick={() => navigate(`/farms/${FID}`)}>
+            <FarmName>{headerTitle}</FarmName>
+            <FarmAddress>{headerSubtitle}</FarmAddress>
+          </FarmInfoLink>
+        ) : (
+          <FarmInfo>
+            <FarmName>{headerTitle}</FarmName>
+            <FarmAddress>{headerSubtitle}</FarmAddress>
+          </FarmInfo>
+        )}
       </ChatHeader>
 
       {/* Messages Area */}
@@ -698,6 +705,21 @@ const FarmInfo = styled.div`
   color: white;
 `;
 
+const FarmInfoLink = styled.div`
+  flex: 1;
+  color: white;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  &:active {
+    opacity: 0.6;
+  }
+`;
+
 const FarmName = styled.div`
   font-size: 16px;
   font-weight: 600;
@@ -901,6 +923,8 @@ const MessageWrapper = styled.div`
   margin-bottom: 15px;
   justify-content: ${(props) => (props.isUser ? "flex-end" : "flex-start")};
   flex-direction: ${(props) => (props.isUser ? "row-reverse" : "row")};
+  width: 100%;
+  ${(props) => props.isUser && "margin-left: auto;"}
 `;
 
 const MessageIcon = styled.div`
@@ -927,6 +951,7 @@ const MessageBubble = styled.div`
   color: ${(props) => (props.isUser ? "white" : "#333")};
   word-wrap: break-word;
   position: relative;
+  ${(props) => props.isUser && "margin-left: auto; margin-right: 0;"}
 `;
 
 const MessageText = styled.div`
