@@ -6,6 +6,8 @@ import Navbar from './frontend/Navbar';
 import NotFound from './frontend/NotFound';
 import Storage from './frontend/Storage';
 import ProductManagement from './frontend/ProductManagement';
+import CreateFarm from "./frontend/farmfeatures/CreateFarm";
+
 import { GlobalStyle } from "./GlobalStyle";
 import './App.css';
 
