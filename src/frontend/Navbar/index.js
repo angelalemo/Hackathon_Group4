@@ -274,7 +274,8 @@ const Navbar = ({ className, onFilterChange }) => {
             >
               <Menu size={24} />
             </button>
-            <h1 className="logo">Phaktae</h1>
+            <h1 className="logo">
+              <Link to="/">Phaktae</Link></h1>
           </div>
           <div className="right-section">
             {/* Search */}

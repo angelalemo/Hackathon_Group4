@@ -54,7 +54,7 @@ const Homepage = ({ className }) => {
         const farmersWithFarms = await Promise.all(
           farmersOnly.map(async (farmer) => {
             try {
-              const farmResponse = await axios.get(`http://localhost:4000/farms/user/${farmer.NID}`);
+              const farmResponse = await axios.get(`http://localhost:4000/farms/All`);
               return {
                 ...farmer,
                 farmName: farmResponse.data?.[0]?.farmName || "ไม่มีฟาร์ม",

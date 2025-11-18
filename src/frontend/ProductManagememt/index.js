@@ -38,7 +38,7 @@ export default function ProductManagement() {
     try {
       setLoading(true);
       const url = farmId 
-        ? `http://localhost:4000/products/${farmId}`
+        ? `http://localhost:4000/products/Farm/${farmId}`
         : "http://localhost:4000/products/All";
       const res = await axios.get(url);
       setProducts(res.data);
@@ -213,21 +213,56 @@ export default function ProductManagement() {
 function ProductModal({ mode, product, onSave, onClose }) {
   const [formData, setFormData] = useState({
     productName: product?.productName || '',
-    category: product?.category || 'ผักสวน',
-    saleType: product?.saleType || 'กก.',
+    category: product?.category || '',
+    saleType: product?.saleType || '',
     price: product?.price || '',
     image: product?.image || null
   });
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, image: reader.result });
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxWidth = 800; // ปรับขนาดสูงสุด
+        const maxHeight = 800;
+
+        let width = img.width;
+        let height = img.height;
+
+        // ย่อขนาดตามสัดส่วน
+        if (width > height) {
+          if (width > maxWidth) {
+            height = height * (maxWidth / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = width * (maxHeight / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // ลดคุณภาพภาพ (0.7 = 70%)
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+        setFormData({ ...formData, image: compressedDataUrl });
       };
-      reader.readAsDataURL(file);
-    }
+
+      img.src = event.target.result;
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const handleSave = () => {

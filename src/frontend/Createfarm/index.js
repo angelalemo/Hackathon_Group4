@@ -50,41 +50,78 @@ const Createfarm = ({ className }) => {
     });
   };
 
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
+const toBase64Image = (file, maxWidth = 800, maxHeight = 800, quality = 0.7) =>
+  new Promise((resolve, reject) => {
+    if (!file.type.startsWith("image/")) {
+      // ถ้าไม่ใช่ภาพ ส่งเป็น base64 ปกติ
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result);
       reader.onerror = reject;
-    });
+      return;
+    }
 
-  const handleStorageUpload = async (e) => {
-    const files = Array.from(e.target.files);
-    const base64List = await Promise.all(
-      files.map(async (file) => ({
-        file: await toBase64(file),
-        typeStorage: "image",
-      }))
-    );
-    setForm((prev) => ({
-      ...prev,
-      storages: [...prev.storages, ...base64List],
-    }));
-  };
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
 
-  const handleCertificateUpload = async (e) => {
-    const files = Array.from(e.target.files);
-    const base64List = await Promise.all(
-      files.map(async (file) => ({
-        institution: "Unknown",
-        file: await toBase64(file),
-      }))
-    );
-    setForm((prev) => ({
-      ...prev,
-      certificates: [...prev.certificates, ...base64List],
-    }));
-  };
+        // ย่อขนาดตามสัดส่วน
+        if (width > height) {
+          if (width > maxWidth) {
+            height = height * (maxWidth / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = width * (maxHeight / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
+        resolve(compressedDataUrl);
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+const handleStorageUpload = async (e) => {
+  const files = Array.from(e.target.files);
+  const base64List = await Promise.all(
+    files.map(async (file) => ({
+      file: await toBase64Image(file),
+      typeStorage: "image",
+    }))
+  );
+  setForm((prev) => ({
+    ...prev,
+    storages: [...prev.storages, ...base64List],
+  }));
+};
+
+const handleCertificateUpload = async (e) => {
+  const files = Array.from(e.target.files);
+  const base64List = await Promise.all(
+    files.map(async (file) => ({
+      institution: "Unknown",
+      file: await toBase64Image(file),
+    }))
+  );
+  setForm((prev) => ({
+    ...prev,
+    certificates: [...prev.certificates, ...base64List],
+  }));
+};
 
   const removeStorage = (index) => {
     setForm((prev) => ({
