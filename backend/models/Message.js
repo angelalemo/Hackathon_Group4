@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       logID: DataTypes.INTEGER,
       senderNID: DataTypes.INTEGER,
       messageText: DataTypes.TEXT,
+      image: { type: DataTypes.TEXT, allowNull: true }, // Base64 image/file data
+      fileType: { type: DataTypes.STRING, allowNull: true }, // 'image', 'file', 'video', etc.
+      fileName: { type: DataTypes.STRING, allowNull: true }, // Original file name
       timestamp: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     },
     {

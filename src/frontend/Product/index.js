@@ -1,16 +1,61 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Bookmark } from "lucide-react";
 
+const BOOKMARKS_API_BASE = "http://localhost:4000/bookmarks";
 const Product = ({ className }) => {
   const { PID } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isOwner, setIsOwner] = useState(false);
+
+  // ดึงข้อมูล user จาก localStorage
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      try {
+        const parsed = JSON.parse(userData);
+        setCurrentUser(parsed.user || parsed);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
+  }, []);
+
+  // ตรวจสอบว่า user เป็นเจ้าของฟาร์มหรือไม่
+  useEffect(() => {
+    if (currentUser && product && product.FID) {
+      const isFarmer = currentUser.type === "Farmer" || currentUser.type === true;
+      
+      if (isFarmer) {
+        const checkFarmOwner = async () => {
+          try {
+            const farmRes = await axios.get(`http://localhost:4000/farms/${product.FID}`);
+            if (farmRes.data?.NID === currentUser.NID) {
+              setIsOwner(true);
+            } else {
+              setIsOwner(false);
+            }
+          } catch (error) {
+            console.error("Error checking farm owner:", error);
+            setIsOwner(false);
+          }
+        };
+        checkFarmOwner();
+      } else {
+        setIsOwner(false);
+      }
+    } else {
+      setIsOwner(false);
+    }
+  }, [currentUser, product]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -45,12 +90,14 @@ const Product = ({ className }) => {
     try {
       const userData = localStorage.getItem("user");
       if (!userData) return;
-      
+
       const user = JSON.parse(userData);
-      const userId = user.user?.UID || user.UID;
-      
-      // เรียก API เช็คว่า bookmark แล้วหรือยัง
-      const res = await axios.get(`/bookmarks/check/${userId}/${productId}`);
+      const currentUser = user.user || user;
+      if (!currentUser?.NID) return;
+
+      const res = await axios.get(
+        `${BOOKMARKS_API_BASE}/check/${currentUser.NID}/${productId}`
+      );
       setIsBookmarked(res.data.isBookmarked);
     } catch (err) {
       console.error("Error checking bookmark:", err);
@@ -67,19 +114,23 @@ const Product = ({ className }) => {
       }
 
       const user = JSON.parse(userData);
-      const userId = user.user?.UID || user.UID;
-      
+      const currentUser = user.user || user;
+      if (!currentUser?.NID) {
+        alert("ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบอีกครั้ง");
+        return;
+      }
+
       setBookmarkLoading(true);
 
       if (isBookmarked) {
-        // ลบ bookmark
-        await axios.delete(`/bookmarks/remove/${userId}/${product.PID}`);
+        await axios.delete(
+          `${BOOKMARKS_API_BASE}/remove/${currentUser.NID}/${product.PID}`
+        );
         setIsBookmarked(false);
       } else {
-        // เพิ่ม bookmark
-        await axios.post("/bookmarks/add", {
-          UID: userId,
-          PID: product.PID
+        await axios.post(`${BOOKMARKS_API_BASE}/add`, {
+          NID: currentUser.NID,
+          PID: product.PID,
         });
         setIsBookmarked(true);
       }
@@ -88,6 +139,61 @@ const Product = ({ className }) => {
       alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
     } finally {
       setBookmarkLoading(false);
+    }
+  };
+
+  const handleChatWithFarm = async () => {
+    const userData = localStorage.getItem("user");
+    if (!userData) {
+      alert("กรุณาเข้าสู่ระบบก่อนเริ่มแชทกับร้านค้า");
+      return;
+    }
+
+    const user = JSON.parse(userData);
+    const currentUser = user.user || user;
+    if (!currentUser?.NID) {
+      alert("ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบใหม่อีกครั้ง");
+      return;
+    }
+
+    // ตรวจสอบว่า user เป็น farmer และเป็นเจ้าของฟาร์มหรือไม่
+    if (isOwner) {
+      alert("ไม่สามารถแชทกับร้านค้าของตัวเองได้");
+      return;
+    }
+
+    try {
+      // เพิ่มสินค้าเข้า Bookmark
+      try {
+        await axios.post(`${BOOKMARKS_API_BASE}/add`, {
+          NID: currentUser.NID,
+          PID: product.PID,
+        });
+        setIsBookmarked(true);
+      } catch (bookmarkError) {
+        // ถ้า bookmark อยู่แล้วก็ไม่เป็นไร
+        if (bookmarkError.response?.status !== 400) {
+          console.error("Error adding bookmark:", bookmarkError);
+        }
+      }
+
+      // สร้างหรือหา chat room
+      const response = await axios.post("http://localhost:4000/chats/create", {
+        NID: currentUser.NID,
+        FID: product.FID,
+      });
+
+      const chat = response.data?.chat;
+      if (chat?.logID) {
+        navigate(`/chat/${chat.logID}/${product.FID}`, {
+          state: { product },
+        });
+      } else {
+        throw new Error("ไม่สามารถสร้างห้องแชทได้");
+      }
+    } catch (error) {
+      console.error("Error creating chat:", error);
+      alert("ไม่สามารถเริ่มแชทได้ กรุณาลองใหม่");
     }
   };
 
@@ -147,10 +253,12 @@ const Product = ({ className }) => {
             </div>
           </div>
 
-          <Link to={`/chat/${product.FID}`} className="chat-btn">
-            <span className="icon">💬</span>
-            <span>แชทกับร้านค้า</span>
-          </Link>
+          {!isOwner && (
+            <button type="button" className="chat-btn" onClick={handleChatWithFarm}>
+              <span className="icon">💬</span>
+              <span>แชทกับร้านค้า</span>
+            </button>
+          )}
 
           <button 
             className={`bookmark-btn ${isBookmarked ? 'bookmarked' : ''}`}

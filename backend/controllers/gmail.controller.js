@@ -2,7 +2,7 @@ const { sendEmail } = require('../service/gmail.service');
 async function sendEmailController(req, res) {
   const {to} = req.body;
     const subject = 'การแจ้งเตือนจากระบบฟาร์มของคุณ';
-    const body = 'มีลูกค้าแสดงความสนใจในสินค้าของคุณ กรุณาตรวจสอบระบบเพื่อดูรายละเอียดเพิ่มเติม.';
+    const body = 'มีลูกค้าติดต่อผ่านระบบแชท กรุณาตรวจสอบระบบแชทของฟาร์มของคุณเพื่อดูรายละเอียดเพิ่มเติม.';
 
   if (!to) {
     return res.status(400).json({ status: 'error', message: 'ไม่ได้ระบุผู้รับ' });

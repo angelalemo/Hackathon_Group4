@@ -24,6 +24,13 @@ class ProductService {
     return products;
   }
 
+  static async getAllByUser(NID) {
+    const farm = await Farm.findAll({ where: { NID } });
+    const FIDs = farm.map(f => f.FID);
+    const products = await Product.findAll({ where: { FID: FIDs } });
+    return products;
+  }
+
   // 🔹 ดึงสินค้าทั้งหมดจาก FID เดียวกัน
   static async getAllByFarm(FID) {
     const farm = await Farm.findByPk(FID);

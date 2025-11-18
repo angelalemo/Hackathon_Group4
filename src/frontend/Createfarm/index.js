@@ -50,7 +50,7 @@ const Createfarm = ({ className }) => {
     });
   };
 
-const toBase64Image = (file, maxWidth = 800, maxHeight = 800, quality = 0.7) =>
+const toBase64Image = (file, maxWidth = 500, maxHeight = 500, quality = 0.6) =>
   new Promise((resolve, reject) => {
     if (!file.type.startsWith("image/")) {
       // ถ้าไม่ใช่ภาพ ส่งเป็น base64 ปกติ
@@ -109,11 +109,17 @@ const handleStorageUpload = async (e) => {
   }));
 };
 
+const getCertificateName = (file, index) => {
+  if (file?.name) return file.name;
+  const timestamp = Date.now();
+  return `certificate-${timestamp}-${index + 1}`;
+};
+
 const handleCertificateUpload = async (e) => {
   const files = Array.from(e.target.files);
   const base64List = await Promise.all(
-    files.map(async (file) => ({
-      institution: "Unknown",
+    files.map(async (file, index) => ({
+      institution: getCertificateName(file, index),
       file: await toBase64Image(file),
     }))
   );
@@ -137,15 +143,72 @@ const handleCertificateUpload = async (e) => {
     }));
   };
 
+  const validateForm = () => {
+    // ตรวจสอบข้อมูลบังคับ
+    if (!form.farmName || !form.farmName.trim()) {
+      alert("กรุณากรอกชื่อฟาร์ม");
+      return false;
+    }
+
+    if (!form.email || !form.email.trim()) {
+      alert("กรุณากรอกอีเมล");
+      return false;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(form.email)) {
+      alert("รูปแบบอีเมลไม่ถูกต้อง");
+      return false;
+    }
+
+    if (!form.phoneNumber || !form.phoneNumber.trim()) {
+      alert("กรุณากรอกเบอร์โทรศัพท์");
+      return false;
+    }
+
+    if (!form.location || !form.location.trim()) {
+      alert("กรุณากรอกที่อยู่");
+      return false;
+    }
+
+    if (!form.province || !form.province.trim()) {
+      alert("กรุณากรอกจังหวัด");
+      return false;
+    }
+
+    if (!form.district || !form.district.trim()) {
+      alert("กรุณากรอกอำเภอ/เขต");
+      return false;
+    }
+
+    if (!form.subDistrict || !form.subDistrict.trim()) {
+      alert("กรุณากรอกตำบล/แขวง");
+      return false;
+    }
+
+    // ตรวจสอบว่า certificates ต้องมีอย่างน้อย 1 ภาพ
+    if (!form.certificates || form.certificates.length === 0) {
+      alert("กรุณาอัปโหลดใบรับรองอย่างน้อย 1 ภาพ");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // ตรวจสอบข้อมูลก่อนส่ง
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       await axios.post("http://localhost:4000/farms/create", form);
       alert("สร้างฟาร์มสำเร็จ!");
       navigate("/farms");
     } catch (err) {
       console.error(err);
-      alert("เกิดข้อผิดพลาดในการสร้างฟาร์ม");
+      alert(err.response?.data?.error || "เกิดข้อผิดพลาดในการสร้างฟาร์ม");
     }
   };
 
@@ -178,7 +241,7 @@ const handleCertificateUpload = async (e) => {
             </h3>
             
             <div className="input-group">
-              <label>ชื่อฟาร์ม *</label>
+              <label>ชื่อฟาร์ม <span style={{ color: "red" }}>*</span></label>
               <input 
                 name="farmName" 
                 value={form.farmName} 
@@ -205,42 +268,46 @@ const handleCertificateUpload = async (e) => {
                 >ที่อยู่ฟาร์ม</h3>
               <div className="grid-2">
                 <div className="input-group">
-                  <label>ที่อยู่</label>
+                  <label>ที่อยู่ <span style={{ color: "red" }}>*</span></label>
                   <input 
                     name="location" 
                     value={form.location} 
                     onChange={handleChange}
                     placeholder="เช่น 123 หมู่ 4 "
+                    required
                   />
                 </div>
             
                 <div className="input-group">
-                  <label>ตำบล/แขวง</label>
+                  <label>ตำบล/แขวง <span style={{ color: "red" }}>*</span></label>
                   <input 
                     name="subDistrict" 
                     value={form.subDistrict} 
                     onChange={handleChange}
                     placeholder="เช่น บางรัก"
+                    required
                   />
                 </div>
 
                 <div className="input-group">
-                  <label>อำเภอ/เขต</label>
+                  <label>อำเภอ/เขต <span style={{ color: "red" }}>*</span></label>
                   <input 
                     name="district" 
                     value={form.district} 
                     onChange={handleChange}
                     placeholder="เช่น เมือง"
+                    required
                   />
                 </div>
 
                 <div className="input-group">
-                  <label>จังหวัด</label>
+                  <label>จังหวัด <span style={{ color: "red" }}>*</span></label>
                   <input 
                     name="province" 
                     value={form.province} 
                     onChange={handleChange}
                     placeholder="เช่น กรุงเทพมหานคร"
+                    required
                   />
                 </div>
 
@@ -261,23 +328,25 @@ const handleCertificateUpload = async (e) => {
             
             <div className="grid-2">
               <div className="input-group">
-                <label>เบอร์โทรศัพท์</label>
+                <label>เบอร์โทรศัพท์ <span style={{ color: "red" }}>*</span></label>
                 <input 
                   name="phoneNumber" 
                   value={form.phoneNumber} 
                   onChange={handleChange}
                   placeholder="0XX-XXX-XXXX"
+                  required
                 />
               </div>
 
               <div className="input-group">
-                <label>อีเมล</label>
+                <label>อีเมล <span style={{ color: "red" }}>*</span></label>
                 <input 
                   name="email" 
                   type="email"
                   value={form.email} 
                   onChange={handleChange}
                   placeholder="example@email.com"
+                  required
                 />
               </div>
 
@@ -348,7 +417,7 @@ const handleCertificateUpload = async (e) => {
           <div className="section">
             <h3 className="section-title">
               <span className="section-icon">🏆</span>
-              ใบรับรอง
+              ใบรับรอง <span style={{ color: "red" }}>*</span>
             </h3>
             
             <div className="upload-area">
@@ -372,7 +441,7 @@ const handleCertificateUpload = async (e) => {
                 {form.certificates.map((c, i) => (
                   <div key={i} className="cert-item">
                     <span className="cert-icon">📜</span>
-                    <span className="cert-name">ใบรับรอง #{i + 1}</span>
+                    <span className="cert-name">{c.institution || `ใบรับรอง #${i + 1}`}</span>
                     <button 
                       type="button" 
                       className="remove-cert-btn"

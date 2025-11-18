@@ -11,5 +11,8 @@ router.post("/create", FarmController.createFarm);    // เฉพาะ Farmer
 router.put("/updateInfo", FarmController.updateFarmInfo);    // เฉพาะ Farmer
 router.put("/addStorage", FarmController.addFarmImageAndVideo);    // เฉพาะ Farmer
 router.put("/deleteStorage", FarmController.deleteFarmImageAndVideo);    // เฉพาะ Farmer
+router.put("/profileImage", FarmController.updateProfileImage);    // เฉพาะ Farmer
+router.post("/certificate", FarmController.addCertificate);    // เฉพาะ Farmer
+router.delete("/certificate", FarmController.deleteCertificate);    // เฉพาะ Farmer
 
 module.exports = router;

@@ -13,8 +13,13 @@ module.exports = (sequelize, DataTypes) => {
   Chat.init(
     {
       logID: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+      roomKey: { type: DataTypes.STRING, unique: true },
       NID: DataTypes.INTEGER,
       FID: DataTypes.INTEGER,
+      lastMessageText: DataTypes.TEXT,
+      lastMessageAt: DataTypes.DATE,
+      customerUnreadCount: { type: DataTypes.INTEGER, defaultValue: 0 },
+      farmerUnreadCount: { type: DataTypes.INTEGER, defaultValue: 0 },
     },
     {
       sequelize,

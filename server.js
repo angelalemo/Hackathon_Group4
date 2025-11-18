@@ -11,6 +11,8 @@ const productRoutes = require("./backend/routes/product.routes");
 const filterRoutes = require("./backend/routes/filter.routes");
 const chatRoutes = require("./backend/routes/chat.routes");
 const gmailRoutes = require("./backend/routes/gmail.routes");
+const bookmarkRoutes = require("./backend/routes/bookmark.routes");
+const otpRoutes = require("./backend/routes/otp.routes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -29,6 +31,8 @@ app.use("/products", productRoutes);
 app.use("/filter", filterRoutes); //
 app.use("/chats", chatRoutes);
 app.use("/gmail", gmailRoutes);
+app.use("/bookmarks", bookmarkRoutes);
+app.use("/otp", otpRoutes);
 
 
 // database

@@ -4,17 +4,18 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 const Login = ({ className }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const sanitizeInput = (value) => {
-    return value
-      .trim() // ตัดช่องว่างหัวท้าย
-      .replace(/\s+/g, " ") // กันช่องว่างยาวเป็นช่องว่างเดียว
-      .replace(/[^\w@.-]/gi, ""); // กันตัวอักษรแปลกๆ, อนุญาต a-z0-9_ @ . -
+  const sanitizeEmail = (value) => {
+    return value.trim().toLowerCase();
+  };
+
+  const sanitizePassword = (value) => {
+    return value.trim();
   };
 
   const handleSubmit = async (e) => {
@@ -22,13 +23,20 @@ const Login = ({ className }) => {
     setError("");
     setLoading(true);
 
+    // ตรวจสอบรูปแบบอีเมล
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("อีเมลไม่ถูกต้อง");
+      setLoading(false);
+      return;
+    }
+
     // ⛔ กันค่าที่รับมาก่อนส่งไป backend
-    const cleanUsername = sanitizeInput(username);
-    const cleanPassword = sanitizeInput(password);
+    const cleanEmail = sanitizeEmail(email);
+    const cleanPassword = sanitizePassword(password);
 
     try {
       const response = await axios.post("http://localhost:4000/users/login", {
-        username: cleanUsername,
+        email: cleanEmail,
         password: cleanPassword,
       });
 
@@ -58,13 +66,13 @@ const Login = ({ className }) => {
         </p>
 
         <form onSubmit={handleSubmit} className="login-form">
-          <label className="login-label">ชื่อผู้ใช้</label>
+          <label className="login-label">อีเมล</label>
           <input
-            type="text"
+            type="email"
             className="login-input"
-            placeholder="กรอกชื่อผู้ใช้ของคุณ"
-            value={username}
-            onChange={(e) => setUsername(sanitizeInput(e.target.value))}
+            placeholder="example@gmail.com"
+            value={email}
+            onChange={(e) => setEmail(sanitizeEmail(e.target.value))}
             required
           />
 
@@ -74,7 +82,7 @@ const Login = ({ className }) => {
             className="login-input"
             placeholder="กรอกรหัสผ่านของคุณ"
             value={password}
-            onChange={(e) => setPassword(sanitizeInput(e.target.value))}
+            onChange={(e) => setPassword(sanitizePassword(e.target.value))}
             required
           />
 
