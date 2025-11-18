@@ -16,7 +16,7 @@ const Product = ({ className }) => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`/products/farms/${PID}`);
+        const res = await axios.get(`/products/Farm/${PID}`);
         setProduct(res.data);
         setError(null);
         
