@@ -938,21 +938,267 @@ json{
   "NID": 1,
   "FID": 8,
   "farmName": "Updated Farm Name",
-  "description": "คำอธิบาย"
+  "description": "คำอธิบายฟาร์มใหม่ที่อัพเดทแล้ว",
+  "phoneNumber": "0801112222",
+  "province": "กรุงเทพมหานคร"
 }
 
-**Test 13: สร้างห้องแชทใหม่ (Create Chat Room)**
-Method: POST
-URL:http://localhost:4000/chats/create
+Expected Response (200):
+json{
+  "message": "Farm updated successfully",
+  "farm": {
+    "FID": 8,
+    "farmName": "Updated Farm Name",
+    "description": "คำอธิบายฟาร์มใหม่ที่อัพเดทแล้ว"
+  }
+}
 
-Body (raw JSON)
-{
+Test Points:
+
+✅ Status code เป็น 200
+✅ ข้อมูลที่ส่งไปถูกอัพเดท
+✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่แก้ไขได้
+
+
+
+
+**Test 13: เพิ่มรูปภาพ/วิดีโอในฟาร์ม (Add Farm Storage)**
+Method: PUT
+URL: http://localhost:4000/farms/addStorage
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
+  "NID": 1,
+  "FID": 8,
+  "storages": [
+    {
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA",
+      "typeStorage": "image"
+    },
+    {
+      "file": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD",
+      "typeStorage": "image"
+    }
+  ]
+}
+Expected Response (200):
+json{
+  "message": "Farm image added successfully",
+  "farm": [
+    {
+      "id": 3,
+      "FID": 8,
+      "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA",
+      "typeStorage": "image"
+    },
+    {
+      "id": 4,
+      "FID": 8,
+      "file": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD",
+      "typeStorage": "image"
+    }
+  ]
+}
+Test Points:
+
+✅ Status code เป็น 200
+✅ สามารถเพิ่มหลายรูปพร้อมกันได้
+✅ แต่ละรูปมี id และ typeStorage
+💾 บันทึก storage id ไว้ใช้ทดสอบการลบ
+
+
+**Test 14: ลบรูปภาพ/วิดีโอในฟาร์ม (Delete Farm Storage)**
+Method: PUT
+URL: http://localhost:4000/farms/deleteStorage
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
+  "NID": 1,
+  "FID": 8,
+  "storagesID": 3
+}
+Expected Response (200):
+json{
+  "message": "Farm image deleted successfully",
+  "farm": {
+    "message": "Storage deleted successfully"
+  }
+}
+Test Points:
+
+✅ Status code เป็น 200
+✅ รูปที่ระบุถูกลบ
+✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่ลบได้
+
+
+🛒 Product Management Tests
+**Test 15: ดูสินค้าทั้งหมด (Get All Products)**
+Method: GET
+URL: http://localhost:4000/products/All
+Expected Response (200):
+json[
+  {
+    "PID": 1,
+    "FID": 1,
+    "productName": "Organic Tomato",
+    "category": "Vegetable",
+    "saleType": "retail",
+    "price": 30,
+    "image": "https://example.com/tomato.jpg"
+  },
+  {
+    "PID": 2,
+    "FID": 1,
+    "productName": "Organic Cabbage",
+    "category": "Vegetables",
+    "saleType": "Organic",
+    "price": 60,
+    "image": "https://example.com/cabbage.jpg"
+  }
+]
+Test Points:
+
+✅ Status code เป็น 200
+✅ Response เป็น array
+✅ แต่ละสินค้ามี PID, FID, productName, price
+
+
+**Test 16: ดูสินค้าตามฟาร์ม (Get Products by Farm)**
+Method: GET
+URL: http://localhost:4000/products/farms/1
+Expected Response (200):
+json[
+  {
+    "PID": 1,
+    "FID": 1,
+    "productName": "Organic Tomato",
+    "category": "Vegetable",
+    "price": 30
+  }
+]
+Test Points:
+
+✅ Status code เป็น 200
+✅ สินค้าทั้งหมดมี FID เท่ากับ 1
+✅ Response เป็น array
+
+
+**Test 17: ดูสินค้าตาม ID (Get Product by ID)**
+Method: GET
+URL: http://localhost:4000/products/2
+Expected Response (200):
+json{
+  "PID": 2,
+  "FID": 1,
+  "productName": "Organic Cabbage",
+  "category": "Vegetables",
+  "saleType": "Organic",
+  "price": 60,
+  "image": "https://example.com/cabbage.jpg"
+}
+Test Points:
+
+✅ Status code เป็น 200
+✅ PID ตรงกับที่ร้องขอ
+✅ มีข้อมูลครบถ้วน
+
+
+**Test 18: สร้างสินค้าใหม่ (Create Product)**
+Method: POST
+URL: http://localhost:4000/products/create
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
+  "NID": 1,
+  "FID": 8,
+  "productName": "มะเขือเทศอินทรีย์",
+  "category": "ผักกินผล",
+  "saleType": "1 กิโลกรัม",
+  "price": 80,
+  "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD"
+}
+Expected Response (201):
+json{
+  "message": "Product created successfully",
+  "product": {
+    "PID": 4,
+    "FID": 8,
+    "productName": "มะเขือเทศอินทรีย์",
+    "category": "ผักกินผล",
+    "saleType": "1 กิโลกรัม",
+    "price": 80,
+    "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD"
+  }
+}
+Test Points:
+
+✅ Status code เป็น 201
+✅ Response มี PID ใหม่
+✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่สร้างได้
+💾 บันทึก PID ไว้ใช้ในการทดสอบต่อไป
+
+
+**Test 19: อัพเดทสินค้า (Update Product)**
+Method: PUT
+URL: http://localhost:4000/products/update
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
+  "NID": 1,
+  "PID": 4,
+  "productName": "มะเขือเทศอินทรีย์ Grade A",
+  "price": 90
+}
+Expected Response (200):
+json{
+  "message": "Product updated successfully",
+  "product": {
+    "PID": 4,
+    "FID": 8,
+    "productName": "มะเขือเทศอินทรีย์ Grade A",
+    "category": "ผักกินผล",
+    "price": 90
+  }
+}
+Test Points:
+
+✅ Status code เป็น 200
+✅ ข้อมูลที่ส่งไปถูกอัพเดท
+✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่แก้ไขได้
+
+
+**Test 20: ลบสินค้า (Delete Product)**
+Method: DELETE
+URL: http://localhost:4000/products/delete
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
+  "NID": 1,
+  "PID": 4
+}
+Expected Response (200):
+json{
+  "message": "Product 4 deleted successfully"
+}
+Test Points:
+
+✅ Status code เป็น 200
+✅ สินค้าถูกลบจากระบบ
+✅ เฉพาะเจ้าของฟาร์มเท่านั้นที่ลบได้
+
+
+💬 Chat Management Tests
+Test 21: สร้างห้องแชท (Create Chat)
+Method: POST
+URL: http://localhost:4000/chats/create
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
   "NID": 1,
   "FID": 5
 }
-
-Expected Response (201)
-{
+Expected Response (201):
+json{
   "message": "Chat created",
   "chat": {
     "logID": 1,
@@ -960,19 +1206,19 @@ Expected Response (201)
     "FID": 5
   }
 }
-
 Test Points:
-✅ Status code = 201
-✅ logID ถูกสร้างใหม่
-✅ 1 คน (NID) เชื่อมกับฟาร์ม (FID) ได้สำเร็จ
-❗ ถ้ามีห้องเดิมอยู่แล้ว ควรป้องกันการซ้ำ (ใช้ findOrCreate)
 
-**Test 14: ดูห้องแชททั้งหมดของผู้ใช้ (Get Chats by User)**
+✅ Status code เป็น 201
+✅ Response มี logID ใหม่
+✅ มีการเชื่อมโยงระหว่าง User และ Farm
+💾 บันทึก logID ไว้ใช้ในการทดสอบต่อไป
+
+
+Test 22: ดูห้องแชททั้งหมดของผู้ใช้ (Get Chats by User)
 Method: GET
-URL:http://localhost:4000/chats/user/1
-
-Expected Response (200)
-[
+URL: http://localhost:4000/chats/user/1
+Expected Response (200):
+json[
   {
     "logID": 1,
     "NID": 1,
@@ -983,82 +1229,250 @@ Expected Response (200)
     }
   }
 ]
-
 Test Points:
-✅ Response เป็น Array
-✅ มีข้อมูลฟาร์มมาให้ด้วย
-✅ logID ตรงกับห้องที่สร้างไว้
 
-**Test 15: ส่งข้อความ (Send Message)**
+✅ Status code เป็น 200
+✅ Response เป็น array
+✅ แต่ละห้องมีข้อมูลฟาร์มที่เกี่ยวข้อง
 
+
+Test 23: ส่งข้อความ (Send Message)
 Method: POST
-URL:http://localhost:4000/chats/message
-
-Body (raw JSON)
-{
+URL: http://localhost:4000/chats/message
+Headers: Content-Type: application/json
+Body (raw JSON):
+json{
   "logID": 1,
   "senderNID": 1,
-  "messageText": "สวัสดีครับ"
+  "messageText": "สวัสดีครับ สนใจสินค้าของฟาร์มครับ"
 }
-
-Expected Response (200)
-{
+Expected Response (201):
+json{
   "message": "Message sent",
   "data": {
     "timestamp": "2025-11-17T08:48:22.208Z",
     "messageID": 1,
     "logID": 1,
     "senderNID": 1,
-    "messageText": "สวัสดีครับ"
+    "messageText": "สวัสดีครับ สนใจสินค้าของฟาร์มครับ"
   }
 }
-
 Test Points:
-✅ Status 200
-✅ มี messageID ใหม่
-✅ timestamp ถูกต้อง
-📝 Tips: ใช้ senderNID เพื่อตรวจว่าใครเป็นผู้ส่ง
+
+✅ Status code เป็น 201
+✅ Response มี messageID และ timestamp
+✅ ข้อความถูกบันทึกในห้องแชทที่ถูกต้อง
 
 
-**Test 16: ดูข้อความทั้งหมดในห้องแชท (Get Messages by Chat Room)**
-
+Test 24: ดูข้อความทั้งหมดในห้องแชท (Get Messages)
 Method: GET
-URL:http://localhost:4000/chats/room/1/messages
-
-Expected Response (200)
-[
+URL: http://localhost:4000/chats/room/1/messages
+Expected Response (200):
+json[
   {
     "messageID": 1,
     "logID": 1,
     "senderNID": 1,
-    "messageText": "สวัสดีครับ",
+    "messageText": "สวัสดีครับ สนใจสินค้าของฟาร์มครับ",
     "timestamp": "2025-11-17T08:48:22.208Z",
     "User": {
       "username": "yaya_updated"
     }
   }
 ]
-
 Test Points:
-✅ Response เป็น Array
-✅ มี username ของผู้ส่ง
-✅ เรียงตามเวลาล่าสุดก่อน (ถ้าทำ sorting แล้ว)
 
-**Test 17: ลบห้องแชท (Delete Chat Room)**
+✅ Status code เป็น 200
+✅ ข้อความเรียงตามเวลา
+✅ แต่ละข้อความมีข้อมูลผู้ส่ง
 
+
+Test 25: ลบห้องแชท (Delete Chat)
 Method: DELETE
-URL:http://localhost:4000/chats/room/1
-
-Expected Response (200)
-{
+URL: http://localhost:4000/chats/room/1
+Expected Response (200):
+json{
   "message": "Chat 1 deleted"
 }
-
 Test Points:
-✅ Status 200
-✅ ลบทั้งห้องและข้อความทั้งหมดใน logID นั้น
-❗ แนะนำให้ทำ cascade delete เพื่อป้องกัน orphan messages
 
+✅ Status code เป็น 200
+✅ ห้องแชทถูกลบจากระบบ
+✅ ข้อความทั้งหมดในห้องถูกลบด้วย
+
+
+🔍 การทดสอบ Error Cases
+Test 26: ลงทะเบียนด้วย Username ซ้ำ
+Method: POST
+URL: http://localhost:4000/users/register
+Body:
+json{
+  "username": "farmer_john",
+  "password": "password123",
+  "type": true
+}
+Expected Response (400):
+json{
+  "error": "Username already exists"
+}
+Test Points:
+
+✅ Status code เป็น 400
+✅ Error message ชัดเจน
+
+
+Test 27: เข้าสู่ระบบด้วยรหัสผ่านผิด
+Method: POST
+URL: http://localhost:4000/users/login
+Body:
+json{
+  "username": "farmer_john",
+  "password": "wrongpassword"
+}
+Expected Response (401):
+json{
+  "error": "Invalid password"
+}
+Test Points:
+
+✅ Status code เป็น 401
+✅ ไม่มี token ถูกส่งกลับ
+
+
+Test 28: สร้างฟาร์มโดย Customer
+Method: POST
+URL: http://localhost:4000/farms/create
+Body:
+json{
+  "NID": 6,
+  "farmName": "Test Farm"
+}
+หมายเหตุ: NID 6 เป็น Customer
+Expected Response (400):
+json{
+  "error": "Permission denied: Only farmers can create farms"
+}
+Test Points:
+
+✅ Status code เป็น 400 หรือ 403
+✅ ระบบตรวจสอบ permission
+
+
+Test 29: สร้างสินค้าในฟาร์มที่ไม่ใช่เจ้าของ
+Method: POST
+URL: http://localhost:4000/products/create
+Body:
+json{
+  "NID": 2,
+  "FID": 1,
+  "productName": "Test Product",
+  "price": 100
+}
+หมายเหตุ: NID 2 ไม่ใช่เจ้าของ FID 1
+Expected Response (400):
+json{
+  "error": "Permission denied: You don't own this farm"
+}
+Test Points:
+
+✅ Status code เป็น 400 หรือ 403
+✅ ระบบตรวจสอบความเป็นเจ้าของ
+
+
+Test 30: ดูฟาร์มที่ไม่มีอยู่
+Method: GET
+URL: http://localhost:4000/farms/99999
+Expected Response (404):
+json{
+  "error": "Farm not found"
+}
+Test Points:
+
+✅ Status code เป็น 404
+✅ Error message ชัดเจน
+
+
+📊 Test Summary Checklist
+User Management (5 tests)
+
+ 🔘ลงทะเบียนผู้ใช้ใหม่
+ 🔘เข้าสู่ระบบ
+ 🔘ดูข้อมูลผู้ใช้ทั้งหมด
+ 🔘ดูข้อมูลผู้ใช้ตาม ID
+ 🔘อัพเดทข้อมูลผู้ใช้
+
+Farm Management (9 tests)
+
+ 🔘ดูฟาร์มทั้งหมดแบบเต็ม
+ 🔘ดูฟาร์มทั้งหมดพร้อมสินค้า
+ 🔘ดูฟาร์มตาม ID
+ 🔘ดูฟาร์มตามเจ้าของ
+ 🔘ดูสินค้าของฟาร์ม
+ 🔘สร้างฟาร์มใหม่
+ 🔘อัพเดทข้อมูลฟาร์ม
+ 🔘เพิ่มรูปภาพ/วิดีโอ
+ 🔘ลบรูปภาพ/วิดีโอ
+
+Product Management (6 tests)
+
+ 🔘ดูสินค้าทั้งหมด
+ 🔘ดูสินค้าตามฟาร์ม
+ 🔘ดูสินค้าตาม ID
+ 🔘สร้างสินค้าใหม่
+ 🔘อัพเดทสินค้า
+ 🔘ลบสินค้า
+
+Chat Management (5 tests)
+
+ สร้างห้องแชท
+ ดูห้องแชททั้งหมดของผู้ใช้
+ ส่งข้อความ
+ ดูข้อความทั้งหมดในห้องแชท
+ ลบห้องแชท
+
+Error Cases (5 tests)
+
+ 🔘ลงทะเบียนด้วย Username ซ้ำ
+ 🔘เข้าสู่ระบบด้วยรหัสผ่านผิด
+ 🔘สร้างฟาร์มโดย Customer
+ 🔘สร้างสินค้าในฟาร์มที่ไม่ใช่เจ้าของ
+ 🔘ดูฟาร์มที่ไม่มีอยู่
+
+รวมทั้งหมด: 30 tests
+
+
+#### 💡 Tips สำหรับการทดสอบ
+
+ใช้ Postman Environment Variables:
+
+สร้างตัวแปรสำหรับ base_url, token, NID, FID, PID
+จะช่วยให้เปลี่ยน endpoint ได้ง่าย
+
+
+ใช้ Postman Tests Scripts:
+
+javascript   // ตัวอย่างการบันทึก token
+   pm.test("Status code is 200", function () {
+       pm.response.to.have.status(200);
+   });
+   
+   var jsonData = pm.response.json();
+   pm.environment.set("token", jsonData.token);
+   pm.environment.set("NID", jsonData.NID);
+
+ทดสอบตามลำดับ:
+
+เริ่มจาก User Management
+จากนั้น Farm Management
+ตามด้วย Product Management
+สุดท้าย Chat Management
+
+
+บันทึกผลการทดสอบ:
+
+สร้างเอกสาร Test Report
+บันทึก bugs ที่พบ
+รวบรวม screenshots
 
 ## 🗄 Database Schema
 
