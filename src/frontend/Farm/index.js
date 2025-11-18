@@ -9,13 +9,16 @@ const FarmProfile = ({ className }) => {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
 
+  const farmerNID = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).NID : "";
+
   // Default farmer image
   const defaultFarmerImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect fill='%23667eea' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='80' fill='white'%3E🧑‍🌾%3C/text%3E%3C/svg%3E";
 
   useEffect(() => {
     const fetchFarm = async () => {
       try {
-        const res = await axios.get(`/farms/${farmID}`);
+        const res = await axios.get(`http://localhost:4000/farms/user/${farmerNID}`);
+        localStorage.setItem("farms", JSON.stringify(res.data));
         setFarm(res.data);
         setLoading(false);
       } catch (err) {

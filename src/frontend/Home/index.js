@@ -43,7 +43,7 @@ const Homepage = ({ className }) => {
         setLoading(true);
         
         // ดึงข้อมูล users ทั้งหมด
-        const usersResponse = await axios.get("/users/All");
+        const usersResponse = await axios.get("้http://localhost:4000/users/All");
         
         // กรองเฉพาะ Farmer
         const farmersOnly = usersResponse.data.filter(
@@ -54,7 +54,7 @@ const Homepage = ({ className }) => {
         const farmersWithFarms = await Promise.all(
           farmersOnly.map(async (farmer) => {
             try {
-              const farmResponse = await axios.get(`/farms/user/${farmer.NID}`);
+              const farmResponse = await axios.get(`http://localhost:4000/farms/user/${farmer.NID}`);
               return {
                 ...farmer,
                 farmName: farmResponse.data?.[0]?.farmName || "ไม่มีฟาร์ม",

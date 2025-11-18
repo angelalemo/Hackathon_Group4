@@ -396,7 +396,7 @@ const Navbar = ({ className, onFilterChange }) => {
                         <span>แชทลูกค้า</span>
                       </Link>
                       <Link
-                        to="/products"
+                        to="/product-management"
                         className="sidebar-menu-item"
                         onClick={() => setShowSidebar(false)}
                       >

@@ -67,7 +67,7 @@ class FarmService {
   }
 
   static async getFarmbyNID ({NID}) {
-    const farms = await Farm.findAll({
+    const farms = await Farm.findOne({
       where: { NID },
       include: [
         { model: User, attributes: ["NID", "username", "email", "phoneNumber", "type"] },
@@ -101,6 +101,7 @@ class FarmService {
       subDistrict: data.subDistrict,
       location: data.location,
     });
+
 
     // 🟩 จัดการ Storage (ภาพ/วิดีโอหลายไฟล์)
     if (Array.isArray(data.storages)) {

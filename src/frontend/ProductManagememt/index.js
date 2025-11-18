@@ -13,6 +13,8 @@ export default function ProductManagement() {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
+  
+
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (!userData) {
@@ -268,9 +270,10 @@ function ProductModal({ mode, product, onSave, onClose }) {
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             >
-              <option value="ผักสวน">ผักสวน</option>
-              <option value="ผักไร่">ผักไร่</option>
-              <option value="ผลไม้">ผลไม้</option>
+              <option value="ผักกินใบ">ผักกินใบ</option>
+              <option value="ผักกินผล">ผักกินผล</option>
+              <option value="ผักรากหัว">ผักรากหัว</option>ฃ
+              <option value="สมุนไพร/เครื่องเทศ">สมุนไพร/เครื่องเทศ</option>
             </Select>
           </FormGroup>
 
@@ -283,7 +286,8 @@ function ProductModal({ mode, product, onSave, onClose }) {
               <option value="กก.">กก.</option>
               <option value="ลัง">ลัง</option>
               <option value="กระสอบ">กระสอบ</option>
-              <option value="ลูก">ลูก</option>
+              <option value="ถุง">ถุง</option>
+              <option value="กล่อง">กล่อง</option>
             </Select>
           </FormGroup>
 

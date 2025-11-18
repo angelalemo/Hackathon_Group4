@@ -75,6 +75,7 @@ class UserService {
     console.log("Farms:", user.Farms);
     console.log("FID:", user.Farms?.[0]?.FID);
 
+
     return {
       token,
       NID: user.NID,
