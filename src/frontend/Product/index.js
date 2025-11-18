@@ -15,8 +15,10 @@ const Product = ({ className }) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        console.log(PID);
         setLoading(true);
-        const res = await axios.get(`/products/Farm/${PID}`);
+        const res = await axios.get(`http://localhost:4000/products/${Number(PID)}`);
+        console.log(res.data);
         setProduct(res.data);
         setError(null);
         

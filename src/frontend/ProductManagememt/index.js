@@ -38,7 +38,7 @@ export default function ProductManagement() {
     try {
       setLoading(true);
       const url = farmId 
-        ? `http://localhost:4000/products/${farmId}`
+        ? `http://localhost:4000/products/Farm/${farmId}`
         : "http://localhost:4000/products/All";
       const res = await axios.get(url);
       setProducts(res.data);
@@ -213,8 +213,8 @@ export default function ProductManagement() {
 function ProductModal({ mode, product, onSave, onClose }) {
   const [formData, setFormData] = useState({
     productName: product?.productName || '',
-    category: product?.category || 'ผักสวน',
-    saleType: product?.saleType || 'กก.',
+    category: product?.category || '',
+    saleType: product?.saleType || '',
     price: product?.price || '',
     image: product?.image || null
   });
