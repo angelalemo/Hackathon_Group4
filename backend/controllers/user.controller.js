@@ -74,6 +74,19 @@ class UserController {
         }
     }
 
+    static async resetPassword(req, res) {
+        try {
+            const { email, newPassword } = req.body;
+            if (!email || !newPassword) {
+                return res.status(400).json({ error: "กรุณากรอกอีเมลและรหัสผ่านใหม่" });
+            }
+            const result = await UserService.resetPassword(email, newPassword);
+            res.status(200).json(result);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
 }
 
 module.exports = UserController;

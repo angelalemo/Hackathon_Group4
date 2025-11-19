@@ -43,10 +43,10 @@ const Homepage = ({ className }) => {
     const fetchFarmers = async () => {
       try {
         setLoading(true);
-        
+
         // ดึงข้อมูล users ทั้งหมด
         const usersResponse = await axios.get("http://localhost:4000/users/All");
-        
+
         // กรองเฉพาะ Farmer
         const farmersOnly = usersResponse.data.filter(
           user => user.type === "Farmer" || user.type === true
@@ -77,7 +77,7 @@ const Homepage = ({ className }) => {
             }
           })
         );
-        
+
         // กรองเฉพาะเกษตรกรที่มีฟาร์ม
         const farmersWithFarmsOnly = farmersWithFarms.filter(f => f.FID);
         setFarmers(farmersWithFarmsOnly);
@@ -119,10 +119,10 @@ const Homepage = ({ className }) => {
             </div>
           ))}
         </div>
-        
+
         <button className="slider-btn prev" onClick={prevSlide}>‹</button>
         <button className="slider-btn next" onClick={nextSlide}>›</button>
-        
+
         <div className="slider-dots">
           {slides.map((_, index) => (
             <span
@@ -140,11 +140,11 @@ const Homepage = ({ className }) => {
           <div className="about-content">
             <h2>ความเป็นมาของ PHAKTAE</h2>
             <p className="about-text">
-              <strong>PHAKTAE</strong> คือ แพลตฟอร์มเชื่อมโยงเกษตรกรอินทรีย์กับผู้บริโภคโดยตรง 
-              โดยใช้ช่องทางดิจิทัลที่ชุมชนเข้าถึงได้ เพื่อให้เกิด{" "}
+              <strong>PHAKTAE</strong> คือ แพลตฟอร์มเชื่อมโยงเกษตรกรอินทรีย์กับ
+              ผู้บริโภคโดยตรง โดยใช้ช่องทางดิจิทัลที่ชุมชนเข้าถึงได้
+              เพื่อให้เกิด{" "}
               <span className="highlight">"สะพานดิจิทัล"</span>{" "}
-              ที่เชื่อมคนกินกับคนปลูก สร้างความโปร่งใส มั่นใจ 
-              และเป็นธรรมสำหรับทุกฝ่าย
+              ที่เชื่อมคนกินกับคนปลูก
             </p>
           </div>
         </div>
@@ -157,21 +157,21 @@ const Homepage = ({ className }) => {
             <span className="icon">🏆</span>
             ใบรับรอง PGS
           </h2>
-          
+
           <div className="pgs-grid">
             <div className="pgs-content">
               <h3>ใบรับรอง PGS คืออะไร?</h3>
               <p>
-                <strong>Participatory Organic Guarantee System (PGS)</strong> 
+                <strong>Participatory Organic Guarantee System (PGS)</strong>
                 เป็นการรับประกันคุณภาพผลผลิตอินทรีย์ของชุมชนที่เหมาะสมกับสภาพ
                 ภูมิสังคม สิ่งแวดล้อม วัฒนธรรม และการเกษตรของท้องถิ่น
               </p>
               <p>
-                กระบวนการมีส่วนร่วมของผู้มีส่วนได้ส่วนเสีย ตั้งแต่ผู้ผลิต 
+                กระบวนการมีส่วนร่วมของผู้มีส่วนได้ส่วนเสีย ตั้งแต่ผู้ผลิต
                 ผู้ประกอบการ นักพัฒนาวิชาการ และผู้บริโภค คือหัวใจของระบบ
               </p>
               <p>
-                PGS เป็นกระบวนการที่พัฒนาอย่างต่อเนื่อง อาศัยการแลกเปลี่ยนความรู้ 
+                PGS เป็นกระบวนการที่พัฒนาอย่างต่อเนื่อง อาศัยการแลกเปลี่ยนความรู้
                 ความซื่อสัตย์ และไว้วางใจกันเพื่อความเชื่อมั่นในระดับชุมชน
               </p>
               <div className="pgs-features">
@@ -181,11 +181,11 @@ const Homepage = ({ className }) => {
                 <div className="feature">✓ พัฒนาอย่างต่อเนื่อง</div>
               </div>
             </div>
-            
+
             <div className="pgs-logo">
-              <img 
-                src={require("./Homecomponents/asset/logopsg.jpg")} 
-                alt="PGS Logo" 
+              <img
+                src={require("./Homecomponents/asset/logopsg.jpg")}
+                alt="PGS Logo"
                 className="pgs-logo-image"
               />
             </div>
@@ -200,7 +200,7 @@ const Homepage = ({ className }) => {
             <span className="icon">👨‍🌾</span>
             เกษตรกร
           </h2>
-          
+
           {loading ? (
             <div className="loading-box">
               <div className="spinner"></div>
@@ -210,8 +210,8 @@ const Homepage = ({ className }) => {
             <div className="farmers-scroll">
               <div className="farmers-grid">
                 {farmers.map((farmer) => (
-                  <div 
-                    key={farmer.NID} 
+                  <div
+                    key={farmer.NID}
                     className="farmer-card"
                     onClick={() => farmer.FID && navigate(`/farms/${farmer.FID}`)}
                     style={{ cursor: farmer.FID ? "pointer" : "default" }}
@@ -249,13 +249,13 @@ const Homepage = ({ className }) => {
             <span className="icon">🥬</span>
             หมวดหมู่
           </h2>
-          
+
           {/* Row 1 */}
           <div className="category-scroll">
             <div className="category-row">
               {categories1.map((cat, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="category-item"
                   onClick={() => navigate(`/filter?category=${encodeURIComponent(cat.name)}`)}
                 >
@@ -272,8 +272,8 @@ const Homepage = ({ className }) => {
           <div className="category-scroll">
             <div className="category-row">
               {categories2.map((cat, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="category-item"
                   onClick={() => navigate(`/filter?category=${encodeURIComponent(cat.name)}`)}
                 >
@@ -292,12 +292,12 @@ const Homepage = ({ className }) => {
       <footer className="footer">
         <div className="footer-shape">
           <svg viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#2E7D32" d="M0,50 Q360,0 720,50 T1440,50 L1440,0 L0,0 Z" opacity="0.3"/>
-            <path fill="#4CAF50" d="M0,70 Q360,20 720,70 T1440,70 L1440,0 L0,0 Z" opacity="0.5"/>
-            <path fill="#1565C0" d="M0,90 Q360,40 720,90 T1440,90 L1440,0 L0,0 Z"/>
+            <path fill="#2E7D32" d="M0,50 Q360,0 720,50 T1440,50 L1440,0 L0,0 Z" opacity="0.3" />
+            <path fill="#4CAF50" d="M0,70 Q360,20 720,70 T1440,70 L1440,0 L0,0 Z" opacity="0.5" />
+            <path fill="#1565C0" d="M0,90 Q360,40 720,90 T1440,90 L1440,0 L0,0 Z" />
           </svg>
         </div>
-        
+
         <div className="footer-content">
           <div className="container">
             <div className="footer-grid">
@@ -308,27 +308,27 @@ const Homepage = ({ className }) => {
                   <h3>PHAKTAE</h3>
                 </div>
                 <p className="address">
-                  313 อาคาร ชิ.พี. ทาวเวอร์ ชั้น 16 ถนนสีลม แขวงสีลม<br/>
+                  313 อาคาร ชิ.พี. ทาวเวอร์ ชั้น 16 ถนนสีลม แขวงสีลม<br />
                   เขตบางรัก กรุงเทพฯ 10500
                 </p>
                 <a href="#" className="map-link">
                   🗺️ ดูแผนที่บน Google Maps
                 </a>
-                
+
                 <div className="social-links">
                   <a href="#" className="social-icon" aria-label="LinkedIn">
                     <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                     </svg>
                   </a>
                   <a href="#" className="social-icon" aria-label="Facebook">
                     <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+                      <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
                     </svg>
                   </a>
                   <a href="#" className="social-icon" aria-label="YouTube">
                     <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                      <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
                     </svg>
                   </a>
                 </div>

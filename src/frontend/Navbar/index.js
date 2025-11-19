@@ -54,6 +54,19 @@ const Navbar = ({ className, onFilterChange }) => {
   const sidebarRef = useRef(null);
   const navigate = useNavigate();
   const API_BASE_URL = "http://localhost:4000";
+  const DEFAULT_PRODUCT_IMAGE = "https://via.placeholder.com/80x80?text=No+Image";
+
+  const parseProductMessage = (text) => {
+    if (!text || typeof text !== "string") return null;
+    if (!text.startsWith("__PRODUCT__:")) return null;
+    try {
+      const payload = text.replace("__PRODUCT__:", "");
+      return JSON.parse(payload);
+    } catch (error) {
+      console.error("Failed to parse product message:", error);
+      return null;
+    }
+  };
 
   // ตรวจสอบ user จาก localStorage
   useEffect(() => {
@@ -173,7 +186,10 @@ const Navbar = ({ className, onFilterChange }) => {
         !overlayRef.current.contains(event.target)
       ) {
         const searchButton = event.target.closest(".search-icon-button");
-        if (!searchButton) setShowSearchOverlay(false);
+        if (!searchButton) {
+          setShowSearchOverlay(false);
+          setSearchQuery("");
+        }
       }
     };
     if (showSearchOverlay)
@@ -296,6 +312,13 @@ const Navbar = ({ className, onFilterChange }) => {
       } else {
         navigate("/filter");
       }
+    }
+  };
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter") {
+      setShowSearchOverlay(false);
+      setSearchQuery("");
     }
   };
 
@@ -438,7 +461,14 @@ const Navbar = ({ className, onFilterChange }) => {
             {/* Search */}
             <button
               className="icon-button search-icon-button"
-              onClick={() => setShowSearchOverlay(!showSearchOverlay)}
+              onClick={() => {
+                if (showSearchOverlay) {
+                  setShowSearchOverlay(false);
+                  setSearchQuery("");
+                } else {
+                  setShowSearchOverlay(true);
+                }
+              }}
             >
               <Search size={24} />
             </button>
@@ -476,31 +506,92 @@ const Navbar = ({ className, onFilterChange }) => {
                   ) : (
                     <ul className="unread-chat-list">
                       {unreadChatItems.map((chat) => {
-                        const displayName =
-                          chat.Farm?.farmName ||
-                          chat.User?.username ||
-                          "ไม่ทราบชื่อ";
+                        const displayName = isFarmer
+                          ? chat.User?.username || `ลูกค้า ${chat.NID || ""}`
+                          : chat.Farm?.farmName || "ฟาร์ม";
                         const count = isFarmer
                           ? chat.farmerUnreadCount
                           : chat.customerUnreadCount;
-                        const lastMessage =
-                          chat.lastMessageText?.trim() || "มีข้อความใหม่";
+                        const productData = parseProductMessage(
+                          chat.lastMessageText
+                        );
+                        const isProductMessage = Boolean(productData);
+                        const lastMessage = isProductMessage
+                          ? "ส่งข้อมูลสินค้า"
+                          : chat.lastMessageText?.trim() || "มีข้อความใหม่";
                         return (
-                          <li key={chat.logID}>
-                            <div className="info">
-                              <span className="name">{displayName}</span>
-                              <span className="preview">{lastMessage}</span>
-                            </div>
-                            <span className="count">
-                              {count > 99 ? "99+" : count}
-                            </span>
-                            <Link
-                              to={`/chat/${chat.logID}/${chat.FID}`}
-                              className="bookmark-link"
-                              onClick={() => setShowBellPopup(false)}
-                            >
-                              เปิด
-                            </Link>
+                          <li
+                            key={chat.logID}
+                            className={isProductMessage ? "product-message" : ""}
+                          >
+                            {isProductMessage && productData ? (
+                              <>
+                                <div className="product-thumb">
+                                  <img
+                                    src={
+                                      productData.image || DEFAULT_PRODUCT_IMAGE
+                                    }
+                                    alt={productData.productName || "สินค้า"}
+                                    onError={(e) => {
+                                      e.currentTarget.src = DEFAULT_PRODUCT_IMAGE;
+                                    }}
+                                  />
+                                </div>
+                                <div className="info">
+                                  <span className="name">{displayName}</span>
+                                  <span className="preview">{lastMessage}</span>
+                                  <div className="product-notification-card">
+                                    <div className="product-details">
+                                      <span className="product-title">
+                                        {productData.productName || "สินค้า"}
+                                      </span>
+                                      <span className="product-price">
+                                        {productData.price != null
+                                          ? `฿${productData.price}`
+                                          : "-"}
+                                        {productData.saleType && (
+                                          <span className="product-unit">
+                                            {` / ${productData.saleType}`}
+                                          </span>
+                                        )}
+                                      </span>
+                                      {productData.category && (
+                                        <span className="product-category">
+                                          {productData.category}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                <span className="count">
+                                  {count > 99 ? "99+" : count}
+                                </span>
+                                <Link
+                                  to={`/chat/${chat.logID}/${chat.FID}`}
+                                  className="bookmark-link"
+                                  onClick={() => setShowBellPopup(false)}
+                                >
+                                  เปิดแชท
+                                </Link>
+                              </>
+                            ) : (
+                              <>
+                                <div className="info">
+                                  <span className="name">{displayName}</span>
+                                  <span className="preview">{lastMessage}</span>
+                                </div>
+                                <span className="count">
+                                  {count > 99 ? "99+" : count}
+                                </span>
+                                <Link
+                                  to={`/chat/${chat.logID}/${chat.FID}`}
+                                  className="bookmark-link"
+                                  onClick={() => setShowBellPopup(false)}
+                                >
+                                  เปิด
+                                </Link>
+                              </>
+                            )}
                           </li>
                         );
                       })}
@@ -518,72 +609,74 @@ const Navbar = ({ className, onFilterChange }) => {
             </div>
 
             {/* Bookmark Popup */}
-            <div className="popup-wrapper" ref={bookmarkRef}>
-              <button
-                className="icon-button"
-                onClick={async () => {
-                  const next = !showBookmarkPopup;
-                  setShowBookmarkPopup(next);
-                  setShowBellPopup(false);
-                  if (next) {
-                    await fetchBookmarkPreview();
-                  }
-                }}
-              >
-                <Bookmark size={24} />
-              </button>
+            {!isFarmer && (
+              <div className="popup-wrapper" ref={bookmarkRef}>
+                <button
+                  className="icon-button"
+                  onClick={async () => {
+                    const next = !showBookmarkPopup;
+                    setShowBookmarkPopup(next);
+                    setShowBellPopup(false);
+                    if (next) {
+                      await fetchBookmarkPreview();
+                    }
+                  }}
+                >
+                  <Bookmark size={24} />
+                </button>
 
-              {showBookmarkPopup && (
-                <div className="popup-box bookmark-popup">
-                  <h4>บุ๊กมาร์กล่าสุด</h4>
-                  {bookmarkLoading ? (
-                    <p>กำลังโหลด...</p>
-                  ) : bookmarkError ? (
-                    <p>{bookmarkError}</p>
-                  ) : bookmarkItems.length === 0 ? (
-                    <p>ยังไม่มีสินค้าที่บันทึก</p>
-                  ) : (
-                    <ul className="bookmark-list">
-                      {bookmarkItems.map((item) => (
-                        <li key={item.id}>
-                          <div className="thumb">
-                            <img
-                              src={
-                                item.Product?.image ||
-                                "https://via.placeholder.com/60x60?text=No+Image"
-                              }
-                              alt={item.Product?.productName || "product"}
-                            />
-                          </div>
-                          <div className="info">
-                            <span className="name">
-                              {item.Product?.productName || "สินค้า"}
-                            </span>
-                            <span className="farm">
-                              {item.Product?.Farm?.farmName || "ฟาร์มไม่ระบุ"}
-                            </span>
-                          </div>
-                          <Link
-                            to={`/product/${item.PID}`}
-                            className="bookmark-link"
-                            onClick={() => setShowBookmarkPopup(false)}
-                          >
-                            ดู
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  <Link
-                    to="/bookmarks"
-                    className="popup-action"
-                    onClick={() => setShowBookmarkPopup(false)}
-                  >
-                    ดูทั้งหมด
-                  </Link>
-                </div>
-              )}
-            </div>
+                {showBookmarkPopup && (
+                  <div className="popup-box bookmark-popup">
+                    <h4>บุ๊กมาร์กล่าสุด</h4>
+                    {bookmarkLoading ? (
+                      <p>กำลังโหลด...</p>
+                    ) : bookmarkError ? (
+                      <p>{bookmarkError}</p>
+                    ) : bookmarkItems.length === 0 ? (
+                      <p>ยังไม่มีสินค้าที่บันทึก</p>
+                    ) : (
+                      <ul className="bookmark-list">
+                        {bookmarkItems.map((item) => (
+                          <li key={item.id}>
+                            <div className="thumb">
+                              <img
+                                src={
+                                  item.Product?.image ||
+                                  "https://via.placeholder.com/60x60?text=No+Image"
+                                }
+                                alt={item.Product?.productName || "product"}
+                              />
+                            </div>
+                            <div className="info">
+                              <span className="name">
+                                {item.Product?.productName || "สินค้า"}
+                              </span>
+                              <span className="farm">
+                                {item.Product?.Farm?.farmName || "ฟาร์มไม่ระบุ"}
+                              </span>
+                            </div>
+                            <Link
+                              to={`/product/${item.PID}`}
+                              className="bookmark-link"
+                              onClick={() => setShowBookmarkPopup(false)}
+                            >
+                              ดู
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <Link
+                      to="/bookmarks"
+                      className="popup-action"
+                      onClick={() => setShowBookmarkPopup(false)}
+                    >
+                      ดูทั้งหมด
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -640,7 +733,7 @@ const Navbar = ({ className, onFilterChange }) => {
                   {isFarmer ? (
                     <div className="sidebar-menu">
                       <Link
-                        to="/createfarm"
+                        to={farmerChatFID ? `/farms/${farmerChatFID}` : "/createfarm"}
                         className="sidebar-menu-item"
                         onClick={() => setShowSidebar(false)}
                       >
@@ -682,14 +775,16 @@ const Navbar = ({ className, onFilterChange }) => {
                         <Bell size={20} />
                         <span>การแจ้งเตือน</span>
                       </Link>
-                      <Link
-                        to="/bookmarks"
-                        className="sidebar-menu-item"
-                        onClick={() => setShowSidebar(false)}
-                      >
-                        <Bookmark size={20} />
-                        <span>บุ๊กมาร์ก</span>
-                      </Link>
+                      {!isFarmer && (
+                        <Link
+                          to="/bookmarks"
+                          className="sidebar-menu-item"
+                          onClick={() => setShowSidebar(false)}
+                        >
+                          <Bookmark size={20} />
+                          <span>บุ๊กมาร์ก</span>
+                        </Link>
+                      )}
                     </div>
                   )}
 
@@ -708,7 +803,10 @@ const Navbar = ({ className, onFilterChange }) => {
         <>
           <div
             className="overlay-backdrop"
-            onClick={() => setShowSearchOverlay(false)}
+            onClick={() => {
+              setShowSearchOverlay(false);
+              setSearchQuery("");
+            }}
           />
           <div className="search-overlay" ref={overlayRef}>
             <div className="overlay-content">
@@ -723,6 +821,7 @@ const Navbar = ({ className, onFilterChange }) => {
                     placeholder="Search"
                     value={searchQuery}
                     onChange={handleSearchChange}
+                    onKeyDown={handleSearchKeyDown}
                     autoFocus
                   />
                 </div>
@@ -1552,5 +1651,63 @@ export default styled(Navbar)`
       color: #ef4444;
       margin-right: 8px;
     }
+
+    li.product-message {
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .product-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #e5e7eb;
+      flex-shrink: 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .product-notification-card {
+      margin-top: 6px;
+      padding: 8px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #f9fafb;
+    }
+
+    .product-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .product-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .product-price {
+      font-size: 12px;
+      font-weight: 700;
+      color: #16a34a;
+
+      .product-unit {
+        font-weight: 500;
+        color: #6b7280;
+        margin-left: 4px;
+      }
+    }
+
+    .product-category {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
   }
 `;

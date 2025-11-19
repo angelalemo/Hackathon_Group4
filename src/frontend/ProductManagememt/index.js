@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Plus, Upload, X } from 'lucide-react';
 
 // Main Component
@@ -12,8 +13,9 @@ export default function ProductManagement() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-
-  
+  const [farmId, setFarmId] = useState(null);
+  const [hasFarm, setHasFarm] = useState(null); // null = loading, true/false = loaded
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -26,22 +28,65 @@ export default function ProductManagement() {
   }, []);
 
   const userId = currentUser?.NID;
-  const farmId = currentUser?.FID || currentUser?.Farm?.FID;
 
+  // ตรวจสอบว่าผู้ใช้มีฟาร์มหรือไม่
   useEffect(() => {
-    if (userId) {
+    const checkFarm = async () => {
+      if (!userId) return;
+      
+      try {
+        setLoading(true);
+        // ตรวจสอบจาก user object ก่อน
+        const userFarmId = currentUser?.FID || currentUser?.Farm?.FID;
+        if (userFarmId) {
+          setFarmId(userFarmId);
+          setHasFarm(true);
+          return;
+        }
+
+        // ถ้าไม่มีใน user object ให้ fetch จาก API
+        try {
+          const response = await axios.get(`http://localhost:4000/farms/user/${userId}`);
+          if (response.data && response.data.FID) {
+            setFarmId(response.data.FID);
+            setHasFarm(true);
+          } else {
+            setHasFarm(false);
+          }
+        } catch (err) {
+          // ถ้า API ส่ง 404 แสดงว่าไม่มีฟาร์ม
+          if (err.response?.status === 404) {
+            setHasFarm(false);
+          } else {
+            console.error("Error checking farm:", err);
+            setError("ไม่สามารถตรวจสอบข้อมูลฟาร์มได้");
+          }
+        }
+      } catch (err) {
+        console.error("Error in checkFarm:", err);
+        setHasFarm(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkFarm();
+  }, [userId, currentUser]);
+
+  // โหลดสินค้าเมื่อมี farmId
+  useEffect(() => {
+    if (farmId && hasFarm) {
       loadProducts();
     }
-  }, [userId]);
+  }, [farmId, hasFarm]);
 
   const loadProducts = async () => {
+    if (!farmId) return;
+    
     try {
       setLoading(true);
-      const url = farmId 
-        ? `http://localhost:4000/products/Farm/${farmId}`
-        : "http://localhost:4000/products/All";
-      const res = await axios.get(url);
-      setProducts(res.data);
+      const res = await axios.get(`http://localhost:4000/products/Farm/${farmId}`);
+      setProducts(res.data || []);
     } catch (err) {
       console.error("Error loading products:", err);
       setError("ไม่สามารถโหลดข้อมูลสินค้าได้");
@@ -150,52 +195,102 @@ export default function ProductManagement() {
     setEditProduct(null);
   };
 
-  if (loading && products.length === 0) {
-    return <LoadingContainer>กำลังโหลด...</LoadingContainer>;
+  if (loading && hasFarm === null) {
+    return (
+      <Container>
+        <TitleBar>
+          <BackButton onClick={() => navigate('/')} aria-label="กลับหน้าแรก">
+            <ChevronLeft size={24} />
+          </BackButton>
+          <Title>คลังสินค้า</Title>
+        </TitleBar>
+        <LoadingContainer>กำลังโหลด...</LoadingContainer>
+      </Container>
+    );
+  }
+
+  // ถ้าไม่มีฟาร์ม ให้แสดงปุ่มไปหน้าสร้างฟาร์ม
+  if (hasFarm === false) {
+    return (
+      <Container>
+        <TitleBar>
+          <BackButton onClick={() => navigate('/')} aria-label="กลับหน้าแรก">
+            <ChevronLeft size={24} />
+          </BackButton>
+          <Title>คลังสินค้า</Title>
+        </TitleBar>
+        <NoFarmContainer>
+          <NoFarmIcon>🌾</NoFarmIcon>
+          <NoFarmTitle>คุณยังไม่มีฟาร์ม</NoFarmTitle>
+          <NoFarmDescription>
+            เริ่มต้นสร้างฟาร์มของคุณเพื่อเริ่มขายสินค้า
+          </NoFarmDescription>
+          <CreateFarmButton onClick={() => navigate('/createfarm')}>
+            ➕ สร้างฟาร์ม
+          </CreateFarmButton>
+        </NoFarmContainer>
+      </Container>
+    );
   }
 
   if (error) {
-    return <ErrorContainer>{error}</ErrorContainer>;
+    return (
+      <Container>
+        <TitleBar>
+          <BackButton onClick={() => navigate('/')} aria-label="กลับหน้าแรก">
+            <ChevronLeft size={24} />
+          </BackButton>
+          <Title>คลังสินค้า</Title>
+        </TitleBar>
+        <ErrorContainer>{error}</ErrorContainer>
+      </Container>
+    );
   }
 
   return (
     <Container>
       <TitleBar>
-        <ChevronLeft size={24} />
+        <BackButton onClick={() => navigate('/')} aria-label="กลับหน้าแรก">
+          <ChevronLeft size={24} />
+        </BackButton>
         <Title>คลังสินค้า</Title>
       </TitleBar>
 
-      <ProductGrid>
-        {products.map(product => (
-          <ProductCard key={product.PID}>
-            <ProductImage>
-              {product.image ? (
-                <img src={product.image} alt={product.productName} />
-              ) : (
-                <ImagePlaceholder />
-              )}
-            </ProductImage>
-            <ProductInfo>
-              <ProductName>{product.productName}</ProductName>
-              <ProductCategory>{product.category}</ProductCategory>
-              <ProductPrice>฿{product.price}/{product.saleType}</ProductPrice>
-              <ButtonContainer>
-                <EditButton onClick={() => handleEditProduct(product)}>
-                  แก้ไขสินค้า
-                </EditButton>
-                <DeleteButton onClick={() => handleDeleteProduct(product.PID)}>
-                  ลบสินค้า
-                </DeleteButton>
-              </ButtonContainer>
-            </ProductInfo>
-          </ProductCard>
-        ))}
+      {loading && products.length === 0 ? (
+        <LoadingContainer>กำลังโหลดสินค้า...</LoadingContainer>
+      ) : (
+        <ProductGrid>
+          {products.map(product => (
+            <ProductCard key={product.PID}>
+              <ProductImage>
+                {product.image ? (
+                  <img src={product.image} alt={product.productName} />
+                ) : (
+                  <ImagePlaceholder />
+                )}
+              </ProductImage>
+              <ProductInfo>
+                <ProductName>{product.productName}</ProductName>
+                <ProductCategory>{product.category}</ProductCategory>
+                <ProductPrice>฿{product.price}/{product.saleType}</ProductPrice>
+                <ButtonContainer>
+                  <EditButton onClick={() => handleEditProduct(product)}>
+                    แก้ไขสินค้า
+                  </EditButton>
+                  <DeleteButton onClick={() => handleDeleteProduct(product.PID)}>
+                    ลบสินค้า
+                  </DeleteButton>
+                </ButtonContainer>
+              </ProductInfo>
+            </ProductCard>
+          ))}
 
-        <AddProductButton onClick={openAddModal}>
-          <Plus size={48} />
-          <span>เพิ่มสินค้า</span>
-        </AddProductButton>
-      </ProductGrid>
+          <AddProductButton onClick={openAddModal}>
+            <Plus size={48} />
+            <span>เพิ่มสินค้า</span>
+          </AddProductButton>
+        </ProductGrid>
+      )}
 
       {showModal && (
         <ProductModal
@@ -398,6 +493,55 @@ const ErrorContainer = styled.div`
   color: #dc2626;
 `;
 
+const NoFarmContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem;
+  text-align: center;
+`;
+
+const NoFarmIcon = styled.div`
+  font-size: 5rem;
+  margin-bottom: 1rem;
+`;
+
+const NoFarmTitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.75rem;
+`;
+
+const NoFarmDescription = styled.p`
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  max-width: 400px;
+`;
+
+const CreateFarmButton = styled.button`
+  background-color: #15803d;
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #166534;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+`;
+
 const TitleBar = styled.div`
   background-color: #15803d;
   color: white;
@@ -405,6 +549,24 @@ const TitleBar = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
+`;
+
+const BackButton = styled.button`
+  background: none;
+  border: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:active {
+    opacity: 0.6;
+  }
 `;
 
 const Title = styled.span`

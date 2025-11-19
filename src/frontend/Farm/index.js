@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "http://localhost:4000";
 
 const FarmProfile = ({ className }) => {
   const { farmID } = useParams(); // ดึง FID จาก URL
+  const navigate = useNavigate();
   const [farm, setFarm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
@@ -483,6 +484,19 @@ const FarmProfile = ({ className }) => {
       {/* Hero Section */}
       <div className="hero-section">
         <div className="hero-overlay"></div>
+        <button 
+          className="back-button" 
+          onClick={() => {
+            if (window.history.length > 1) {
+              navigate(-1);
+            } else {
+              navigate("/");
+            }
+          }}
+          aria-label="ย้อนกลับ"
+        >
+          ← ย้อนกลับ
+        </button>
         <div className="hero-content">
           <div className="farm-badge">🌾 ฟาร์มออนไลน์</div>
           <h1 className="farm-title">{farm.farmName}</h1>
@@ -1148,45 +1162,93 @@ const FarmProfile = ({ className }) => {
                 </div>
               ) : (
                 <>
-              {farm.phoneNumber && (
-                <a href={`tel:${farm.phoneNumber}`} className="contact-item">
-                  <span className="contact-icon">📱</span>
-                  <div>
-                    <div className="contact-label">โทรศัพท์</div>
-                    <div className="contact-value">{farm.phoneNumber}</div>
+              {(() => {
+                const phoneValue = farm.phoneNumber || "-";
+                const hasValidPhone = phoneValue && phoneValue.trim() !== "" && phoneValue.trim() !== "-";
+                return hasValidPhone ? (
+                  <a href={`tel:${farm.phoneNumber}`} className="contact-item">
+                    <span className="contact-icon">📱</span>
+                    <div>
+                      <div className="contact-label">โทรศัพท์</div>
+                      <div className="contact-value">{farm.phoneNumber}</div>
+                    </div>
+                  </a>
+                ) : (
+                  <div className="contact-item" style={{ cursor: "default", opacity: 0.6, pointerEvents: "none" }}>
+                    <span className="contact-icon">📱</span>
+                    <div>
+                      <div className="contact-label">โทรศัพท์</div>
+                      <div className="contact-value">{phoneValue}</div>
+                    </div>
                   </div>
-                </a>
-              )}
+                );
+              })()}
 
-              {farm.email && (
-                <a href={`mailto:${farm.email}`} className="contact-item">
-                  <span className="contact-icon">📧</span>
-                  <div>
-                    <div className="contact-label">อีเมล</div>
-                    <div className="contact-value">{farm.email}</div>
+              {(() => {
+                const emailValue = farm.email || "-";
+                const hasValidEmail = emailValue && emailValue.trim() !== "" && emailValue.trim() !== "-";
+                return hasValidEmail ? (
+                  <a href={`mailto:${farm.email}`} className="contact-item">
+                    <span className="contact-icon">📧</span>
+                    <div>
+                      <div className="contact-label">อีเมล</div>
+                      <div className="contact-value">{farm.email}</div>
+                    </div>
+                  </a>
+                ) : (
+                  <div className="contact-item" style={{ cursor: "default", opacity: 0.6, pointerEvents: "none" }}>
+                    <span className="contact-icon">📧</span>
+                    <div>
+                      <div className="contact-label">อีเมล</div>
+                      <div className="contact-value">{emailValue}</div>
+                    </div>
                   </div>
-                </a>
-              )}
+                );
+              })()}
 
-              {farm.line && (
-                <a href={`https://line.me/ti/p/${farm.line}`} target="_blank" rel="noopener noreferrer" className="contact-item">
-                  <span className="contact-icon">💬</span>
-                  <div>
-                    <div className="contact-label">LINE</div>
-                    <div className="contact-value">{farm.line}</div>
+              {(() => {
+                const lineValue = farm.line || "-";
+                const hasValidLine = lineValue && lineValue.trim() !== "" && lineValue.trim() !== "-";
+                return hasValidLine ? (
+                  <a href={`https://line.me/ti/p/${farm.line}`} target="_blank" rel="noopener noreferrer" className="contact-item">
+                    <span className="contact-icon">💬</span>
+                    <div>
+                      <div className="contact-label">LINE</div>
+                      <div className="contact-value">{farm.line}</div>
+                    </div>
+                  </a>
+                ) : (
+                  <div className="contact-item" style={{ cursor: "default", opacity: 0.6, pointerEvents: "none" }}>
+                    <span className="contact-icon">💬</span>
+                    <div>
+                      <div className="contact-label">LINE</div>
+                      <div className="contact-value">{lineValue}</div>
+                    </div>
                   </div>
-                </a>
-              )}
+                );
+              })()}
 
-              {farm.facebook && (
-                <a href={`https://facebook.com/${farm.facebook}`} target="_blank" rel="noopener noreferrer" className="contact-item">
-                  <span className="contact-icon">👥</span>
-                  <div>
-                    <div className="contact-label">Facebook</div>
-                    <div className="contact-value">{farm.facebook}</div>
+              {(() => {
+                const facebookValue = farm.facebook || "-";
+                const hasValidFacebook = facebookValue && facebookValue.trim() !== "" && facebookValue.trim() !== "-";
+                return hasValidFacebook ? (
+                  <a href={`https://facebook.com/${farm.facebook}`} target="_blank" rel="noopener noreferrer" className="contact-item">
+                    <span className="contact-icon">👥</span>
+                    <div>
+                      <div className="contact-label">Facebook</div>
+                      <div className="contact-value">{farm.facebook}</div>
+                    </div>
+                  </a>
+                ) : (
+                  <div className="contact-item" style={{ cursor: "default", opacity: 0.6, pointerEvents: "none" }}>
+                    <span className="contact-icon">👥</span>
+                    <div>
+                      <div className="contact-label">Facebook</div>
+                      <div className="contact-value">{facebookValue}</div>
+                    </div>
                   </div>
-                </a>
-                  )}
+                );
+              })()}
                 </>
               )}
             </div>
@@ -1458,6 +1520,53 @@ export default styled(FarmProfile)`
       position: absolute;
       inset: 0;
       background: rgba(0,0,0,0.2);
+    }
+
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 500;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 1);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+
+      @media (max-width: 768px) {
+        top: 15px;
+        left: 15px;
+        padding: 8px 16px;
+        font-size: 14px;
+        border-radius: 10px;
+      }
+
+      @media (max-width: 480px) {
+        top: 12px;
+        left: 12px;
+        padding: 6px 12px;
+        font-size: 13px;
+        border-radius: 8px;
+      }
     }
     
     .hero-content {

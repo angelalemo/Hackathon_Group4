@@ -102,6 +102,16 @@ class UserService {
     return user;
   }
 
+  // Reset password ด้วย email และ OTP
+  static async resetPassword(email, newPassword) {
+    const user = await User.findOne({ where: { email } });
+    if (!user) throw new Error("ไม่พบผู้ใช้ด้วยอีเมลนี้");
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await user.update({ password: hashedPassword });
+    return { success: true, message: "เปลี่ยนรหัสผ่านสำเร็จ" };
+  }
+
   static async registerOrLoginWithLine(accessToken, type) {
     const response = await axios.get("https://api.line.me/v2/profile", {
       headers: { Authorization: `Bearer ${accessToken}` },
