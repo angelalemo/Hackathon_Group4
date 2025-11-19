@@ -98,6 +98,36 @@ class FarmController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  static async updateProfileImage(req, res) {
+    try {
+      const { NID, FID, profileImage } = req.body;
+      const farm = await FarmService.updateProfileImage(NID, FID, profileImage);
+      res.status(200).json({ message: "Profile image updated successfully", farm });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  static async addCertificate(req, res) {
+    try {
+      const { NID, FID, certificate } = req.body;
+      const result = await FarmService.addCertificate(NID, FID, certificate);
+      res.status(200).json({ message: "Certificate added successfully", certificate: result });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  static async deleteCertificate(req, res) {
+    try {
+      const { NID, FID, certificateID } = req.body;
+      const result = await FarmService.deleteCertificate(NID, FID, certificateID);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = FarmController;

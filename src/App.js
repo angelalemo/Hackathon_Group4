@@ -13,6 +13,7 @@ import Product from './frontend/Product';
 import ProductManagement from './frontend/ProductManagememt';
 import ChatPage from './frontend/Chatfeatures';
 import ChatList from './frontend/Chatfeatures/ChatList';
+import Bookmarks from './frontend/Bookmarks';
 
 
 function App() {
@@ -28,10 +29,12 @@ function App() {
         <Route path="/createfarm" element={<Createfarm />} />
         <Route path="/product/:PID" element={<Product />} />
         <Route path="/farms" element={<FarmListPage />} />
+        <Route path="/farms/:farmID" element={<FarmListPage />} />
         <Route path="/filter" element={<Filter />} />
         <Route path="/product-management" element={<ProductManagement />} />
         <Route path="/chat" element={<ChatList />} />
         <Route path="/chat/:logID/:FID" element={<ChatPage />} />
+        <Route path="/bookmarks" element={<Bookmarks />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

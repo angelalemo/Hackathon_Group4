@@ -7,5 +7,6 @@ router.get("/:NID", UserController.getUserById);
 router.post("/register", UserController.registerUser);
 router.post("/login", UserController.loginUser);
 router.put("/update/:NID", UserController.updateUser);
+router.put("/profileImage", UserController.updateUserProfileImage);
 
 module.exports = router;

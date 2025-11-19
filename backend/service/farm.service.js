@@ -85,6 +85,44 @@ class FarmService {
     if (!user) throw new Error("User not found");
     if (user.type !== "Farmer") throw new Error("Permission denied: Only farmers can create farms");
 
+    // ตรวจสอบข้อมูลบังคับ
+    if (!data.farmName || !data.farmName.trim()) {
+      throw new Error("กรุณากรอกชื่อฟาร์ม");
+    }
+
+    if (!data.email || !data.email.trim()) {
+      throw new Error("กรุณากรอกอีเมล");
+    }
+
+    if (!/\S+@\S+\.\S+/.test(data.email)) {
+      throw new Error("รูปแบบอีเมลไม่ถูกต้อง");
+    }
+
+    if (!data.phoneNumber || !data.phoneNumber.trim()) {
+      throw new Error("กรุณากรอกเบอร์โทรศัพท์");
+    }
+
+    if (!data.location || !data.location.trim()) {
+      throw new Error("กรุณากรอกที่อยู่");
+    }
+
+    if (!data.province || !data.province.trim()) {
+      throw new Error("กรุณากรอกจังหวัด");
+    }
+
+    if (!data.district || !data.district.trim()) {
+      throw new Error("กรุณากรอกอำเภอ/เขต");
+    }
+
+    if (!data.subDistrict || !data.subDistrict.trim()) {
+      throw new Error("กรุณากรอกตำบล/แขวง");
+    }
+
+    // ตรวจสอบว่า certificates ต้องมีอย่างน้อย 1 ภาพ
+    if (!Array.isArray(data.certificates) || data.certificates.length === 0) {
+      throw new Error("กรุณาอัปโหลดใบรับรองอย่างน้อย 1 ภาพ");
+    }
+
     // 🟦 สร้างฟาร์ม
     const newFarm = await Farm.create({
       NID: NID,
@@ -198,9 +236,82 @@ class FarmService {
       district: data.district ?? farm.district,
       subDistrict: data.subDistrict ?? farm.subDistrict,
       location: data.location ?? farm.location,
+      profileImage: data.profileImage !== undefined ? data.profileImage : farm.profileImage,
     });
 
     return farm;
+  }
+
+  // อัปเดตรูปโปรไฟล์ฟาร์ม
+  static async updateProfileImage(NID, FID, profileImage) {
+    const user = await User.findByPk(NID);
+    if (!user) throw new Error("User not found");
+    if (user.type !== "Farmer") throw new Error("Permission denied");
+
+    const farm = await Farm.findByPk(FID);
+    if (!farm) throw new Error("Farm not found");
+    if (farm.NID !== NID) throw new Error("You can only edit your own farm");
+
+    // แปลง profileImage เป็น base64 ถ้าจำเป็น
+    let imageData = profileImage;
+    if (typeof profileImage === "string" && !profileImage.startsWith("data:") && !profileImage.startsWith("http")) {
+      const abs = path.resolve(profileImage);
+      const buf = fs.readFileSync(abs);
+      imageData = buf.toString("base64");
+    }
+
+    await farm.update({ profileImage: imageData });
+    return farm;
+  }
+
+  // เพิ่ม Certificate
+  static async addCertificate(NID, FID, certificate) {
+    const user = await User.findByPk(NID);
+    if (!user) throw new Error("User not found");
+    if (user.type !== "Farmer") throw new Error("Permission denied");
+
+    const farm = await Farm.findByPk(FID);
+    if (!farm) throw new Error("Farm not found");
+    if (farm.NID !== NID) throw new Error("You can only edit your own farm");
+
+    let certFile = certificate.file;
+    if (Buffer.isBuffer(certFile)) {
+      certFile = certFile.toString("base64");
+    } else if (typeof certFile === "string") {
+      if (certFile.startsWith("http")) {
+        // URL ใช้ได้เลย
+      } else if (!certFile.startsWith("data:")) {
+        const abs = path.resolve(certFile);
+        const buf = fs.readFileSync(abs);
+        certFile = buf.toString("base64");
+      }
+    }
+
+    const created = await Certificate.create({
+      FID: farm.FID,
+      institution: certificate.institution || "ใบรับรอง",
+      file: certFile,
+    });
+
+    return created;
+  }
+
+  // ลบ Certificate
+  static async deleteCertificate(NID, FID, certificateID) {
+    const user = await User.findByPk(NID);
+    if (!user) throw new Error("User not found");
+    if (user.type !== "Farmer") throw new Error("Permission denied");
+
+    const farm = await Farm.findByPk(FID);
+    if (!farm) throw new Error("Farm not found");
+    if (farm.NID !== NID) throw new Error("You can only edit your own farm");
+
+    const certificate = await Certificate.findByPk(certificateID);
+    if (!certificate) throw new Error("Certificate not found");
+    if (certificate.FID !== FID) throw new Error("Certificate does not belong to this farm");
+
+    await certificate.destroy();
+    return { message: "Certificate deleted successfully" };
   }
 
   static async addStorage(NID, FID, storages) {

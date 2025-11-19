@@ -33,8 +33,11 @@ class UserController {
     // ✅ เพิ่ม Debug log
     static async loginUser(req, res) {
         try {
-            const { username, password } = req.body;
-            const result = await UserService.loginUser(username, password);
+            const { email, password } = req.body;
+            if (!email || !password) {
+                return res.status(400).json({ error: "กรุณากรอกอีเมลและรหัสผ่าน" });
+            }
+            const result = await UserService.loginUser(email, password);
             
             // 🔍 Debug: ดูว่า return อะไร
             console.log("=== LOGIN SUCCESS ===");
@@ -53,6 +56,19 @@ class UserController {
             const NID = req.params.NID;
             const user = await UserService.updateUser(NID, req.body);
             res.status(200).json(user);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+    static async updateUserProfileImage(req, res) {
+        try {
+            const { NID, profileImage } = req.body;
+            if (!NID || !profileImage) {
+                return res.status(400).json({ error: "NID and profileImage are required" });
+            }
+            const user = await UserService.updateUserProfileImage(NID, profileImage);
+            res.status(200).json({ message: "Profile image updated successfully", user });
         } catch (error) {
             res.status(400).json({ error: error.message });
         }

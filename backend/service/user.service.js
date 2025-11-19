@@ -48,9 +48,9 @@ class UserService {
     return newUser;
   }
 
-  static async loginUser(username, password) {
+  static async loginUser(email, password) {
     const user = await User.findOne({ 
-      where: { username },
+      where: { email },
       include: [{ 
         model: Farm, 
         attributes: ['FID', 'farmName'],
@@ -173,7 +173,7 @@ class UserService {
     finalImage = `data:${mimeType};base64,${base64String}`;
   }
 
-  user.profileImage = finalImage;
+  user.ProfileImage = finalImage;
   await user.save();
   return user;
 }

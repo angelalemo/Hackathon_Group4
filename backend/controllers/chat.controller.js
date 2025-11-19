@@ -21,6 +21,43 @@ class ChatController {
     }
   }
 
+  static async getChatsByFarm(req, res) {
+    try {
+      const { FID } = req.params;
+      const chats = await ChatService.getChatsByFarm(FID);
+      res.json(chats);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  static async markAsRead(req, res) {
+    try {
+      const { logID } = req.params;
+      const { readerNID } = req.body;
+      if (!readerNID) {
+        return res.status(400).json({ error: "readerNID is required" });
+      }
+      const chat = await ChatService.markAsRead(logID, readerNID);
+      res.json(chat);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  static async getUnreadSummary(req, res) {
+    try {
+      const { NID, FID } = req.query;
+      const summary = await ChatService.getUnreadSummary({
+        NID,
+        FID,
+      });
+      res.json(summary);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
   static async getMessages(req, res) {
     try {
       const { logID } = req.params;
@@ -33,8 +70,8 @@ class ChatController {
 
   static async sendMessage(req, res) {
     try {
-      const { logID, senderNID, messageText } = req.body;
-      const message = await ChatService.sendMessage(logID, senderNID, messageText);
+      const { logID, senderNID, messageText, image, fileType, fileName } = req.body;
+      const message = await ChatService.sendMessage(logID, senderNID, messageText, image, fileType, fileName);
       res.status(201).json({ message: "Message sent", data: message });
     } catch (error) {
       res.status(400).json({ error: error.message });

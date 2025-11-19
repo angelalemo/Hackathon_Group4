@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Bookmark } from "lucide-react";
 
+const BOOKMARKS_API_BASE = "http://localhost:4000/bookmarks";
 const Product = ({ className }) => {
   const { PID } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  const [farmInfo, setFarmInfo] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -26,6 +29,16 @@ const Product = ({ className }) => {
         const user = localStorage.getItem("user");
         if (user) {
           checkBookmarkStatus(res.data.PID);
+        }
+
+        // ดึงข้อมูลฟาร์ม
+        if (res.data.FID) {
+          try {
+            const farmRes = await axios.get(`http://localhost:4000/farms/${res.data.FID}`);
+            setFarmInfo(farmRes.data);
+          } catch (farmErr) {
+            console.error("Error fetching farm info:", farmErr);
+          }
         }
       } catch (err) {
         console.error(err);
@@ -45,12 +58,14 @@ const Product = ({ className }) => {
     try {
       const userData = localStorage.getItem("user");
       if (!userData) return;
-      
+
       const user = JSON.parse(userData);
-      const userId = user.user?.UID || user.UID;
-      
-      // เรียก API เช็คว่า bookmark แล้วหรือยัง
-      const res = await axios.get(`/bookmarks/check/${userId}/${productId}`);
+      const currentUser = user.user || user;
+      if (!currentUser?.NID) return;
+
+      const res = await axios.get(
+        `${BOOKMARKS_API_BASE}/check/${currentUser.NID}/${productId}`
+      );
       setIsBookmarked(res.data.isBookmarked);
     } catch (err) {
       console.error("Error checking bookmark:", err);
@@ -67,19 +82,23 @@ const Product = ({ className }) => {
       }
 
       const user = JSON.parse(userData);
-      const userId = user.user?.UID || user.UID;
-      
+      const currentUser = user.user || user;
+      if (!currentUser?.NID) {
+        alert("ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบอีกครั้ง");
+        return;
+      }
+
       setBookmarkLoading(true);
 
       if (isBookmarked) {
-        // ลบ bookmark
-        await axios.delete(`/bookmarks/remove/${userId}/${product.PID}`);
+        await axios.delete(
+          `${BOOKMARKS_API_BASE}/remove/${currentUser.NID}/${product.PID}`
+        );
         setIsBookmarked(false);
       } else {
-        // เพิ่ม bookmark
-        await axios.post("/bookmarks/add", {
-          UID: userId,
-          PID: product.PID
+        await axios.post(`${BOOKMARKS_API_BASE}/add`, {
+          NID: currentUser.NID,
+          PID: product.PID,
         });
         setIsBookmarked(true);
       }
@@ -88,6 +107,55 @@ const Product = ({ className }) => {
       alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
     } finally {
       setBookmarkLoading(false);
+    }
+  };
+
+  const handleChatWithFarm = async () => {
+    const userData = localStorage.getItem("user");
+    if (!userData) {
+      alert("กรุณาเข้าสู่ระบบก่อนเริ่มแชทกับร้านค้า");
+      return;
+    }
+
+    const user = JSON.parse(userData);
+    const currentUser = user.user || user;
+    if (!currentUser?.NID) {
+      alert("ไม่พบข้อมูลผู้ใช้ กรุณาเข้าสู่ระบบใหม่อีกครั้ง");
+      return;
+    }
+
+    try {
+      // เพิ่มสินค้าเข้า Bookmark
+      try {
+        await axios.post(`${BOOKMARKS_API_BASE}/add`, {
+          NID: currentUser.NID,
+          PID: product.PID,
+        });
+        setIsBookmarked(true);
+      } catch (bookmarkError) {
+        // ถ้า bookmark อยู่แล้วก็ไม่เป็นไร
+        if (bookmarkError.response?.status !== 400) {
+          console.error("Error adding bookmark:", bookmarkError);
+        }
+      }
+
+      // สร้างหรือหา chat room
+      const response = await axios.post("http://localhost:4000/chats/create", {
+        NID: currentUser.NID,
+        FID: product.FID,
+      });
+
+      const chat = response.data?.chat;
+      if (chat?.logID) {
+        navigate(`/chat/${chat.logID}/${product.FID}`, {
+          state: { product },
+        });
+      } else {
+        throw new Error("ไม่สามารถสร้างห้องแชทได้");
+      }
+    } catch (error) {
+      console.error("Error creating chat:", error);
+      alert("ไม่สามารถเริ่มแชทได้ กรุณาลองใหม่");
     }
   };
 
@@ -125,16 +193,29 @@ const Product = ({ className }) => {
         <div className="info-section">
           <h1 className="product-name">{product.productName}</h1>
 
+          {farmInfo && product.FID && (
+            <div className="farm-info-card" onClick={() => navigate(`/farms/${product.FID}`)}>
+              <div className="farm-icon">🌾</div>
+              <div className="farm-details">
+                <div className="farm-label">ฟาร์ม</div>
+                <div className="farm-name">{farmInfo.farmName || "ฟาร์ม"}</div>
+              </div>
+              <div className="farm-arrow">›</div>
+            </div>
+          )}
+
           <div className="detail-card">
             <div className="detail-row">
               <span className="label">หมวดหมู่:</span>
-              <span className="value">{product.category}</span>
+              <span className="value">
+                {product.category || product.Category || product.CATEGORY || "-"}
+              </span>
             </div>
 
             <div className="detail-row">
               <span className="label">ประเภทการขาย:</span>
               <span className="value">
-                {product.saleType === "retail" ? "ขายปลีก" : "ขายส่ง"}
+                {product.saleType || product.sale_type || product.SaleType || "-"}
               </span>
             </div>
           </div>
@@ -147,10 +228,10 @@ const Product = ({ className }) => {
             </div>
           </div>
 
-          <Link to={`/chat/${product.FID}`} className="chat-btn">
+          <button type="button" className="chat-btn" onClick={handleChatWithFarm}>
             <span className="icon">💬</span>
             <span>แชทกับร้านค้า</span>
-          </Link>
+          </button>
 
           <button 
             className={`bookmark-btn ${isBookmarked ? 'bookmarked' : ''}`}
@@ -233,6 +314,66 @@ export default styled(Product)`
     color: #1565c0;
     margin: 0 0 24px 0;
     font-weight: 700;
+  }
+
+  .farm-info-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+      background: #f5f5f5;
+      border-color: #1565c0;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(21, 101, 192, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .farm-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+
+  .farm-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .farm-label {
+    font-size: 12px;
+    color: #757575;
+    margin-bottom: 4px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .farm-name {
+    font-size: 18px;
+    color: #1565c0;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .farm-arrow {
+    font-size: 24px;
+    color: #1565c0;
+    flex-shrink: 0;
+    font-weight: 300;
   }
 
   .detail-card {

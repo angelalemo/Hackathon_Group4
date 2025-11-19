@@ -19,6 +19,13 @@ const Register = ({ className }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  
+  // OTP states
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
 
   // กันค่าที่รับมาเหมือนหน้า Login → trimStart()
   const handleChange = (e) => {
@@ -79,12 +86,87 @@ const validateForm = () => {
   return true;
 };
 
+  // ส่ง OTP
+  const handleSendOTP = async () => {
+    if (!formData.email.trim()) {
+      setError("กรุณากรอกอีเมลก่อน");
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setError("อีเมลไม่ถูกต้อง");
+      return;
+    }
+
+    setOtpLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      await axios.post("http://localhost:4000/otp/send", {
+        email: formData.email,
+      });
+
+      setOtpSent(true);
+      setSuccess("ส่ง OTP ไปยังอีเมลของคุณแล้ว กรุณาตรวจสอบอีเมล");
+      
+      // ตั้งเวลา resend (60 วินาที)
+      setResendTimer(60);
+      const timer = setInterval(() => {
+        setResendTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch (err) {
+      setError(err.response?.data?.error || "ไม่สามารถส่ง OTP ได้ กรุณาลองใหม่");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  // ยืนยัน OTP
+  const handleVerifyOTP = async () => {
+    if (!otp || otp.length !== 6) {
+      setError("กรุณากรอก OTP 6 หลัก");
+      return;
+    }
+
+    setOtpLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      await axios.post("http://localhost:4000/otp/verify", {
+        email: formData.email,
+        otp: otp,
+      });
+
+      setOtpVerified(true);
+      setSuccess("ยืนยันอีเมลสำเร็จ! ตอนนี้สามารถลงทะเบียนได้แล้ว");
+    } catch (err) {
+      setError(err.response?.data?.error || "OTP ไม่ถูกต้อง กรุณาลองใหม่");
+      setOtp("");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
     if (!validateForm()) return;
+
+    // ตรวจสอบว่ายืนยัน OTP แล้วหรือยัง
+    if (!otpVerified) {
+      setError("กรุณายืนยันอีเมลด้วย OTP ก่อนลงทะเบียน");
+      return;
+    }
 
     setLoading(true);
 
@@ -102,8 +184,8 @@ const validateForm = () => {
       setSuccess("ลงทะเบียนสำเร็จ! กำลังเปลี่ยนไปยังหน้าเข้าสู่หน้าหลัก...");
 
       setTimeout(() => {
-        window.location.href = "/";
-      }, 2000);
+        window.location.href = "/login";
+      }, 1000);
     } catch (err) {
       setError(err.response?.data?.error || "ลงทะเบียนล้มเหลว กรุณาลองใหม่");
     } finally {
@@ -159,14 +241,36 @@ const validateForm = () => {
           <div className="form-row">
             <div className="form-group">
               <label>อีเมล</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="example@gmail.com"
-                required
-              />
+              <div style={{ display: "flex", gap: "8px" }}>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="example@gmail.com"
+                  required
+                  disabled={otpSent}
+                  style={{ flex: 1 }}
+                />
+                {!otpSent && (
+                  <button
+                    type="button"
+                    onClick={handleSendOTP}
+                    disabled={otpLoading || !formData.email}
+                    style={{
+                      padding: "8px 16px",
+                      background: "#22c55e",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {otpLoading ? "กำลังส่ง..." : "ส่ง OTP"}
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="form-group">
@@ -181,6 +285,94 @@ const validateForm = () => {
               />
             </div>
           </div>
+
+          {/* OTP Verification */}
+          {otpSent && !otpVerified && (
+            <div style={{ 
+              padding: "16px", 
+              background: "#f0fdf4", 
+              borderRadius: "8px", 
+              marginBottom: "16px",
+              border: "1px solid #22c55e"
+            }}>
+              <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+                รหัสยืนยันอีเมล (OTP)
+              </label>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    setOtp(value);
+                  }}
+                  placeholder="กรอก OTP 6 หลัก"
+                  maxLength={6}
+                  style={{
+                    flex: 1,
+                    padding: "12px",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    fontSize: "16px",
+                    textAlign: "center",
+                    letterSpacing: "4px",
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={handleVerifyOTP}
+                  disabled={otpLoading || otp.length !== 6}
+                  style={{
+                    padding: "12px 24px",
+                    background: otp.length === 6 ? "#22c55e" : "#ccc",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: otp.length === 6 ? "pointer" : "not-allowed",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {otpLoading ? "กำลังยืนยัน..." : "ยืนยัน"}
+                </button>
+              </div>
+              {resendTimer > 0 ? (
+                <p style={{ marginTop: "8px", fontSize: "14px", color: "#666" }}>
+                  ส่ง OTP ใหม่ได้ใน {resendTimer} วินาที
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleSendOTP}
+                  disabled={otpLoading}
+                  style={{
+                    marginTop: "8px",
+                    padding: "8px 16px",
+                    background: "transparent",
+                    color: "#22c55e",
+                    border: "1px solid #22c55e",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  ส่ง OTP ใหม่
+                </button>
+              )}
+            </div>
+          )}
+
+          {otpVerified && (
+            <div style={{ 
+              padding: "12px", 
+              background: "#d1fae5", 
+              borderRadius: "8px", 
+              marginBottom: "16px",
+              color: "#065f46",
+              fontSize: "14px"
+            }}>
+              ✓ ยืนยันอีเมลสำเร็จแล้ว
+            </div>
+          )}
 
           {/* Password */}
           <label className="register-label">รหัสผ่าน</label>
@@ -224,8 +416,16 @@ const validateForm = () => {
             <span>แสดงรหัสผ่าน</span>
           </div>
 
-          <button type="submit" className="register-button" disabled={loading}>
-            {loading ? "กำลังลงทะเบียน..." : "ลงทะเบียน"}
+          <button 
+            type="submit" 
+            className="register-button" 
+            disabled={loading || !otpVerified}
+            style={{
+              opacity: otpVerified ? 1 : 0.5,
+              cursor: otpVerified ? "pointer" : "not-allowed"
+            }}
+          >
+            {loading ? "กำลังลงทะเบียน..." : otpVerified ? "ลงทะเบียน" : "กรุณายืนยันอีเมลก่อน"}
           </button>
         </form>
 

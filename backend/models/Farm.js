@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       district: DataTypes.STRING,
       subDistrict: DataTypes.STRING,
       location: DataTypes.STRING,
+      profileImage: { type: DataTypes.TEXT, allowNull: true }, // รูปภาพโปรไฟล์ฟาร์ม
     },
     {
       sequelize,

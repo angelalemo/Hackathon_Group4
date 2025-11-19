@@ -15,6 +15,8 @@ import {
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
+const BOOKMARKS_API_BASE = "http://localhost:4000/bookmarks";
+
 const Navbar = ({ className, onFilterChange }) => {
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -36,6 +38,14 @@ const Navbar = ({ className, onFilterChange }) => {
     districts: [],
     subDistricts: [],
   });
+  const [unreadChats, setUnreadChats] = useState(0);
+  const [farmerChatFID, setFarmerChatFID] = useState(null);
+  const [bookmarkItems, setBookmarkItems] = useState([]);
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  const [bookmarkError, setBookmarkError] = useState("");
+  const [unreadChatItems, setUnreadChatItems] = useState([]);
+  const [unreadChatsLoading, setUnreadChatsLoading] = useState(false);
+  const [unreadChatsError, setUnreadChatsError] = useState("");
 
   const bellRef = useRef(null);
   const bookmarkRef = useRef(null);
@@ -57,6 +67,72 @@ const Navbar = ({ className, onFilterChange }) => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setFarmerChatFID(null);
+      return;
+    }
+    const isFarmer = user.type === "Farmer" || user.type === true;
+    if (!isFarmer) {
+      setFarmerChatFID(null);
+      return;
+    }
+
+    if (user.FID) {
+      setFarmerChatFID(user.FID);
+      return;
+    }
+
+    const fetchFarmerFID = async () => {
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/farms/user/${user.NID}`
+        );
+        setFarmerChatFID(response.data?.FID || null);
+      } catch (error) {
+        console.error("Error fetching farmer chat FID:", error);
+        setFarmerChatFID(null);
+      }
+    };
+
+    fetchFarmerFID();
+  }, [user]);
+
+  useEffect(() => {
+    const fetchUnreadChats = async () => {
+      if (!user) {
+        setUnreadChats(0);
+        return;
+      }
+
+      const isFarmer = user.type === "Farmer" || user.type === true;
+      const params = {};
+
+      if (isFarmer) {
+        const fid = user.FID || farmerChatFID;
+        if (!fid) return;
+        params.FID = fid;
+      } else {
+        if (!user.NID) return;
+        params.NID = user.NID;
+      }
+
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/chats/summary/unread`,
+          { params }
+        );
+        setUnreadChats(response.data?.totalUnread || 0);
+      } catch (error) {
+        console.error("Error fetching unread chats:", error);
+      }
+    };
+
+    fetchUnreadChats();
+    const interval = setInterval(fetchUnreadChats, 5000);
+    return () => clearInterval(interval);
+  }, [user, farmerChatFID]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -187,13 +263,39 @@ const Navbar = ({ className, onFilterChange }) => {
     showSearchOverlay,
   ]);
 
+  const buildFilterQuery = (filters, searchValue) => {
+    const params = new URLSearchParams();
+    const trimmedSearch = searchValue?.trim();
+
+    if (trimmedSearch) params.set("search", trimmedSearch);
+    if (filters.productCategory) params.set("category", filters.productCategory);
+    if (filters.province) params.set("province", filters.province);
+    if (filters.district) params.set("district", filters.district);
+    if (filters.subDistrict) params.set("subDistrict", filters.subDistrict);
+
+    return params.toString();
+  };
+
+  const navigateToFilterPage = (filters, searchValue = searchQuery) => {
+    const queryString = buildFilterQuery(filters, searchValue);
+    if (queryString) {
+      navigate(`/filter?${queryString}`);
+    } else {
+      navigate("/filter");
+    }
+  };
+
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
 
-    // พิมพ์แล้วไปหน้า filter โดยส่ง query ไปด้วย
-    if (value.trim().length > 0) {
-      navigate(`/filter?search=${value}`);
+    const queryString = buildFilterQuery(filterValues, value);
+    if (value.trim().length > 0 || queryString.length > 0) {
+      if (queryString) {
+        navigate(`/filter?${queryString}`);
+      } else {
+        navigate("/filter");
+      }
     }
   };
 
@@ -202,17 +304,14 @@ const Navbar = ({ className, onFilterChange }) => {
 
   const handleFilterValueChange = (value) => {
     setFilterValues((prev) => {
-      const newValues = {
-        productCategory: "",
-        province: "",
-        district: "",
-        subDistrict: "",
-      };
-      if (selectedFilter === "ชนิดผัก") newValues.productCategory = value;
-      if (selectedFilter === "จังหวัด") newValues.province = value;
-      if (selectedFilter === "อำเภอ") newValues.district = value;
-      if (selectedFilter === "ตำบล") newValues.subDistrict = value;
-      return { ...prev, ...newValues };
+      const nextValues = { ...prev };
+      if (selectedFilter === "ชนิดผัก") nextValues.productCategory = value;
+      if (selectedFilter === "จังหวัด") nextValues.province = value;
+      if (selectedFilter === "อำเภอ") nextValues.district = value;
+      if (selectedFilter === "ตำบล") nextValues.subDistrict = value;
+
+      navigateToFilterPage(nextValues);
+      return nextValues;
     });
   };
 
@@ -262,6 +361,64 @@ const Navbar = ({ className, onFilterChange }) => {
 
   const isFarmer = user && (user.type === "Farmer" || user.type === true);
 
+  const fetchBookmarkPreview = async () => {
+    if (!user?.NID) {
+      setBookmarkItems([]);
+      setBookmarkError("กรุณาเข้าสู่ระบบ");
+      return;
+    }
+    setBookmarkLoading(true);
+    setBookmarkError("");
+    try {
+      const response = await axios.get(
+        `${BOOKMARKS_API_BASE}/user/${user.NID}`
+      );
+      const list = response.data || [];
+      setBookmarkItems(list.slice(0, 3));
+    } catch (error) {
+      console.error("Error fetching bookmarks:", error);
+      setBookmarkError("ไม่สามารถโหลดรายการได้");
+    } finally {
+      setBookmarkLoading(false);
+    }
+  };
+
+  const fetchUnreadChatList = async () => {
+    if (!user) {
+      setUnreadChatItems([]);
+      setUnreadChatsError("กรุณาเข้าสู่ระบบ");
+      return;
+    }
+
+    const params = {};
+    if (isFarmer) {
+      const fid = user.FID || farmerChatFID;
+      if (!fid) return;
+      params.endpoint = `${API_BASE_URL}/chats/farm/${fid}`;
+    } else {
+      if (!user.NID) return;
+      params.endpoint = `${API_BASE_URL}/chats/${user.NID}`;
+    }
+
+    setUnreadChatsLoading(true);
+    setUnreadChatsError("");
+    try {
+      const response = await axios.get(params.endpoint);
+      const list = (response.data || []).filter((chat) => {
+        const count = isFarmer
+          ? chat.farmerUnreadCount
+          : chat.customerUnreadCount;
+        return count > 0;
+      });
+      setUnreadChatItems(list.slice(0, 5));
+    } catch (error) {
+      console.error("Error fetching unread chats:", error);
+      setUnreadChatsError("โหลดข้อมูลไม่สำเร็จ");
+    } finally {
+      setUnreadChatsLoading(false);
+    }
+  };
+
   return (
     <div className={className}>
       {/* Header */}
@@ -290,18 +447,72 @@ const Navbar = ({ className, onFilterChange }) => {
             <div className="popup-wrapper" ref={bellRef}>
               <button
                 className="icon-button"
-                onClick={() => {
-                  setShowBellPopup(!showBellPopup);
-                  setShowBookmarkPopup(false); // ปิดอันอื่น
+                onClick={async () => {
+                  const next = !showBellPopup;
+                  setShowBellPopup(next);
+                  setShowBookmarkPopup(false);
+                  if (next) {
+                    await fetchUnreadChatList();
+                  }
                 }}
               >
                 <Bell size={24} />
+                {unreadChats > 0 && (
+                  <span className="notification-badge">
+                    {unreadChats > 99 ? "99+" : unreadChats}
+                  </span>
+                )}
               </button>
 
               {showBellPopup && (
-                <div className="popup-box">
-                  <h4>การแจ้งเตือน</h4>
-                  <p>ยังไม่มีการแจ้งเตือน</p>
+                <div className="popup-box bell-popup">
+                  <h4>ข้อความที่ยังไม่ได้อ่าน</h4>
+                  {unreadChatsLoading ? (
+                    <p>กำลังโหลด...</p>
+                  ) : unreadChatsError ? (
+                    <p>{unreadChatsError}</p>
+                  ) : unreadChatItems.length === 0 ? (
+                    <p>ไม่มีข้อความใหม่</p>
+                  ) : (
+                    <ul className="unread-chat-list">
+                      {unreadChatItems.map((chat) => {
+                        const displayName =
+                          chat.Farm?.farmName ||
+                          chat.User?.username ||
+                          "ไม่ทราบชื่อ";
+                        const count = isFarmer
+                          ? chat.farmerUnreadCount
+                          : chat.customerUnreadCount;
+                        const lastMessage =
+                          chat.lastMessageText?.trim() || "มีข้อความใหม่";
+                        return (
+                          <li key={chat.logID}>
+                            <div className="info">
+                              <span className="name">{displayName}</span>
+                              <span className="preview">{lastMessage}</span>
+                            </div>
+                            <span className="count">
+                              {count > 99 ? "99+" : count}
+                            </span>
+                            <Link
+                              to={`/chat/${chat.logID}/${chat.FID}`}
+                              className="bookmark-link"
+                              onClick={() => setShowBellPopup(false)}
+                            >
+                              เปิด
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                  <Link
+                    to="/chat"
+                    className="popup-action"
+                    onClick={() => setShowBellPopup(false)}
+                  >
+                    ไปหน้าข้อความ
+                  </Link>
                 </div>
               )}
             </div>
@@ -310,18 +521,66 @@ const Navbar = ({ className, onFilterChange }) => {
             <div className="popup-wrapper" ref={bookmarkRef}>
               <button
                 className="icon-button"
-                onClick={() => {
-                  setShowBookmarkPopup(!showBookmarkPopup);
+                onClick={async () => {
+                  const next = !showBookmarkPopup;
+                  setShowBookmarkPopup(next);
                   setShowBellPopup(false);
+                  if (next) {
+                    await fetchBookmarkPreview();
+                  }
                 }}
               >
                 <Bookmark size={24} />
               </button>
 
               {showBookmarkPopup && (
-                <div className="popup-box">
-                  <h4>บุ๊กมาร์ก</h4>
-                  <p>ยังไม่มีรายการที่บันทึก</p>
+                <div className="popup-box bookmark-popup">
+                  <h4>บุ๊กมาร์กล่าสุด</h4>
+                  {bookmarkLoading ? (
+                    <p>กำลังโหลด...</p>
+                  ) : bookmarkError ? (
+                    <p>{bookmarkError}</p>
+                  ) : bookmarkItems.length === 0 ? (
+                    <p>ยังไม่มีสินค้าที่บันทึก</p>
+                  ) : (
+                    <ul className="bookmark-list">
+                      {bookmarkItems.map((item) => (
+                        <li key={item.id}>
+                          <div className="thumb">
+                            <img
+                              src={
+                                item.Product?.image ||
+                                "https://via.placeholder.com/60x60?text=No+Image"
+                              }
+                              alt={item.Product?.productName || "product"}
+                            />
+                          </div>
+                          <div className="info">
+                            <span className="name">
+                              {item.Product?.productName || "สินค้า"}
+                            </span>
+                            <span className="farm">
+                              {item.Product?.Farm?.farmName || "ฟาร์มไม่ระบุ"}
+                            </span>
+                          </div>
+                          <Link
+                            to={`/product/${item.PID}`}
+                            className="bookmark-link"
+                            onClick={() => setShowBookmarkPopup(false)}
+                          >
+                            ดู
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <Link
+                    to="/bookmarks"
+                    className="popup-action"
+                    onClick={() => setShowBookmarkPopup(false)}
+                  >
+                    ดูทั้งหมด
+                  </Link>
                 </div>
               )}
             </div>
@@ -408,7 +667,7 @@ const Navbar = ({ className, onFilterChange }) => {
                   ) : (
                     <div className="sidebar-menu">
                       <Link
-                        to="/chat-history"
+                        to="/chat"
                         className="sidebar-menu-item"
                         onClick={() => setShowSidebar(false)}
                       >
@@ -416,7 +675,7 @@ const Navbar = ({ className, onFilterChange }) => {
                         <span>ประวัติการแชท</span>
                       </Link>
                       <Link
-                        to="/notifications"
+                        to="/chat"
                         className="sidebar-menu-item"
                         onClick={() => setShowSidebar(false)}
                       >
@@ -578,10 +837,26 @@ export default styled(Navbar)`
     align-items: center;
     padding: 4px;
     transition: opacity 0.2s;
+    position: relative;
 
     &:hover {
       opacity: 0.7;
     }
+  }
+
+  .notification-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #ef4444;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 999px;
+    transform: translate(40%, -40%);
+    min-width: 20px;
+    text-align: center;
   }
 
   .auth-buttons {
@@ -1181,5 +1456,101 @@ export default styled(Navbar)`
   .popup-box p {
     font-size: 13px;
     color: #6b7280;
+  }
+
+  .bookmark-popup,
+  .bell-popup {
+    width: 300px;
+
+    .bookmark-list,
+    .unread-chat-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .thumb {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #f3f4f6;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      .info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .name {
+          font-size: 14px;
+          color: #1f2937;
+          font-weight: 600;
+        }
+
+        .farm {
+          font-size: 12px;
+          color: #6b7280;
+        }
+      }
+
+      .bookmark-link {
+        font-size: 13px;
+        color: #22c55e;
+        text-decoration: none;
+        font-weight: 600;
+      }
+    }
+
+    .popup-action {
+      display: inline-flex;
+      margin-top: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #22c55e;
+      text-decoration: none;
+    }
+  }
+
+  .unread-chat-list {
+    .info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .preview {
+        font-size: 12px;
+        color: #6b7280;
+      }
+    }
+
+    .count {
+      font-size: 12px;
+      font-weight: 700;
+      color: #ef4444;
+      margin-right: 8px;
+    }
   }
 `;

@@ -21,6 +21,16 @@ class ProductController {
     }
   }
 
+  static async getAllByUser(req, res) {
+    try {
+      const { NID } = req.params;
+      const products = await ProductService.getAllByUser(NID);
+      res.status(200).json(products);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
   static async getById(req, res) {
     try {
       const { PID } = req.params;
