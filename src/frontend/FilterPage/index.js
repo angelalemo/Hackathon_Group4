@@ -123,7 +123,7 @@ const FilterPage = ({ className }) => {
             <div className="left">
               <Link to={`/farms/${farm.FID}`} className="farm-link">
                 <img
-                  src={farm.image || "https://via.placeholder.com/150"}
+                  src={farm.profileImage || "https://via.placeholder.com/150"}
                   alt={farm.farmName}
                 />
               </Link>
