@@ -52,9 +52,6 @@ const Login = ({ className }) => {
 
   return (
     <div className={className}>
-      <div className="login-left">
-      <h1 className="logo">Phaktae</h1>
-      </div>
 
       <div className="login-right">
         <h1 className="login-title">ยินดีต้อนรับกลับมา!</h1>
