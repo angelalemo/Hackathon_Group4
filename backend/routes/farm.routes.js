@@ -14,5 +14,6 @@ router.put("/deleteStorage", FarmController.deleteFarmImageAndVideo);    // เ�
 router.put("/profileImage", FarmController.updateProfileImage);    // เฉพาะ Farmer
 router.post("/certificate", FarmController.addCertificate);    // เฉพาะ Farmer
 router.delete("/certificate", FarmController.deleteCertificate);    // เฉพาะ Farmer
+router.delete("/:FID", FarmController.deleteFarm);    // เฉพาะ Farmer
 
 module.exports = router;

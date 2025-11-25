@@ -128,6 +128,22 @@ class FarmController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  static async deleteFarm(req, res) {
+    try {
+      const { FID } = req.params;
+      const { NID } = req.body;
+      
+      if (!NID) {
+        return res.status(400).json({ error: "NID is required" });
+      }
+
+      const result = await FarmService.deleteFarm(NID, FID);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = FarmController;

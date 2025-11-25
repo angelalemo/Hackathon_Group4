@@ -1,4 +1,5 @@
-const { Farm, User, Storage, Product, Certificate } = require("../models");
+const { Farm, User, Storage, Product, Certificate, Chat, Message } = require("../models");
+const { Op } = require("sequelize");
 const fs = require("fs");
 const path = require("path");
 
@@ -380,6 +381,47 @@ class FarmService {
     await storage.destroy();
 
     return { message: "Storage deleted successfully" };
+  }
+
+  // ลบฟาร์ม (เฉพาะเจ้าของฟาร์ม)
+  static async deleteFarm(NID, FID) {
+    const user = await User.findByPk(NID);
+    if (!user) throw new Error("User not found");
+    if (user.type !== "Farmer") throw new Error("Permission denied: Only farmers can delete farms");
+
+    const farm = await Farm.findByPk(FID);
+    if (!farm) throw new Error("Farm not found");
+    if (farm.NID !== NID) throw new Error("Permission denied: You can only delete your own farm");
+
+    // ลบข้อมูลที่เกี่ยวข้อง
+    // ดึง Chat IDs ที่เกี่ยวข้องกับฟาร์ม
+    const chats = await Chat.findAll({
+      where: { FID: FID },
+      attributes: ['logID']
+    });
+    const chatLogIDs = chats.map(chat => chat.logID);
+
+    // ลบ Messages ที่เกี่ยวข้องกับ Chats ของฟาร์ม
+    if (chatLogIDs.length > 0) {
+      await Message.destroy({ where: { logID: { [Op.in]: chatLogIDs } } });
+    }
+
+    // ลบ Chats ที่เกี่ยวข้องกับฟาร์ม
+    await Chat.destroy({ where: { FID: FID } });
+
+    // ลบ Storage (ภาพ/วิดีโอ)
+    await Storage.destroy({ where: { FID: FID } });
+
+    // ลบ Certificate
+    await Certificate.destroy({ where: { FID: FID } });
+
+    // ลบ Product ที่เกี่ยวข้อง
+    await Product.destroy({ where: { FID: FID } });
+
+    // ลบฟาร์ม
+    await farm.destroy();
+
+    return { message: `Farm ${FID} deleted successfully` };
   }
 
 }

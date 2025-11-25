@@ -22,6 +22,7 @@ const FarmProfile = ({ className }) => {
   const [editDescription, setEditDescription] = useState("");
   const [editContact, setEditContact] = useState({});
   const [isSaving, setIsSaving] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const storedUser = localStorage.getItem("user");
   let farmerNID = "";
@@ -75,6 +76,37 @@ const FarmProfile = ({ className }) => {
     };
     fetchFarm();
   }, [farmID, farmerNID]);
+
+  // ตรวจสอบว่า sidebar เปิดอยู่หรือไม่
+  useEffect(() => {
+    const checkSidebar = () => {
+      // ตรวจสอบว่า sidebar element มีอยู่ใน DOM หรือไม่
+      // sidebar จะมีเฉพาะเมื่อ showSidebar เป็น true ใน Navbar
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarBackdrop = document.querySelector('.sidebar-backdrop');
+      const isOpen = sidebar !== null || sidebarBackdrop !== null;
+      setIsSidebarOpen(isOpen);
+    };
+
+    // ตรวจสอบทันที
+    checkSidebar();
+
+    // ตรวจสอบทุก 100ms
+    const interval = setInterval(checkSidebar, 100);
+
+    // ใช้ MutationObserver เพื่อตรวจสอบการเปลี่ยนแปลง DOM
+    const observer = new MutationObserver(checkSidebar);
+    const targetNode = document.body;
+    observer.observe(targetNode, {
+      childList: true,
+      subtree: true
+    });
+
+    return () => {
+      clearInterval(interval);
+      observer.disconnect();
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -484,19 +516,21 @@ const FarmProfile = ({ className }) => {
       {/* Hero Section */}
       <div className="hero-section">
         <div className="hero-overlay"></div>
-        <button 
-          className="back-button" 
-          onClick={() => {
-            if (window.history.length > 1) {
-              navigate(-1);
-            } else {
-              navigate("/");
-            }
-          }}
-          aria-label="ย้อนกลับ"
-        >
-          ← ย้อนกลับ
-        </button>
+        {!isSidebarOpen && (
+          <button 
+            className="back-button" 
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate("/");
+              }
+            }}
+            aria-label="ย้อนกลับ"
+          >
+            ← ย้อนกลับ
+          </button>
+        )}
         <div className="hero-content">
           <div className="farm-badge">🌾 ฟาร์มออนไลน์</div>
           <h1 className="farm-title">{farm.farmName}</h1>
