@@ -3,29 +3,40 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@reduxjs/toolkit": "^2.10.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "geothai": "^2.0.1",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.553.0",
     "morgan": "^1.10.1",
+    "nodemailer": "^7.0.10",
     "nodemon": "^3.1.10",
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^6.30.2",
     "react-scripts": "5.0.1",
     "sequelize": "^6.37.7",
+    "styled-components": "^6.1.19",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": " react-scripts start",
     "dev": "nodemon server.js",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "build": " react-scripts build",
+    "test": " react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -45,5 +56,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.3"
   }
 }

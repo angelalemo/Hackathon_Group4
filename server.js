@@ -1,23 +1,41 @@
 const express = require('express');
 const morgan = require('morgan');
 const sequelize = require('./backend/config/db');
+const dotenv = require('dotenv');
+dotenv.config();
+
+// routes
 const userRoutes = require("./backend/routes/user.routes");
 const farmRoutes = require("./backend/routes/farm.routes");
 const productRoutes = require("./backend/routes/product.routes");
+const filterRoutes = require("./backend/routes/filter.routes");
+const chatRoutes = require("./backend/routes/chat.routes");
+const gmailRoutes = require("./backend/routes/gmail.routes");
+const bookmarkRoutes = require("./backend/routes/bookmark.routes");
+const otpRoutes = require("./backend/routes/otp.routes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const cors = require('cors');
 
 // Middleware
+app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+// routes
 app.use("/users", userRoutes);
 app.use("/farms", farmRoutes);
 app.use("/products", productRoutes);
+app.use("/filter", filterRoutes); //
+app.use("/chats", chatRoutes);
+app.use("/gmail", gmailRoutes);
+app.use("/bookmarks", bookmarkRoutes);
+app.use("/otp", otpRoutes);
 
+
+// database
 async function initializeDatabase() {
     try {
         await sequelize.authenticate();
@@ -28,6 +46,7 @@ async function initializeDatabase() {
         console.error('Unable to connect to the database:', error);
     }
 }
+
 app.listen(PORT, async () => {
     await initializeDatabase();
     console.log(`Server is running on http://localhost:${PORT}`);

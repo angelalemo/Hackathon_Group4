@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
       FID: DataTypes.INTEGER,
-      file: DataTypes.STRING,
+      file: DataTypes.TEXT,
       typeStorage: DataTypes.STRING, // image หรือ video
     },
     {
