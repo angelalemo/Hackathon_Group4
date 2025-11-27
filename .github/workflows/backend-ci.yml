@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'backend/**'
-    branches: [test]
+    branches: [main]
   pull_request:
     paths:
       - 'backend/**'
@@ -47,7 +47,6 @@ jobs:
         run: npm ci
         working-directory: backend
 
-      # ✅ ถ้ายังไม่มี migrate script ให้คอมเมนต์ไว้ก่อน
       # - name: Run migration
       #   run: npm run migrate
       #   working-directory: backend
