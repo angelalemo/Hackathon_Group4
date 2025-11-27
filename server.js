@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/users", userRoutes);
 app.use("/farms", farmRoutes);
 app.use("/products", productRoutes);
-app.use("/filter", filterRoutes); //
+app.use("/filter", filterRoutes);
 app.use("/chats", chatRoutes);
 app.use("/gmail", gmailRoutes);
 app.use("/bookmarks", bookmarkRoutes);
