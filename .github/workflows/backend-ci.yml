@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'backend/**'
-    branches: [test]
+    branches: [main]
   pull_request:
     paths:
       - 'backend/**'
@@ -16,11 +16,12 @@ jobs:
     services:
       postgres:
         image: postgres:14
-        ports: [5432:5432]
+        ports:
+          - 5432:5432
         env:
-          POSTGRES_USER: testuser///
-          POSTGRES_PASSWORD: testpass///
-          POSTGRES_DB: testdb///
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -29,6 +30,7 @@ jobs:
 
     env:
       DATABASE_URL: postgres://testuser:testpass@localhost:5432/testdb
+      NODE_ENV: test
 
     steps:
       - name: Checkout source
@@ -38,17 +40,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         working-directory: backend
 
-      - name: Run migration (ถ้ามี เช่น Prisma, TypeORM)
-        run: npm run migrate
-        working-directory: backend
+      # - name: Run migration
+      #   run: npm run migrate
+      #   working-directory: backend
 
       - name: Run tests
         run: npm test
         working-directory: backend
-
-      # เพิ่ม deploy step ได้ ถ้าต้องการ
